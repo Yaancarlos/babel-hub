@@ -28,6 +28,7 @@ export function authorizedRoles (
             }
 
             req.user.userId = user.id;
+            req.user.email = user.email;
             req.user.role = user.role;
             req.user.schoolId = user.school_id;
 

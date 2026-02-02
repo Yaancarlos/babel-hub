@@ -1,5 +1,4 @@
 import { Router } from "express";
-import type { NextFunction } from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { authorizedRoles } from "../middleware/role.middleware.js";
 import { getAttendance, upsertAttendance} from "../controllers/attendance.controller.js";

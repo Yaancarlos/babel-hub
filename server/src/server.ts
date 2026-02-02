@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import attendanceRoutes from "./routes/attendance.routes.js";
 import {errorHandler} from "./middleware/error.middleware.js";
 import gradesRoutes from "./routes/grades.routes.js";
+import accessRoleRoutes from "./routes/access.role.routes.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/attendance", attendanceRoutes);
 app.use("/grades", gradesRoutes);
+app.use("/user", accessRoleRoutes);
 
 app.use(errorHandler);
 

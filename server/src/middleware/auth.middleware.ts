@@ -15,6 +15,7 @@ export interface AuthenticatedRequest extends Request {
         supabaseUserId: string;
         userId?: string | undefined;
         role?: UserRole;
+        email?: string;
         schoolId?: string | undefined;
     };
 }
