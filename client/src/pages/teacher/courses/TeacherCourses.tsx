@@ -1,7 +1,7 @@
 import {Outlet, useNavigate, useParams} from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import api from "../../../api/client.ts";
-import {LoadingPage} from "../../../components/Loadings.tsx";
+import {LoadingPage} from "../../../components/ui/Loadings.tsx";
 import {HiDotsVertical} from "react-icons/hi";
 import {IoSchool} from "react-icons/io5";
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from "../../../../api/client.ts";
-import DynamicModalForm, { type FormField } from "../../../../components/ModalForm.tsx";
-import {DeleteButton, EditButton, PrimaryButton} from "../../../../components/Buttons.tsx";
-import ButtonChevronBack from "../../../../components/ButtonChevrowBack.tsx";
-import {LoadingContent} from "../../../../components/Loadings.tsx";
+import DynamicModalForm, { type FormField } from "../../../../components/ui/modals/ModalForm.tsx";
+import {DeleteButton, EditButton, PrimaryButton} from "../../../../components/ui/buttons/Buttons.tsx";
+import ButtonChevronBack from "../../../../components/ui/buttons/ButtonChevrowBack.tsx";
+import {LoadingContent} from "../../../../components/ui/Loadings.tsx";
 
 export default function AreaSubjects() {
     const { areaId } = useParams<{ areaId: string }>();

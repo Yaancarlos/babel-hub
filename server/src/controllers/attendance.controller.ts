@@ -34,7 +34,7 @@ export async function getClassAttendance(
         });
 
     } catch (error) {
-        console.error("Get Class Attendance Error:", error);
+        console.error("Get Class AttendanceList Error:", error);
         response.status(500).json({ message: "Failed to fetch attendance" });
     } finally {
         client.release();
@@ -131,11 +131,11 @@ export async function bulkUpsertClassAttendance(
 
         await client.query("COMMIT");
 
-        return response.status(200).json({ message: "Attendance successfully recorded" });
+        return response.status(200).json({ message: "AttendanceList successfully recorded" });
 
     } catch (dbError) {
         await client.query("ROLLBACK");
-        console.error("Attendance Upsert Error:", dbError);
+        console.error("AttendanceList Upsert Error:", dbError);
         return response.status(500).json({ message: "Server error while saving attendance" });
     } finally {
         client.release();
@@ -203,7 +203,7 @@ export async function getAttendanceCenterSummary(
         });
 
     } catch (error) {
-        console.error("Get Attendance Center Error:", error);
+        console.error("Get AttendanceList Center Error:", error);
         response.status(500).json({ message: "Failed to fetch attendance center data" });
     } finally {
         client.release();
@@ -250,7 +250,7 @@ export async function getAttendanceStatusByCalendar(
             attendanceByCalendar: result.rows
         })
     } catch (dbError) {
-        console.error("Get Attendance By Calendar Error:", dbError);
+        console.error("Get AttendanceList By Calendar Error:", dbError);
         response.status(500).json({ message: "Failed to fetch attendance by calendar" });
     } finally {
         client.release();
@@ -303,7 +303,7 @@ export async function getAttendanceCourseByClass(
             attendanceClass: result.rows
         })
     } catch (dbError) {
-        console.error("Get Attendance By Course Error:", dbError);
+        console.error("Get AttendanceList By Course Error:", dbError);
         response.status(500).json({ message: "Failed to fetch attendance by course" });
     } finally {
         client.release();

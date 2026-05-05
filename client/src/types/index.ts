@@ -1,4 +1,5 @@
 export type UserRole = "principal" | "admin" | "teacher" | "student" | null;
+export type ModalModeTypes = 'create' | 'edit' | 'none';
 
 export function formateDate(date: string) {
     return  new Date(date).toLocaleDateString('es-ES', {
@@ -38,7 +39,7 @@ export function reverseName(fullName: string, firstNameCount = 2) {
     const lastNames = parts.slice(firstNameCount).join(" ");
 
     return `${lastNames} ${firstNames}`.trim();
-};
+}
 
 export const formatterDate = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Bogota',

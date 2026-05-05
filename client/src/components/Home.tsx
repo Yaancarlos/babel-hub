@@ -1,8 +1,8 @@
 import React, { useState, type JSX } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import LogOutButton from "./LogOutButton.tsx";
+import LogOutButton from "./auth/LogOutButton.tsx";
 import type { UserProfile } from "../auth/useAuth.ts";
-import ErrorBoundary from "./ErrorBoundary.tsx";
+import ErrorBoundary from "./core/ErrorBoundary.tsx";
 import { HiMenu, HiX } from "react-icons/hi";
 import logo from "../../src/assets/images/logo.png"
 import { IoSettingsOutline } from "react-icons/io5";

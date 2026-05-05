@@ -5,7 +5,7 @@ A full-stack, production-ready school management platform designed to handle dai
 ## Features
 
 * **RBAC:** Distinct, secure dashboards and data access levels for Principals (Coordinadores), Teachers (Profesores), and Students (Estudiantes).
-* **Attendance Tracking:** Custom-built attendance modules featuring a dynamic, 70-day historical grid with intelligent date-capping to prevent empty future data.
+* **AttendanceList Tracking:** Custom-built attendance modules featuring a dynamic, 70-day historical grid with intelligent date-capping to prevent empty future data.
 * **Responsive UI:** Fully responsive design utilizing Tailwind CSS, featuring a sliding mobile drawer and fixed desktop sidebar for optimal user experience on any device.
 * **Backend:** RESTful Express API utilizing parameterized SQL queriesate
 

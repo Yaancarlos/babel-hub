@@ -1,0 +1,4 @@
+export { StudentsLayout } from "./components/students/StudentsLayout.tsx"
+export { TeacherLayout } from "./components/teachers/TeacherLayout.tsx"
+export { TeacherProfileLayout } from "./components/teachers/TeacherProfile.tsx"
+export { StudentProfileLayout } from "./components/students/StudentProfile.tsx"

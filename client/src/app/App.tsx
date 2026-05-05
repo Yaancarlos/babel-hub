@@ -1,32 +1,37 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "../auth/Route.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+
 import Login from "../pages/auth/login.tsx";
 import TeacherDashboard from "../pages/teacher/dashboard/TeacherDashboard.tsx";
 import PrincipalDashboard from "../pages/principal/dashboard/PrincipalDashboard.tsx";
-import ProtectedRoute from "../auth/Route.tsx";
 import NotFoundPage from "../pages/misc/notFoundPage.tsx";
-import PrincipalCourses from "../pages/principal/courses/PrincipalCourses.tsx";
-import CourseDetails from "../pages/principal/courses/CourseDetails.tsx";
 import PrincipalLayout from "../pages/principal/PrincipalLayout.tsx";
-import ListStudents from "../pages/principal/community/students/Students.tsx";
-import ListTeacher from "../pages/principal/community/teachers/Teachers.tsx";
 import Community from "../pages/principal/community/Community.tsx";
-import StudentProfile from "../pages/principal/community/students/StudentProfile.tsx";
 import ClassDetails from "../pages/principal/courses/classes/ClassesDetails.tsx";
-import FilesDashboard from "../pages/principal/files/FilesDashboard.tsx";
 import AreaDetails from "../pages/principal/files/areas/AreaDetails.tsx";
-import TeacherDetails from "../pages/principal/community/teachers/TeacherDetails.tsx";
 import TeacherLayout from "../pages/teacher/TeacherLayout.tsx";
 import TeacherCourses from "../pages/teacher/courses/TeacherCourses.tsx";
 import NotificationCenter from "../pages/principal/notifications/NotificationCenter.tsx";
-import AttendanceNotification from "../pages/principal/notifications/attendance/AttendanceNotification.tsx";
+import AttendanceCenter from "../pages/principal/notifications/attendance/Attendance.tsx";
 import TeacherCourseDetails from "../pages/teacher/courses/CourseDetails.tsx";
 import StudentLayout from "../pages/student/StudentLayout.tsx";
 import StudentDashboard from "../pages/student/dashboard/StudentDashboard.tsx";
+import Students from "../pages/principal/community/students/Students.tsx";
+import Teachers from "../pages/principal/community/teachers/Teachers.tsx";
+import TeacherProfile from "../pages/principal/community/teachers/TeacherProfile.tsx";
+import StudentProfile from "../pages/principal/community/students/StudentProfile.tsx";
+import Courses from "../pages/principal/courses/Courses.tsx";
+import CourseDetails from "../pages/principal/courses/CourseDetails.tsx";
+import Setup from "../pages/principal/files/Setup.tsx";
+
+const queryClient = new QueryClient();
 
 function App() {
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <Toaster
                 position="top-center"
                 toastOptions={{
@@ -65,22 +70,22 @@ function App() {
                     >
                         <Route path="dashboard" index element={<PrincipalDashboard />} />
 
-                        <Route path="cursos" element={<PrincipalCourses />}>
+                        <Route path="cursos" element={<Courses />}>
                             <Route path=":id" element={<CourseDetails />} />
                             <Route path=":courseId/clase/:id" element={<ClassDetails />} />
                         </Route>
 
                         <Route path="comunidad" element={<Community />} />
-                        <Route path="comunidad/profesores" element={<ListTeacher />} />
-                        <Route path="comunidad/profesores/:id" element={<TeacherDetails />} />
-                        <Route path="comunidad/estudiantes" element={<ListStudents />} />
+                        <Route path="comunidad/profesores" element={<Teachers />} />
+                        <Route path="comunidad/profesores/:id" element={<TeacherProfile />} />
+                        <Route path="comunidad/estudiantes" element={<Students />} />
                         <Route path="comunidad/estudiantes/:id" element={<StudentProfile />} />
 
-                        <Route path="formatos" element={<FilesDashboard />} />
+                        <Route path="formatos" element={<Setup />} />
                         <Route path="formatos/areas/:areaId" element={<AreaDetails />} />
 
                         <Route path="notificaciones" element={<NotificationCenter />} />
-                        <Route path="notificaciones/asistencia" element={<AttendanceNotification />} />
+                        <Route path="notificaciones/asistencia" element={<AttendanceCenter />} />
 
                     </Route>
 
@@ -121,7 +126,7 @@ function App() {
                     />
                 </Routes>
             </BrowserRouter>
-        </>
+        </QueryClientProvider>
     )
 }
 

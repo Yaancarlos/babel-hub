@@ -109,7 +109,7 @@ export async function getStudents(
             ORDER BY u.full_name ASC
         `, [schoolId]);
 
-        response.status(200).json(result.rows);
+        response.status(200).json({ students: result.rows });
     } catch (dbError) {
         console.error("Database Error - GET Students failed:", dbError);
         response.status(500).json({ message: "Database error: Failed to fetch students" });
@@ -175,7 +175,7 @@ export async function getStudentById(
 
         delete studentInfo.supabase_user_id;
 
-        return response.status(200).json({
+        response.status(200).json({
             id: studentInfo.student_id,
             full_name: studentInfo.full_name,
             email: studentInfo.email,
@@ -183,7 +183,6 @@ export async function getStudentById(
             enrollment_code: studentInfo.enrollment_code,
             recent_grades: gradesQuery.rows
         });
-
     } catch (dbError) {
         console.error("Database Error in getStudentById:", dbError);
         return response.status(500).json({ message: "Database error" });

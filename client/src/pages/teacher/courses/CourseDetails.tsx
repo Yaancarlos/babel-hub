@@ -1,11 +1,11 @@
 import {useState, useEffect, useCallback} from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../../api/client.ts";
-import { LoadingContent } from "../../../components/Loadings.tsx";
-import ButtonChevronBack from "../../../components/ButtonChevrowBack.tsx";
+import { LoadingContent } from "../../../components/ui/Loadings.tsx";
+import ButtonChevronBack from "../../../components/ui/buttons/ButtonChevrowBack.tsx";
 import {HiOutlineCalendar, HiOutlineClipboardList, HiOutlineDocumentText, HiOutlineUsers} from "react-icons/hi";
 import {formatDate, formatterDate, getInitials, reverseName} from "../../../types";
-import {PrimaryButton} from "../../../components/Buttons.tsx";
+import {PrimaryButton} from "../../../components/ui/buttons/Buttons.tsx";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -46,7 +46,7 @@ const StudentAttendanceRow = memo(function StudentAttendanceRow({
                 <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
                     {getInitials(student.student_name)}
                 </div>
-                <span className="font-medium text-sm md:text-base text-custom-black leading-tight">
+                <span className="font-medium text-sm md:text-base capitalize text-custom-black leading-tight">
                     {reverseName(student.student_name)}
                 </span>
             </div>
@@ -358,7 +358,7 @@ export default function TeacherCourseDetails() {
                                                         {getInitials(student.student_name)}
                                                 </div>
                                                 <div className="max-w-48 py-0.5">
-                                                    <span className="block font-medium truncate text-custom-black text-sm md:text-base leading-normal">
+                                                    <span className="block font-medium truncate capitalize text-custom-black text-sm md:text-base leading-normal">
                                                         {reverseName(student.student_name)}
                                                     </span>
                                                 </div>
@@ -455,7 +455,7 @@ export default function TeacherCourseDetails() {
                                     {attendanceGrid.map((student) => (
                                         <tr key={student.student_id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="sticky left-0 bg-white p-4 border-r border-gray-100 z-10">
-                                                <div className="truncate max-w-[200px] font-medium text-custom-black text-sm"
+                                                <div className="truncate max-w-[200px] font-medium capitalize text-custom-black text-sm"
                                                      title={reverseName(student.name)}>
                                                     {reverseName(student.name)}
                                                 </div>

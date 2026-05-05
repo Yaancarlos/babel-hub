@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import ListData from "../../../components/List.tsx";
+import ListData from "../../../components/ui/lists/List.tsx";
 
 function Community () {
     const navigate = useNavigate();

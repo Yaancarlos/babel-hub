@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import backImg from "../../assets/images/login-img.webp";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
-import AuthButton from "../../components/AuthButtons.tsx";
+import AuthButton from "../../components/auth/AuthButtons.tsx";
 
 export default function Login() {
     const [email, setEmail] = useState("");

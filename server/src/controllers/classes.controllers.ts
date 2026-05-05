@@ -59,7 +59,6 @@ export async function createClass(
             message: "Class created successfully",
             classId: newClassId
         });
-
     } catch (dbError) {
         await client.query("ROLLBACK");
         console.error("Database Error:", dbError);
