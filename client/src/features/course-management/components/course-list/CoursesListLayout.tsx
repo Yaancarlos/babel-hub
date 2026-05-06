@@ -82,6 +82,7 @@ export function CoursesListLayout() {
                     if (courseToDelete) {
                         await deleteCourseById(courseToDelete.id);
                         setCourseToDelete(null);
+                        navigate("/principal/cursos/")
                     }
                 }}
                 title="¿Estás seguro?"
