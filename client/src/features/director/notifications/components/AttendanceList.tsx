@@ -79,10 +79,11 @@ export function AttendanceList() {
                                                 <button
                                                     onClick={() => handleToggle(student, index)}
                                                     className={`group py-3 px-4 cursor-pointer transition-all duration-200 w-full border flex items-center justify-between rounded-2xl
-                                                            ${isOpen ?
-                                                        absences % 2 == 0 ? 'border-red-error shadow-md' : 'border-primary shadow-md' :
-                                                        absences % 2 == 0 ? 'border-red-error hover:shadow-sm' : 'border-gray-100 bg-white hover:border-primary hover:shadow-sm'
+                                                    ${isOpen ?
+                                                        (absences > 0 && absences % 2 === 0) ? 'border-red-error shadow-md' : 'border-primary shadow-md' :
+                                                        (absences > 0 && absences % 2 === 0) ? 'border-red-error hover:shadow-sm' : 'border-gray-100 bg-white hover:border-primary hover:shadow-sm'
                                                     }`}
+
                                                 >
                                                     <div className="flex items-center min-w-0 gap-3">
                                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors
