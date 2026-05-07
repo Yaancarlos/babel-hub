@@ -1,4 +1,4 @@
-import {SchoolSetupLayout} from "../../../features/school-setup/components";
+import {SchoolSetupLayout} from "../../../features/director/school-setup/components";
 
 export default function Setup () {
     return (

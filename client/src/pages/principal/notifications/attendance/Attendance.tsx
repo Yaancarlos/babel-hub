@@ -1,4 +1,4 @@
-import { AttendanceLayout, AttendanceList } from "../../../../features/notifications";
+import { AttendanceLayout, AttendanceList } from "../../../../features/director/notifications";
 
 export default function AttendanceCenter() {
     return (

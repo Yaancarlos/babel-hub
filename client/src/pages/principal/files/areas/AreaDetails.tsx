@@ -5,6 +5,7 @@ import DynamicModalForm, { type FormField } from "../../../../components/ui/moda
 import {DeleteButton, EditButton, PrimaryButton} from "../../../../components/ui/buttons/Buttons.tsx";
 import ButtonChevronBack from "../../../../components/ui/buttons/ButtonChevrowBack.tsx";
 import {LoadingContent} from "../../../../components/ui/Loadings.tsx";
+import {AreaDetails} from "../../../../features/director/school-setup/components/areas/AreaDetails.tsx";
 
 export default function AreaSubjects() {
     const { areaId } = useParams<{ areaId: string }>();
@@ -105,6 +106,7 @@ export default function AreaSubjects() {
 
     return (
         <div className="space-y-5">
+            <AreaDetails />
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div className="flex items-center gap-3">
                     <ButtonChevronBack onClick={() => navigate(-1)} />

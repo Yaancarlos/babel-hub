@@ -1,4 +1,4 @@
-import {TeacherProfileLayout} from "../../../../features/comunity";
+import {TeacherProfileLayout} from "../../../../features/director/comunity";
 
 export default function TeacherProfile() {
     return (

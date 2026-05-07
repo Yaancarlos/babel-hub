@@ -1,14 +1,14 @@
-import { useClassData } from "../../../../features/class-management/hooks/useClassData.ts";
+import { useClassData } from "../../../../features/director/class-management/hooks/useClassData.ts";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { LoadingContent } from "../../../../components/ui/Loadings.tsx";
 import { formatterDate } from "../../../../types";
 
-import { ClassLayout } from "../../../../features/class-management";
-import { Assignments } from "../../../../features/class-management/components/tabs/Assigments.tsx";
-import { RegisterAttendance } from "../../../../features/class-management/components/tabs/RegisterAttendance.tsx";
-import { Students } from "../../../../features/class-management/components/tabs/Students.tsx";
-import { ViewAttendance } from "../../../../features/class-management/components/tabs/ViewAttendance.tsx";
+import { ClassLayout } from "../../../../features/director/class-management";
+import { Assignments } from "../../../../features/director/class-management/components/tabs/Assigments.tsx";
+import { RegisterAttendance } from "../../../../features/director/class-management/components/tabs/RegisterAttendance.tsx";
+import { Students } from "../../../../features/director/class-management/components/tabs/Students.tsx";
+import { ViewAttendance } from "../../../../features/director/class-management/components/tabs/ViewAttendance.tsx";
 
 type TabTypes = 'students' | 'register attendance' | 'see attendance' | 'assignments';
 

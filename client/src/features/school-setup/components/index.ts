@@ -1,1 +1,0 @@
-export { SchoolSetupLayout } from '../components/layout/SchoolSetupLayout.tsx';

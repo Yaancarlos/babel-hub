@@ -1,4 +1,4 @@
-import { CoursesListLayout } from "../../../features/course-management";
+import { CoursesListLayout } from "../../../features/director/course-management";
 
 export default function Courses(){
     return (
