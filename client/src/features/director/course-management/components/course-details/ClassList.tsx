@@ -32,7 +32,7 @@ export const ClassList = ({ classes, onNavigate, onEdit, onDelete, classOption, 
                     />
                 ))}
                 {classes.length === 0 && (
-                    <p className="text-gray-500 text-center py-6 text-sm">No hay clases asignadas a este curso.</p>
+                    <p className="text-gray-500 text-center py-6 text-sm">No hay clases asignadas a este curso</p>
                 )}
             </ul>
         </div>

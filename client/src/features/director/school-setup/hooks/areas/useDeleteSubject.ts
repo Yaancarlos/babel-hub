@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { deleteSubject } from "../../api";
 
 export const useDeleteSubject = (onSuccess: () => void) => {
-    const [loadingDelete, setLoadingDelete] = useState(true);
+    const [loadingDelete, setLoadingDelete] = useState(false);
 
     const deleteSubjectById = async (id: string) => {
         if (!id) return;

@@ -17,7 +17,7 @@ export function CourseDetailsLayout() {
     const navigate = useNavigate();
 
     if (!id) {
-        toast.error("No se encontró el ID del curso en la URL.");
+        toast.error("No se encontró el ID del curso en la URL");
         return null;
     };
 

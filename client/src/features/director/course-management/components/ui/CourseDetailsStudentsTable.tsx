@@ -1,5 +1,6 @@
 import {getInitials, getStatusDotColor, reverseName} from "../../../../../types";
 import type {Student} from "../../types";
+import {NoResults} from "../../../../../components/ui/blocks/NoResults.tsx";
 
 interface StudentsTableProps {
     students: Student[];
@@ -54,13 +55,7 @@ export function CourseDetailsStudentsTable({ students, attendance }: StudentsTab
                         </tbody>
                     </table>
 
-                    {students.length === 0 && (
-                        <div className="p-3">
-                            <div className="py-10 sm:py-14 lg:py-20 flex flex-col items-center justify-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                                <p className="text-gray-400 text-sm font-medium">No hay estudiantes en este curso</p>
-                            </div>
-                        </div>
-                    )}
+                    {students.length === 0 && ( <NoResults title="No hay estudiantes en este curso" /> )}
                 </div>
             </div>
         </div>

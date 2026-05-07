@@ -1,8 +1,9 @@
-import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
-import type {ClassItem, modeTypes} from "../../types";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
+import type { ClassItem } from "../../types";
 import React, { useState } from "react";
-import {useUpsertClass} from "../../hooks/course-details/useUpsertClass.ts";
-import {useModalData} from "../../hooks/course-details/useModalData.ts";
+import { useUpsertClass } from "../../hooks/course-details/useUpsertClass.ts";
+import { useModalData } from "../../hooks/course-details/useModalData.ts";
+import type { modeTypes } from "../../../types/types.ts";
 
 interface CourseDetailsFormProps {
     id: string;

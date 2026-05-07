@@ -7,8 +7,8 @@ import { useDeleteCourse } from "../../hooks/course-list/useDeleteCourse.ts";
 import { LoadingPage } from "../../../../../components/ui/Loadings.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { CourseListFormModal } from "../ui/CourseListFormModal.tsx";
-import { IoSchool } from "react-icons/io5";
 import type { ModalModeTypes } from "../../../../../types";
+import {NoOutletInfo} from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
 
 export function CoursesListLayout() {
     const navigate = useNavigate();
@@ -66,13 +66,7 @@ export function CoursesListLayout() {
             <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex-1 no-scrollbar overflow-y-auto ${!activeCourseId ? 'hidden lg:flex items-center justify-center' : 'flex flex-col'}`}>
                 {activeCourseId ? (
                     <Outlet key={activeCourseId} />
-                ) : (
-                    <div className="flex items-center justify-center flex-col text-gray-400 p-10">
-                        <IoSchool className="text-4xl text-primary" />
-                        <h3 className="text-xl font-medium text-gray-500">Selecciona un curso</h3>
-                        <p className="text-sm text-center mt-2">Haz clic en un curso de la lista para ver sus detalles, estudiantes y clases asignadas.</p>
-                    </div>
-                )}
+                ) : ( <NoOutletInfo title="Selecciona un curso" paragraph="Haz clic en un curso de la lista para ver sus detalles, estudiantes y clases asignadas."></NoOutletInfo> )}
             </div>
 
             <ConfirmModal

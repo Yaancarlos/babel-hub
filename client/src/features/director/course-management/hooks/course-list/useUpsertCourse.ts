@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import {createCourse, updateCourse} from "../../api";
+import { createCourse, updateCourse } from "../../api";
 import toast from "react-hot-toast";
-import type { modeTypes } from "../../types";
-
+import type { modeTypes } from "../../../types/types.ts";
 
 export const useUpsertCourse = (onSuccess: () => void) => {
     const [loading, setLoading] = useState(false);

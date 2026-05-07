@@ -1,11 +1,11 @@
 import {useState, useEffect, useCallback} from "react";
 import {getAreaById, getSubjects} from "../../api";
-import type {AreaProps} from "../../types";
+import type {AreaProps, SubjectsProps} from "../../types";
 
 export const useAreaDetails = (id: string) => {
     const [loading, setLoading] = useState(false);
     const [areaDetails, setAreaDetails] = useState<AreaProps>();
-    const [subjects, setSubjects] = useState<any[]>([]);
+    const [subjects, setSubjects] = useState<SubjectsProps[]>([]);
     const [reloadTrigger, setReloadTrigger] = useState(0);
 
     const refetch = useCallback(() => {

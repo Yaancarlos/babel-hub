@@ -19,6 +19,7 @@ export function CoursesList({ courses, activeCourseId, onEditCourse, onDeleteCou
             {
                 courses.map((course) => (
                     <InteractiveHomeList
+                        key={course.id}
                         isActive={activeCourseId === course.id}
                         onClick={() => onNavigate(course.id)}
                         avatarText={course.course_name ? course.course_name.replace("-", "") : "UNK"}

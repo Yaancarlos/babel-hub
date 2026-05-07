@@ -1,7 +1,8 @@
-import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
-import React, {useState} from "react";
-import type {AreaProps, modeTypes} from "../../types";
-import {useUpsertArea} from "../../hooks/areas/useUpsertArea.ts";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
+import React, { useState } from "react";
+import type { AreaProps } from "../../types";
+import { useUpsertArea } from "../../hooks/areas/useUpsertArea.ts";
+import type { modeTypes } from "../../../types/types.ts";
 
 interface AreasFormModalProps {
     mode: modeTypes;
@@ -34,7 +35,7 @@ export function AreasFormModal({ mode, onSuccess, area, onClose }: AreasFormModa
     const handleFormChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-
+        setError('');
     }
 
     return (

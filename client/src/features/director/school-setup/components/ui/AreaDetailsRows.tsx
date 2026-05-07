@@ -1,4 +1,5 @@
 import {DeleteButton, EditButton} from "../../../../../components/ui/buttons/Buttons.tsx";
+import {LoadingContent} from "../../../../../components/ui/Loadings.tsx";
 
 interface AreaDetailsRowsProps {
     subjects: any[];
@@ -7,7 +8,9 @@ interface AreaDetailsRowsProps {
     onDelete: (area: any) => void;
 }
 
-export function AreaDetailsRows ({ subjects, onEdit, onDelete }: AreaDetailsRowsProps) {
+export function AreaDetailsRows ({ subjects, onEdit, loading, onDelete }: AreaDetailsRowsProps) {
+    if (loading) return <LoadingContent title='Cargando' />;
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             {subjects.length === 0 ? (

@@ -1,7 +1,8 @@
-import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
-import type {modeTypes, PeriodProps} from "../../types";
-import React, {useState} from "react";
-import {useUpsertPeriod} from "../../hooks/periods/useUpsertPeriod.ts";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
+import type { PeriodProps } from "../../types";
+import React, { useState } from "react";
+import { useUpsertPeriod } from "../../hooks/periods/useUpsertPeriod.ts";
+import type { modeTypes } from "../../../types/types.ts";
 
 interface periodFormModalProps {
     mode: modeTypes;

@@ -1,9 +1,10 @@
 import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
 import React, { useState } from "react";
 import { useTeacherSubmit } from "../../hooks/teachers/useTeacherSubmit.ts";
+import type { modeTypes } from "../../../types/types.ts";
 
 interface TeacherFormModalProps {
-    mode: 'edit' | 'create';
+    mode: modeTypes;
     onClose: () => void;
     initialData: any | null;
     onSuccess: () => void;

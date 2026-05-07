@@ -4,7 +4,7 @@ import { createSubject, updateSubject } from "../../api";
 import toast from "react-hot-toast";
 
 export const useUpsertSubject = (onSuccess: () => void) => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const upsertSubject = async (mode: modeTypes, subjectId: string | undefined, payload: any) => {

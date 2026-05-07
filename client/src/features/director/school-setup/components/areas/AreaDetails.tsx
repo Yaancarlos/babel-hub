@@ -1,13 +1,14 @@
-import {useAreaDetails} from "../../hooks/areas/useAreaDetails.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import { useAreaDetails } from "../../hooks/areas/useAreaDetails.ts";
+import { useNavigate, useParams } from "react-router-dom";
 import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevrowBack.tsx";
-import {PrimaryButton} from "../../../../../components/ui/buttons/Buttons.tsx";
-import type {ModalModeTypes} from "../../../../../types";
-import { useState } from "react";
-import {AreaDetailsRows} from "./AreaDetailsRows.tsx";
-import {ConfirmModal} from "../../../../../components/ui/modals/ConfirmModal.tsx";
-import {useDeleteSubject} from "../../hooks/areas/useDeleteSubject.ts";
-import type {SubjectsProps} from "../../types";
+import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
+import type { ModalModeTypes } from "../../../../../types";
+import {  useState  } from "react";
+import { AreaDetailsRows } from "../ui/AreaDetailsRows.tsx";
+import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
+import { useDeleteSubject } from "../../hooks/areas/useDeleteSubject.ts";
+import type { SubjectsProps } from "../../types";
+import { AreaDetailsFormModal } from "../ui/AreaDetailsFormModal.tsx";
 
 export function AreaDetails() {
     const { areaId } = useParams<{ areaId: string }>();
@@ -18,10 +19,8 @@ export function AreaDetails() {
     const { loading, areaDetails, subjects, refetch } = useAreaDetails(areaId);
     const { loadingDelete, deleteSubjectById } = useDeleteSubject(refetch);
 
-    console.log(areaDetails, subjects);
-
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | null>(null);
+    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | undefined>(undefined);
     const [subjectToDelete, setSubjectToDelete] = useState<SubjectsProps | null>(null);
 
     const handleEdit = (subject: any) => {
@@ -75,7 +74,20 @@ export function AreaDetails() {
             />
 
             {modalMode !== 'none' && (
-
+                <AreaDetailsFormModal
+                    mode={modalMode}
+                    onSuccess={async () => {
+                        setSubjectToEdit(undefined);
+                        setModalMode('none');
+                        refetch();
+                    }}
+                    areaId={areaId}
+                    subject={subjectToEdit}
+                    onClose={() => {
+                        setSubjectToEdit(undefined);
+                        setModalMode('none');
+                    }}
+                />
             )}
         </div>
     )

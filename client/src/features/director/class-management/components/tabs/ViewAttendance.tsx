@@ -76,7 +76,6 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                                     </td>
 
                                     {student.records.map((record: any, idx: number) => {
-
                                         let bg = "bg-gray-100";
                                         if (record.status === 'present') bg = "bg-green-500 shadow-sm";
                                         if (record.status === 'absent') bg = "bg-red-500 shadow-sm";
