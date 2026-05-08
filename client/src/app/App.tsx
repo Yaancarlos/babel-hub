@@ -10,11 +10,9 @@ import PrincipalDashboard from "../pages/principal/dashboard/PrincipalDashboard.
 import NotFoundPage from "../pages/misc/notFoundPage.tsx";
 import PrincipalLayout from "../pages/principal/PrincipalLayout.tsx";
 import Community from "../pages/principal/community/Community.tsx";
-import ClassDetails from "../pages/principal/courses/classes/ClassesDetails.tsx";
 import TeacherLayout from "../pages/teacher/TeacherLayout.tsx";
 import NotificationCenter from "../pages/principal/notifications/NotificationCenter.tsx";
 import AttendanceCenter from "../pages/principal/notifications/attendance/Attendance.tsx";
-import TeacherCourseDetails from "../pages/teacher/courses/CourseDetails.tsx";
 import StudentLayout from "../pages/student/StudentLayout.tsx";
 import StudentDashboard from "../pages/student/dashboard/StudentDashboard.tsx";
 import Students from "../pages/principal/community/students/Students.tsx";
@@ -26,6 +24,8 @@ import CourseDetails from "../pages/principal/courses/CourseDetails.tsx";
 import Setup from "../pages/principal/files/Setup.tsx";
 import Details from "../pages/principal/files/areas/Details.tsx";
 import TeacherClasses from "../pages/teacher/courses/Classes.tsx";
+import ClassesDetails from "../pages/principal/courses/classes/ClassesDetails.tsx";
+import ClassDetails from "../pages/teacher/courses/ClassDetails.tsx";
 
 const queryClient = new QueryClient();
 
@@ -72,7 +72,7 @@ function App() {
 
                         <Route path="cursos" element={<Courses />}>
                             <Route path=":id" element={<CourseDetails />} />
-                            <Route path=":courseId/clase/:id" element={<ClassDetails />} />
+                            <Route path=":courseId/clase/:id" element={<ClassesDetails />} />
                         </Route>
 
                         <Route path="comunidad" element={<Community />} />
@@ -100,7 +100,7 @@ function App() {
                         <Route path="dashboard" index element={<TeacherDashboard />}/>
 
                         <Route path="clases" element={<TeacherClasses />}>
-                            <Route path=":id" element={<TeacherCourseDetails />}/>
+                            <Route path=":id" element={<ClassDetails />}/>
                         </Route>
                     </Route>
 

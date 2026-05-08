@@ -88,15 +88,15 @@ export function AttendanceList() {
                                                     <div className="flex items-center min-w-0 gap-3">
                                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors
                                                                 ${isOpen ?
-                                                            (absences >= 2) ? 'bg-red-error text-white' : 'bg-primary text-white' :
-                                                            (absences >= 2) ? 'bg-red-shadow text-red-error' : 'bg-primary-shadow text-primary'
+                                                            (absences > 0 && absences % 2 === 0) ? 'bg-red-error text-white' : 'bg-primary text-white' :
+                                                            (absences > 0 && absences % 2 === 0) ? 'bg-red-shadow text-red-error' : 'bg-primary-shadow text-primary'
                                                         }`}>
                                                             {getInitials(student.student_name)}
                                                         </div>
                                                         <p className={`text-sm md:text-base leading-tight max-w-40 sm:max-w-full text-left capitalize font-semibold transition-colors 
                                                                 ${isOpen ?
-                                                            absences >= 2 ? 'text-gray-900' : 'text-gray-900' :
-                                                            absences >= 2 ?  'text-gray-700 group-hover:text-red-error' :  'text-gray-700 group-hover:text-primary'
+                                                            (absences > 0 && absences % 2 === 0) ? 'text-gray-900' : 'text-gray-900' :
+                                                            (absences > 0 && absences % 2 === 0) ?  'text-gray-700 group-hover:text-red-error' :  'text-gray-700 group-hover:text-primary'
                                                         }`}>
                                                             {reverseName(student.student_name)}
                                                         </p>
@@ -120,7 +120,7 @@ export function AttendanceList() {
                                                 </button>
 
                                                 {isOpen && selectedPeriod && (
-                                                    <div className="p-1 rounded-xl bg-primary-shadow/30 ring-1 ring-primary/20">
+                                                    <div className="p-1 rounded-xl border border-gray-100">
                                                         <div className="bg-white rounded-xl shadow-inner">
                                                             <StudentCalendarCard
                                                                 studentId={student.student_id}

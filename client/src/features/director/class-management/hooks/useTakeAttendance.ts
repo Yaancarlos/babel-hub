@@ -16,8 +16,9 @@ export const useTakeAttendance = ({ classId, date, students }: TakeAttendancePro
     const [records, setRecords] = useState<Record<string, string>>({});
 
     useEffect(() => {
-        if (!classId || !date) return;
         const loadDate = async () => {
+            if (!classId || !date) return;
+
             setLoading(true);
             try {
                 const response = await getDailyAttendance(classId, attendanceDate);
@@ -30,7 +31,6 @@ export const useTakeAttendance = ({ classId, date, students }: TakeAttendancePro
                     const existingRecord = fetchedRecords.find((r: any) => r.student_id === student.student_id);
                     newRecordsMap[student?.student_id] = existingRecord?.status ?? 'present';
                 });
-
 
                 setRecords(newRecordsMap)
             } catch (error) {

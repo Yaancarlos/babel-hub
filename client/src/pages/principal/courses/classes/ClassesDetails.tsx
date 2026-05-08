@@ -16,6 +16,7 @@ export default function ClassesDetails() {
     const { id, courseId } = useParams<{ id: string, courseId: string }>();
     const [tab, setTab] = useState<TabTypes>("students")
 
+
     if (!id || !courseId) return null;
 
     const { data, loading } = useClassData(id);

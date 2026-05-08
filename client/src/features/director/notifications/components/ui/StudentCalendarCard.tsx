@@ -25,12 +25,8 @@ const StudentCalendarCardComponent = ({ studentId, period }: { studentId: string
 
     const fetchCalendar = useCallback(async (signal?: AbortSignal) => {
         setLoading(true);
-
         try {
-            const response = await api.get(
-                `/attendance/summary/calendar?startDate=${period.start_date}&endDate=${period.end_date}&studentId=${studentId}`,
-                { signal }
-            );
+            const response = await api.get(`/attendance/summary/calendar?startDate=${period.start_date}&endDate=${period.end_date}&studentId=${studentId}`, { signal });
 
             setCalendarData(response.data.attendanceByCalendar || response.data);
             setLoading(false);

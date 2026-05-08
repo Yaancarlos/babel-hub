@@ -10,8 +10,9 @@ export const useAvailableTeachers = (id: string | undefined) => {
         const controller = new AbortController();
 
         const loadTeachers = async () => {
-            setLoading(true);
+            if (!id) return;
 
+            setLoading(true);
             try {
                 const url = id
                     ? `/teacher?available=true&includeTeacherId=${id}`
