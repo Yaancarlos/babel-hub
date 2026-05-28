@@ -22,15 +22,15 @@ export function TeacherProfileLayout() {
 
                     <div className="flex items-center gap-5 w-full">
                         <div className="p-3 md:p-4 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary-darker font-bold text-xl md:text-2xl shadow-inner">
-                            {getInitials(profile.full_name)}
+                            {getInitials(profile.teacher.full_name)}
                         </div>
 
                         <div className="flex grow justify-between">
                             <div>
                                 <h1 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">
-                                    {profile.full_name}
+                                    {profile.teacher.full_name}
                                 </h1>
-                                <p className="text-gray-500 text-sm md:text-base mt-1">{profile.email}</p>
+                                <p className="text-gray-500 text-sm md:text-base mt-1">{profile.teacher.email}</p>
                             </div>
                         </div>
                     </div>

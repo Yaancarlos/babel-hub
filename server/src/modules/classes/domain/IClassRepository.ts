@@ -1,0 +1,10 @@
+import type { ClassDetails, CreateClass, TeacherClassDetails, TeacherClasses } from "./Classes.types.js";
+
+export interface IClassRepository {
+    getClassDetails(classId: string, schoolId: string): Promise<ClassDetails | null>;
+    createClass(courseId: string, subjectId: string, teacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateClass>;
+    updateClass(classId: string, teacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;
+    deleteClass(classId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;
+    getTeacherClasses(teacherId: string, teacherSchoolId: string): Promise<TeacherClasses[]>;
+    getTeacherClassDetails(classId: string, teacherId: string, teacherSchoolId: string): Promise<TeacherClassDetails | null>;
+}

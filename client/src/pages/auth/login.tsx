@@ -44,7 +44,7 @@ export default function Login() {
                 }
             });
 
-            const userData = userResponse.data;
+            const userData = userResponse.data.responseData;
             const role = userData.role;
 
             setAuth(token, userData);

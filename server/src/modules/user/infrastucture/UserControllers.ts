@@ -1,0 +1,18 @@
+import type { UserService } from "../application/UserService.js";
+import type { AuthenticatedRequest } from "../../../middleware/auth.middleware.js";
+import type { Response, NextFunction} from "express";
+
+export class UserController {
+    constructor( private readonly userService: UserService ) {}
+
+    getUser = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const supabaseUserId = request.user!.supabaseUserId as string;
+
+            const user = await this.userService.getUser(supabaseUserId);
+            response.status(200).json({ responseData: user });
+        } catch (error : any) {
+            next(error);
+        }
+    }
+}

@@ -46,25 +46,25 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse min-w-max">
-                            <thead>
-                            <tr className="bg-gray-50 text-gray-600 text-[10px] uppercase tracking-wider">
-                                <th className="bg-gray-50 sticky left-0  p-4 border-b border-r border-gray-100 z-10 font-bold min-w-[200px]">
-                                    Estudiantes
-                                </th>
-                                {calendar.map(date => {
-                                    const { dayNum, month, weekday } = formatDate(date);
+                            <thead className={`${attendance.length === 0 ? 'hidden' : ''}`}>
+                                <tr className="bg-gray-50 text-gray-600 text-[10px] uppercase tracking-wider">
+                                    <th className="bg-gray-50 sticky left-0  p-4 border-b border-r border-gray-100 z-10 font-bold min-w-[200px]">
+                                        Estudiantes
+                                    </th>
+                                    {calendar.map(date => {
+                                        const { dayNum, month, weekday } = formatDate(date);
 
-                                    return (
-                                        <th key={date} className="p-1 border-b border-gray-100 text-center font-semibold w-8">
-                                            <div className="text-[10px] flex flex-col items-center font-medium text-gray-400">
-                                                <span>{dayNum}</span>
-                                                <span className="text-custom-black -my-1">{month}</span>
-                                                <span>{weekday}</span>
-                                            </div>
-                                        </th>
-                                    );
-                                })}
-                            </tr>
+                                        return (
+                                            <th key={date} className="p-1 border-b border-gray-100 text-center font-semibold w-8">
+                                                <div className="text-[10px] flex flex-col items-center font-medium text-gray-400">
+                                                    <span>{dayNum}</span>
+                                                    <span className="text-custom-black -my-1">{month}</span>
+                                                    <span>{weekday}</span>
+                                                </div>
+                                            </th>
+                                        );
+                                    })}
+                                </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                             {attendance.map((student) => (

@@ -54,6 +54,13 @@ export interface UpdateTeacher {
     fullName: string;
 }
 
+export interface TeacherItem {
+    teacher_id: string;
+    created_at: string;
+    full_name: string;
+    email: string;
+}
+
 export interface ClassItem {
     class_id: string;
     subject_name: string;

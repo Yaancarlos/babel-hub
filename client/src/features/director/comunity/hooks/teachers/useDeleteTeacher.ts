@@ -13,7 +13,7 @@ export const useDeleteTeacher = (onSuccess: () => void) => {
 
             onSuccess();
         } catch (error: any) {
-            const msg = error?.message?.error || "Error al eliminar el profesor";
+            const msg = error.response?.data?.message || "Error al eliminar el profesor";
             console.error(msg);
             toast.error(msg);
         } finally {

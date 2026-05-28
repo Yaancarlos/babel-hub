@@ -6,7 +6,7 @@ import type { modeTypes } from "../../../types/types.ts";
 
 interface CourseListFormModalProps {
     mode: modeTypes
-    teacherId: string | undefined;
+    teacherId: string | null;
     course: any;
     onClose: () => void;
     onSuccess: () => void;

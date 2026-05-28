@@ -43,7 +43,7 @@ export const getAllTeachers = async () => {
 }
 
 export const getAvailableSubjects = async (id: string) => {
-    const response = await api.get(`/courses/course/${id}`);
+    const response = await api.get(`/subjects/available?courseId=${id}`);
     return response.data.availableSubjects;
 }
 

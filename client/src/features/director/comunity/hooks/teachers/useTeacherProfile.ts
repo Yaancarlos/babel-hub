@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import {getTeacherById} from "../../api";
-import type {ClassItem} from "../../types";
+import { getTeacherById } from "../../api";
+import type { ClassItem, TeacherItem } from "../../types";
 
 interface TeacherProfileData {
-    teacher_id: string;
-    created_at: string;
-    full_name: string;
-    email: string;
+    teacher: TeacherItem;
     classes: ClassItem[];
 }
 

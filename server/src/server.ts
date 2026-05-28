@@ -1,22 +1,21 @@
+import { globalErrorHandler } from "./middleware/error.middleware.js";
+import { defaultLimiter } from "./middleware/ratelimit.middleware.js";
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import attendanceRoutes from "./routes/attendance.routes.js";
-import { errorHandler } from "./middleware/error.middleware.js";
-import gradesRoutes from "./routes/grades.routes.js";
-import accessRoleRoutes from "./routes/access.role.routes.js";
-import principalRoutes from "./routes/principal.routes.js";
-import teacherRoutes from "./routes/teacher.routes.js";
-import studentRoutes from "./routes/student.routes.js";
-import SchoolRoutes from "./routes/school.routes.js";
-import { defaultLimiter } from "./middleware/ratelimit.middleware.js";
-import healthcheckRoutes from "./routes/healthcheck.routes.js";
-import coursesRoutes from "./routes/courses.routes.js";
-import classesRoutes from "./routes/classes.routes.js";
-import subjectsRoutes from "./routes/subjects.routes.js";
-import areasRoutes from "./routes/areas.routes.js";
-import periodsRoutes from "./routes/periods.routes.js";
 
+import areaRoutes from "./modules/areas/infrastructure/area.routes.js";
+import periodRoutes from "./modules/periods/infrastructure/period.routes.js";
+import subjectRoutes from "./modules/subjects/infrastructure/subject.routes.js";
+import teacherRoutes from "./modules/teacher/infrastructure/teacher.routes.js";
+import studentRoutes from "./modules/student/infrastructure/student.routes.js";
+import coursesRoutes from "./modules/courses/infrastructure/course.routes.js";
+import classesRoutes from "./modules/classes/infrastructure/class.routes.js";
+import principalRoutes from "./modules/principal/infrastructure/principal.routes.js";
+import attendanceRoutes from "./modules/attendance/infrastructure/attendance.routes.js";
+import SchoolRoutes from "./modules/school/infrastructure/school.routes.js";
+import userRoutes from "./modules/user/infrastucture/user.routes.js";
 
 dotenv.config();
 
@@ -28,29 +27,33 @@ app.use(express.json());
 app.set("trust proxy", 1);
 app.use(defaultLimiter);
 
-app.use("/healthcheck", healthcheckRoutes);
+app.use("/healthcheck", (req, res, next) => {
+    res.status(200).json({ message: 'OK' })
+});
 
 //CRUD of attendance and grades
 app.use("/attendance", attendanceRoutes);
-app.use("/grades", gradesRoutes);
+// app.use("/grades", gradesRoutes);
 
 //GET current user info
-app.use("/user", accessRoleRoutes);
+app.use("/user", userRoutes);
 
 //CRUD principals, teachers and community
 app.use("/principal", principalRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/student", studentRoutes);
 
+// Testing
+
 //CRUD courses and schools
 app.use("/school", SchoolRoutes);
 app.use("/courses", coursesRoutes);
 app.use("/classes", classesRoutes);
-app.use("/subjects", subjectsRoutes);
-app.use("/areas", areasRoutes);
-app.use("/periods", periodsRoutes);
+app.use("/subjects", subjectRoutes);
+app.use("/areas", areaRoutes);
+app.use("/periods", periodRoutes);
 
-app.use(errorHandler);
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);

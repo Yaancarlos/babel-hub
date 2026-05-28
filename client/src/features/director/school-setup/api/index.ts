@@ -20,7 +20,7 @@ export const getAreaById = async (id: string) => {
 }
 
 export const getSubjects = async (id: string) => {
-    const response = await api.get(`/areas/${id}/subjects`);
+    const response = await api.get(`/subjects/area/${id}`);
     return response.data.subjects;
 }
 

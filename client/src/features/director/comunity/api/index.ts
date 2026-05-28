@@ -10,7 +10,7 @@ export const getStudents = async () => {
 
 export const getStudentById = async (id: string) => {
     const response = await api.get(`/student/${id}`);
-    return response.data;
+    return response.data.record;
 }
 
 export const getCourses = async () => {

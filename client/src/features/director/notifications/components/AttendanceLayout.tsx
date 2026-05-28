@@ -19,7 +19,7 @@ export function AttendanceLayout({ children }: AttendanceLayoutProps) {
                     </div>
                 </div>
             </div>
-            <div className="h-full bg-white rounded-xl p-3 md:p-5 shadow-sm border border-gray-100 overflow-x-auto">
+            <div className="h-full bg-white rounded-xl p-3 md:p-5 shadow-sm border border-gray-100 no-scrollbar overflow-x-auto">
                 { children }
             </div>
         </div>

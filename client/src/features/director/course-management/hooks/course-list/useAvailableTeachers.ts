@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getTeachers } from "../../api";
 import axios from "axios";
 
-export const useAvailableTeachers = (id: string | undefined) => {
+export const useAvailableTeachers = (id: string | null) => {
     const [loading, setLoading] = useState(false);
     const [teachers, setTeachers] = useState<any[]>([]);
 
@@ -10,8 +10,6 @@ export const useAvailableTeachers = (id: string | undefined) => {
         const controller = new AbortController();
 
         const loadTeachers = async () => {
-            if (!id) return;
-
             setLoading(true);
             try {
                 const url = id
