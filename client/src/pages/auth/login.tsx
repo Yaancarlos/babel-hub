@@ -4,7 +4,7 @@ import api from "../../api/client.ts";
 import { useAuth } from "../../auth/useAuth.ts";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
-import backImg from "../../assets/images/login-img.webp";
+// import backImg from "../../assets/images/login-img.webp";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import AuthButton from "../../components/auth/AuthButtons.tsx";
 
@@ -71,7 +71,7 @@ export default function Login() {
             <div className="bg-gradient-to-b from-[#f7f7fb] to-[#f9f9fb] p-5 xl:p-10">
                 <div
                     className={`w-full h-[calc(100dvh-2.5rem)] xl:h-[calc(100dvh-5rem)] flex items-center justify-center mx-auto max-w-7xl bg-cover lg:bg-contain xl:bg-cover bg-no-repeat bg-center`}
-                    style={{ backgroundImage: `url(${backImg})` }}
+                    style={{ backgroundImage: `url()` }}
                 >
                     <div className="bg-white shadow p-5 border border-gray-100 max-w-xs w-full flex flex-col gap-4 items-center rounded-xl">
                         <div className="flex w-full justify-center items-center gap-1">
