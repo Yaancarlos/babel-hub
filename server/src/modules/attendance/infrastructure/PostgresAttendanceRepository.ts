@@ -68,6 +68,8 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                 throw new NotFoundError("No fue posible guardar la asistencia");
             }
 
+            // Postgres Test
+
             const studentIds: string[] = records.map(r => r.studentId);
             const statuses: string[] = records.map(r => r.status);
 
