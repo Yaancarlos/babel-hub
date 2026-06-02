@@ -4,6 +4,8 @@ import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { NotFoundError } from "../../errors/domain/CustomErrors.js";
 
+// Checking attendance calls
+
 export class PostgresAttendanceRepository implements IAttendanceRepository {
     async getDailyClassAttendance(classId: string, schoolId: string, date: string): Promise<ClassAttendance[]> {
         const client = await pool.connect();
@@ -67,8 +69,6 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
             if (classCheck.rowCount === 0) {
                 throw new NotFoundError("No fue posible guardar la asistencia");
             }
-
-            // Postgres Test
 
             const studentIds: string[] = records.map(r => r.studentId);
             const statuses: string[] = records.map(r => r.status);
