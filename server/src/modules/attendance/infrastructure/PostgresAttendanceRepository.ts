@@ -4,8 +4,6 @@ import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { NotFoundError } from "../../errors/domain/CustomErrors.js";
 
-// Checking attendance calls
-
 export class PostgresAttendanceRepository implements IAttendanceRepository {
     async getDailyClassAttendance(classId: string, schoolId: string, date: string): Promise<ClassAttendance[]> {
         const client = await pool.connect();

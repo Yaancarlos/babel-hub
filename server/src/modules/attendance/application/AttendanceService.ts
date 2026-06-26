@@ -2,8 +2,6 @@ import type { IAttendanceRepository } from "../domain/IAttendanceRepository.js";
 import type { BulkRecords } from "../domain/Attendance.types.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
 
-// Checking attendance services
-
 export class AttendanceService {
     constructor(private readonly attendanceRepository : IAttendanceRepository) {}
 
