@@ -5,7 +5,7 @@ import jwksClient from "jwks-rsa";
 
 export interface AuthenticatedRequest extends Request {
     user?: {
-        supabaseUserId: string;
+        authUserId: string;
         userId?: string | undefined;
         role?: UserRole;
         email?: string | undefined;
@@ -89,7 +89,7 @@ export async function authMiddleware(
         });
 
         req.user = {
-            supabaseUserId: decoded.sub,
+            authUserId: decoded.sub,
         };
 
         next();

@@ -1,7 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../auth/useAuth.ts";
-import {supabase} from "../auth/supabase.ts";
+import { supabase } from "../auth/supabase.ts";
 
 const DYNAMIC_URL = import.meta.env.VITE_API_URL;
 
