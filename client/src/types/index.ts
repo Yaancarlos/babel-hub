@@ -1,4 +1,4 @@
-export type UserRole = "principal" | "admin" | "teacher" | "student" | null;
+export type UserRole = "principal" | "admin" | "teacher" | "student" | "parent" | null;
 export type ModalModeTypes = 'create' | 'edit' | 'none';
 
 export function formateDate(date: string) {

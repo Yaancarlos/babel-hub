@@ -9,8 +9,9 @@ export class ClassControllers {
         try {
             const id = request.params.id as string;
             const schoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.classServices.getClassDetails(id, schoolId);
+            const records = await this.classServices.getClassDetails(id, schoolId, isActive);
             response.status(200).json(records);
         } catch (error : any) {
             next(error);

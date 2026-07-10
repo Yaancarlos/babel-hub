@@ -13,10 +13,10 @@ export async function createAuditLog(
     await client.query(
         `
         INSERT INTO audit_logs (
-          actor_user_id,
+          actor_profile_id,
           actor_role,
           action,
-          target_user_id,
+          target_profile_id,
           school_id,
           metadata
         )

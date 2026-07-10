@@ -1,35 +1,44 @@
 import type { ICourseRepository } from "../domain/ICourseRepository.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
-import {ConflictError, NotFoundError, UnauthorizedError} from "../../errors/domain/CustomErrors.js";
+import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/domain/CustomErrors.js";
+import type { CourseDetails, Courses } from "../domain/Course.types.js";
 
 export class PostgresCourseRepository implements ICourseRepository {
-    async getCourses(userSchoolId: string){
+    async getCourses(userSchoolId: string, isActive: boolean): Promise<Courses[]> {
         const client = await pool.connect();
         try {
             const result = await client.query(`
-                SELECT 
-                    c.id, 
+                SELECT
+                    c.id,
                     c.name as course_name,
                     c.created_at,
                     c.year,
+                    c.is_active,
                     c.teacher_id as director_id,
-                    u.full_name as director_name,
-                    COUNT(s.id) as student_count
-                FROM courses c
-                JOIN teachers t ON c.teacher_id = t.id
-                JOIN users u ON t.user_id = u.id
-                LEFT JOIN students s ON c.id = s.course_id
-                WHERE c.school_id = $1
+                    p.first_name as director_first_name,
+                    p.middle_name as director_middle_name,
+                    p.first_last_name as director_first_last_name,
+                    p.second_last_name as director_second_last_name,
+                    COUNT(s.id)::int as student_count
+                FROM course c
+                JOIN teacher t ON c.teacher_id = t.id
+                JOIN profile p ON t.profile_id = p.id
+                LEFT JOIN student s ON c.id = s.course_id
+                WHERE c.school_id = $1 AND c.is_active = $2
                 GROUP BY
                     c.id,
                     c.name,
                     c.created_at,
                     c.year,
+                    c.is_active,
                     c.teacher_id,
-                    u.full_name
+                    p.first_name,
+                    p.middle_name,
+                    p.first_last_name,
+                    p.second_last_name
                 ORDER BY c.name::integer ASC;
-            `, [userSchoolId]);
+            `, [userSchoolId, isActive]);
 
             return result.rows;
         } finally {
@@ -37,16 +46,17 @@ export class PostgresCourseRepository implements ICourseRepository {
         }
     }
 
-    async getCourseDetails(courseId: string, userSchoolId: string) {
+    async getCourseDetails(courseId: string, userSchoolId: string, isActive: boolean): Promise<CourseDetails | null> {
         const client = await pool.connect();
         try {
             const course = await client.query(`
                 SELECT 
+                    is_active,
                     id,
                     name, 
-                    created_at, 
-                    year
-                FROM courses 
+                    year,
+                    created_at 
+                FROM course
                 WHERE id = $1 AND school_id = $2
             `, [courseId, userSchoolId]);
 
@@ -54,26 +64,34 @@ export class PostgresCourseRepository implements ICourseRepository {
 
             const students = await client.query(`
                 SELECT
+                    p.is_active,
                     st.id as student_id,
-                    u.full_name, 
-                    u.email
-                FROM students st
-                JOIN users u ON st.user_id = u.id
-                WHERE st.course_id = $1
-                ORDER BY u.full_name ASC
-            `, [courseId]);
+                    p.first_name,
+                    p.middle_name,
+                    p.first_last_name,
+                    p.second_last_name,
+                    p.email
+                FROM student st
+                JOIN profile p ON st.profile_id = p.id
+                WHERE st.course_id = $1 AND p.is_active = $2
+                ORDER BY p.first_last_name ASC;
+            `, [courseId, isActive]);
 
             const classes = await client.query(`
                 SELECT 
+                    cl.is_active,
                     cl.id as class_id, 
-                    s.name as subject_name, 
-                    u.full_name as teacher_name
-                FROM classes cl
-                JOIN subjects s ON cl.subject_id = s.id
-                JOIN teachers t ON cl.teacher_id = t.id
-                JOIN users u ON t.user_id = u.id
-                WHERE cl.course_id = $1
-            `, [courseId]);
+                    s.name as subject_name,
+                    p.first_name,
+                    p.middle_name,
+                    p.first_last_name,
+                    p.second_last_name
+                FROM class cl
+                JOIN subject s ON cl.subject_id = s.id
+                JOIN teacher t ON cl.teacher_id = t.id
+                JOIN profile p ON t.profile_id = p.id
+                WHERE cl.course_id = $1 AND cl.is_active = $2
+            `, [courseId, isActive]);
 
             return {
                 course: course.rows[0],
@@ -91,7 +109,7 @@ export class PostgresCourseRepository implements ICourseRepository {
             await client.query('BEGIN');
 
             const course = await client.query(`
-                INSERT INTO courses (school_id, name, year, teacher_id)
+                INSERT INTO course (school_id, name, year, teacher_id)
                 VALUES ($1, $2, $3, $4)
                 RETURNING id
             `, [userSchoolId, courseName, courseYear, courseTeacherId]);
@@ -114,8 +132,13 @@ export class PostgresCourseRepository implements ICourseRepository {
             await client.query('COMMIT');
 
             return courseId;
-        } catch (error) {
+        } catch (error: any) {
             await client.query( 'ROLLBACK');
+
+            if (error.code === '23505' && error.constraint === 'course_teacher_id_key') {
+                throw new ConflictError("Este profesor ya dirige otro curso");
+            }
+
             throw error;
         } finally {
             client.release();
@@ -128,7 +151,7 @@ export class PostgresCourseRepository implements ICourseRepository {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                UPDATE courses 
+                UPDATE course
                 SET name = $1, year = $2, teacher_id = $3
                 WHERE id = $4 AND school_id = $5
                 RETURNING id, name
@@ -150,8 +173,13 @@ export class PostgresCourseRepository implements ICourseRepository {
             await client.query('COMMIT');
 
             return result.rows[0];
-        } catch (error) {
+        } catch (error: any) {
             await client.query('ROLLBACK');
+
+            if (error.code === '23505' && error.constraint === 'course_teacher_id_key') {
+                throw new ConflictError("Este profesor ya dirige otro curso");
+            }
+
             throw error;
         } finally {
             client.release();
@@ -165,8 +193,8 @@ export class PostgresCourseRepository implements ICourseRepository {
 
             const checkQuery = await client.query(`
                 SELECT 
-                    (SELECT COUNT(*) FROM students WHERE course_id = $1) as student_count,
-                    (SELECT COUNT(*) FROM classes WHERE course_id = $1) as class_count
+                    (SELECT COUNT(*) FROM student WHERE course_id = $1) as student_count,
+                    (SELECT COUNT(*) FROM class WHERE course_id = $1) as class_count
             `, [courseId]);
 
             const studentCount = parseInt(checkQuery.rows[0].student_count);
@@ -175,7 +203,7 @@ export class PostgresCourseRepository implements ICourseRepository {
             if (studentCount > 0 || classCount > 0) throw new ConflictError("No se puede eliminar el curso porque tiene alumnos o clases asignadas");
 
             const result = await client.query(`
-                DELETE FROM courses 
+                DELETE FROM course
                 WHERE id = $1 AND school_id = $2
                 RETURNING id, name
             `, [courseId, userSchoolId]);
@@ -213,11 +241,11 @@ export class PostgresCourseRepository implements ICourseRepository {
                 SELECT
                     c.id,
                     c.name,
-                    COUNT(s.id) as total_students
-                FROM courses c
-                JOIN teachers t ON c.teacher_id = t.id
-                LEFT JOIN students s ON s.course_id = c.id
-                WHERE t.user_id = $1 AND c.school_id = $2
+                    COUNT(s.id)::int as total_students
+                FROM course c
+                JOIN teacher t ON c.teacher_id = t.id
+                LEFT JOIN student s ON s.course_id = c.id
+                WHERE t.profile_id = $1 AND c.school_id = $2
                 GROUP BY c.id, c.name;
             `, [userId, userSchoolId]);
 

@@ -1,6 +1,6 @@
-import type {IUserRepository} from "../domain/IUserRepository.js";
-import type {UserProfileResponse} from "../domain/User.types.js";
-import {pool} from "../../../db/index.js";
+import type { IUserRepository } from "../domain/IUserRepository.js";
+import type { UserProfileResponse } from "../domain/User.types.js";
+import { pool } from "../../../db/index.js";
 
 export class PostgresUserRepository implements IUserRepository {
     async getUser(clientId: string): Promise<UserProfileResponse | null> {
@@ -35,26 +35,31 @@ export class PostgresUserRepository implements IUserRepository {
             let profileId: string | null = null;
 
             switch (realRole) {
-                case "admin":
+                case "admin": {
                     const admin = await client.query(`SELECT id FROM admin WHERE profile_id = $1`, [internalUserId]);
                     if (admin.rows.length > 0) profileId = admin.rows[0].id;
                     break;
-                case "principal":
+                }
+                case "principal": {
                     const principal = await client.query(`SELECT id FROM principal WHERE profile_id = $1`, [internalUserId]);
                     if (principal.rows.length > 0) profileId = principal.rows[0].id;
                     break;
-                case "teacher":
+                }
+                case "teacher": {
                     const teacher = await client.query(`SELECT id FROM teacher WHERE profile_id = $1`, [internalUserId]);
                     if (teacher.rows.length > 0) profileId = teacher.rows[0].id;
                     break;
-                case "student":
+                }
+                case "student": {
                     const student = await client.query(`SELECT id FROM student WHERE profile_id = $1`, [internalUserId]);
                     if (student.rows.length > 0) profileId = student.rows[0].id;
                     break;
-                case "parent":
+                }
+                case "parent": {
                     const parent = await client.query(`SELECT id FROM parent WHERE profile_id = $1`, [internalUserId]);
                     if (parent.rows.length > 0) profileId = parent.rows[0].id;
                     break;
+                }
                 default:
                     return null;
             }

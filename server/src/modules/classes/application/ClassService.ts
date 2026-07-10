@@ -1,14 +1,15 @@
 import type { IClassRepository } from "../domain/IClassRepository.js";
 import { NotFoundError, UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import type { ClassDetails } from "../domain/Classes.types.js";
 
 export class ClassService {
     constructor( private readonly classRepository : IClassRepository ) {};
 
-    async getClassDetails(classId: string, schoolId: string) {
+    async getClassDetails(classId: string, schoolId: string, isActive: boolean): Promise<ClassDetails> {
         if (!classId) throw new ValidationError("El ID de la clase es obligatorio");
         if (!schoolId) throw new UnauthorizedError("Falta el ID del colegio");
 
-        const classDetails = await this.classRepository.getClassDetails(classId, schoolId);
+        const classDetails = await this.classRepository.getClassDetails(classId, schoolId, isActive);
 
         if (!classDetails) {
             throw new NotFoundError("La clase no existe o no tienes acceso");

@@ -1,10 +1,3 @@
-export interface Class {
-    id: string;
-    subject_id: string;
-    teacher_id: string;
-    course_id: string;
-}
-
 export interface ClassDetails {
     details: {
         id: string;
@@ -12,12 +5,18 @@ export interface ClassDetails {
         course_name: string;
         subject_name: string;
         teacher_id: string;
-        teacher_name: string;
+        teacher_first_name: string;
+        teacher_middle_name: string | null;
+        teacher_first_last_name: string;
+        teacher_second_last_name: string | null;
         created_at: string;
     };
     students: {
         student_id: string;
-        full_name: string;
+        first_name: string;
+        middle_name: string | null;
+        first_last_name: string;
+        second_last_name: string | null;
         email: string;
     }[];
     assignments: any[];
@@ -40,5 +39,11 @@ export interface TeacherClassDetails {
     course_name: string;
     subject_name: string;
     total_students: number;
-    students: any[];
+    students: {
+        student_id: string;
+        student_first_name: string;
+        student_middle_name: string | null;
+        student_first_last_name: string;
+        student_second_last_name: string | null;
+    }[];
 }
