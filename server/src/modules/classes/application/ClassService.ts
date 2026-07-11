@@ -47,11 +47,11 @@ export class ClassService {
         return await this.classRepository.deleteClass(classId, userId, userRole, userSchoolId);
     }
 
-    async getTeacherClasses(teacherId: string, teacherSchoolId: string) {
+    async getTeacherClasses(teacherId: string, teacherSchoolId: string, isActive: boolean) {
         if (!teacherId) throw new ValidationError("El ID del profesor es obligatorio");
         if (!teacherSchoolId) throw new UnauthorizedError("Falta el ID del colegio");
 
-        return await this.classRepository.getTeacherClasses(teacherId, teacherSchoolId);
+        return await this.classRepository.getTeacherClasses(teacherId, teacherSchoolId, isActive);
     }
 
     async getTeacherClassDetails(classId: string, teacherId: string, teacherSchoolId: string) {

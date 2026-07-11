@@ -2,7 +2,7 @@ import type { ICourseRepository } from "../domain/ICourseRepository.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/domain/CustomErrors.js";
-import type { CourseDetails, Courses } from "../domain/Course.types.js";
+import type { CourseDetails, Courses, TeacherCourse } from "../domain/Course.types.js";
 
 export class PostgresCourseRepository implements ICourseRepository {
     async getCourses(userSchoolId: string, isActive: boolean): Promise<Courses[]> {
@@ -186,7 +186,7 @@ export class PostgresCourseRepository implements ICourseRepository {
         }
     }
 
-    async deleteCourse(courseId: string, userId: string, userRole: string, userSchoolId: string) {
+    async deleteCourse(courseId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -234,7 +234,7 @@ export class PostgresCourseRepository implements ICourseRepository {
         }
     }
 
-    async getTeacherCourse(userId: string, userSchoolId: string) {
+    async getTeacherCourse(userId: string, userSchoolId: string): Promise<TeacherCourse> {
         const client = await pool.connect();
         try {
             const result = await client.query(`

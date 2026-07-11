@@ -6,9 +6,17 @@ import type { CreatePrincipal } from "../domain/Principal.types.js";
 import { ValidationError } from "../../errors/domain/CustomErrors.js";
 
 export class PostgresPrincipalRepository implements IPrincipalRepository {
-    async createPrincipal(principalEmail: string, principalPassword: string, principalName: string, userId: string, userRole: string, userSchoolId: string): Promise<CreatePrincipal> {
+    async createPrincipal(principalEmail: string,
+                          principalPassword: string,
+                          principalFirstName: string,
+                          principalMiddleName: string,
+                          principalFirstLastName: string,
+                          principalSecondLastName: string,
+                          userId: string,
+                          userRole: string,
+                          userSchoolId: string): Promise<CreatePrincipal> {
         const client = await pool.connect();
-        let supabaseUserId: string | null = null;
+        let authUserId: string | null = null;
 
         try {
             await client.query('BEGIN');
@@ -21,34 +29,52 @@ export class PostgresPrincipalRepository implements IPrincipalRepository {
 
             if (error) throw new ValidationError(`No se pudo crear el usuario (${error.message})`);
 
-            supabaseUserId = data.user?.id as string;
+            authUserId = data.user?.id as string;
+
+            const profile = await client.query(`
+                INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id) 
+                VALUES ($1, $2, $3, $4, $5, 'principal', $6, $7)
+                RETURNING id;
+            `, [authUserId, principalFirstName, principalMiddleName, principalFirstLastName, principalSecondLastName, principalEmail, userSchoolId]);
+
+            const profileId = profile.rows[0].id;
 
             await client.query(`
-                INSERT INTO users (supabase_user_id, email, role, school_id, full_name) 
-                VALUES ($1, $2, 'principal', $3, $4)
-            `, [supabaseUserId, principalEmail, userSchoolId, principalName]);
+                INSERT INTO principal (profile_id)
+                VALUES ($1) 
+                RETURNING id;
+            `, [profileId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,
                 actorRole: userRole,
                 schoolId: userSchoolId,
-                targetUserId: supabaseUserId,
+                targetUserId: profileId,
                 action: "CREATE_PRINCIPAL",
                 metadata: {
-                    name: principalName,
+                    id: profileId,
+                    name:  [principalFirstName, principalMiddleName, principalFirstLastName, principalSecondLastName].join(" "),
                     email: principalEmail,
                 }
             });
 
             await client.query('COMMIT');
 
-            return { id: supabaseUserId };
+            return { id: authUserId };
         } catch (error) {
-            await client.query('ROLLBACK');
+            let rolledBack = true;
+            try {
+                await client.query('ROLLBACK');
+            } catch (rollbackError) {
+                rolledBack = false;
+                console.error('[CRITICAL] Rollback failed, DB state uncertain:', rollbackError);
+            }
 
-            if (supabaseUserId) {
-                console.warn(`[Error]: Eliminando usuario huérfano de Supabase: ${supabaseUserId}`);
-                await supabase.auth.admin.deleteUser(supabaseUserId);
+            if (authUserId && rolledBack) {
+                console.warn(`[Error]: Eliminando usuario huérfano de Supabase: ${authUserId}`);
+                await supabase.auth.admin.deleteUser(authUserId);
+            } else if (authUserId && !rolledBack) {
+                console.error(`[CRITICAL] Uncertain state for authUserId=${authUserId}, profile may or may not exist. Manual reconciliation needed.`);
             }
 
             throw error;

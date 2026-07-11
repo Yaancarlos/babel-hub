@@ -2,7 +2,7 @@ import type { IClassRepository } from "../domain/IClassRepository.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
-import type { ClassDetails } from "../domain/Classes.types.js";
+import type { ClassDetails, TeacherClassDetails, TeacherClasses } from "../domain/Classes.types.js";
 
 export class PostgresClassRepository implements IClassRepository {
     async getClassDetails(classId: string, userSchoolId: string, isActive: boolean): Promise<ClassDetails | null> {
@@ -153,7 +153,7 @@ export class PostgresClassRepository implements IClassRepository {
         }
     }
 
-    async deleteClass(classId: string, userId: string, userRole: string, userSchoolId: string) {
+    async deleteClass(classId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -194,7 +194,7 @@ export class PostgresClassRepository implements IClassRepository {
         }
     }
 
-    async getTeacherClasses(teacherId: string, teacherSchoolId: string) {
+    async getTeacherClasses(teacherId: string, teacherSchoolId: string, isActive: boolean): Promise<TeacherClasses[]> {
         const client = await pool.connect();
         try {
             const result = await client.query(`
@@ -209,13 +209,13 @@ export class PostgresClassRepository implements IClassRepository {
                 JOIN course co ON cl.course_id = co.id
                 LEFT JOIN student st ON co.id = st.course_id
                 JOIN teacher t ON cl.teacher_id = t.id
-                WHERE t.profile_id = $1 AND co.school_id = $2 
+                WHERE t.profile_id = $1 AND cl.is_active = $2 AND co.school_id = $3
                 GROUP BY cl.id,
                          s.name,
                          co.name,
                          co.id
                 ORDER BY co.name::integer, s.name;
-            `, [teacherId, teacherSchoolId]);
+            `, [teacherId, isActive, teacherSchoolId]);
 
             return result.rows;
         } finally {
@@ -223,7 +223,7 @@ export class PostgresClassRepository implements IClassRepository {
         }
     }
 
-    async getTeacherClassDetails(classId: string, teacherId: string, teacherSchoolId: string) {
+    async getTeacherClassDetails(classId: string, teacherId: string, teacherSchoolId: string): Promise<TeacherClassDetails | null> {
         const client = await pool.connect();
         try {
             const classDetails = await client.query(`

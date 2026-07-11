@@ -68,8 +68,9 @@ export class ClassControllers {
         try {
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.classServices.getTeacherClasses(userId, userSchoolId);
+            const records = await this.classServices.getTeacherClasses(userId, userSchoolId, isActive);
             response.status(200).json({ teacherClasses: records });
         } catch (error : any) {
             next(error);

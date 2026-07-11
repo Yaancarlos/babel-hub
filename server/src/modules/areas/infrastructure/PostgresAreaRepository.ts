@@ -9,7 +9,7 @@ export class PostgresAreaRepository implements IAreaRepository  {
         const client = await pool.connect();
         try {
             const result = await client.query(`
-                SELECT * FROM areas 
+                SELECT * FROM area 
                 WHERE school_id = $1 
                 ORDER BY name ASC
             `, [schoolId]);
@@ -24,7 +24,7 @@ export class PostgresAreaRepository implements IAreaRepository  {
         const client = await pool.connect();
         try {
             const result = await client.query(`
-                SELECT * FROM areas
+                SELECT * FROM area
                 WHERE id = $1 AND school_id = $2;
             `, [id, schoolId]);
 
@@ -42,7 +42,7 @@ export class PostgresAreaRepository implements IAreaRepository  {
             await client.query(`BEGIN`);
 
             const result = await client.query(`
-                INSERT INTO areas (school_id, name)
+                INSERT INTO area (school_id, name)
                 VALUES ($1, $2)
                 RETURNING id, name
             `, [userSchoolId, name]);
@@ -74,7 +74,7 @@ export class PostgresAreaRepository implements IAreaRepository  {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                UPDATE areas
+                UPDATE area
                 SET name = $1 
                 WHERE id = $2 AND school_id = $3
                 RETURNING id, name
@@ -107,7 +107,7 @@ export class PostgresAreaRepository implements IAreaRepository  {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                DELETE FROM areas 
+                DELETE FROM area
                 WHERE id = $1 AND school_id = $2
                 RETURNING id, name
             `, [id, userSchoolId]);

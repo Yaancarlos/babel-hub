@@ -5,10 +5,10 @@ import { NotFoundError, UnauthorizedError, ValidationError } from "../../errors/
 export class StudentService {
     constructor( private readonly studentService: IStudentRepository ) {}
 
-    async getStudents(userSchoolId: string): Promise<Students[]> {
+    async getStudents(userSchoolId: string, isActive: boolean): Promise<Students[]> {
         if (!userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
 
-        return await this.studentService.getStudents(userSchoolId);
+        return await this.studentService.getStudents(userSchoolId, isActive);
     }
 
     async getStudentDetails(studentId: string, userSchoolId: string): Promise<StudentDetails> {
@@ -21,18 +21,72 @@ export class StudentService {
         return student;
     }
 
-    async createStudent(courseId: string, studentName: string, studentEmail: string, studentPassword: string, studentEnrolmentCode: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateStudent> {
-        if (!courseId || !studentEmail || !studentPassword || !studentEnrolmentCode || !studentName) throw new ValidationError("Faltan campos obligatorios");
+    async createStudent(courseId: string,
+                        studentFirstName: string,
+                        studentMiddleName: string,
+                        studentFirstLastName: string,
+                        studentSecondLastName: string,
+                        studentEmail: string,
+                        studentPassword: string,
+                        studentEnrolmentCode: string,
+                        userId: string,
+                        userRole: string,
+                        userSchoolId: string): Promise<CreateStudent> {
+        if (!courseId ||
+            !studentEmail ||
+            !studentPassword ||
+            !studentEnrolmentCode ||
+            !studentFirstName ||
+            !studentMiddleName ||
+            !studentFirstLastName ||
+            !studentSecondLastName
+        ) throw new ValidationError("Faltan campos obligatorios");
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
 
-        return await this.studentService.createStudent(courseId, studentName, studentEmail, studentPassword, studentEnrolmentCode, userId, userRole, userSchoolId);
+        return await this.studentService.createStudent(
+            courseId,
+            studentFirstName,
+            studentMiddleName,
+            studentFirstLastName,
+            studentSecondLastName,
+            studentEmail,
+            studentPassword,
+            studentEnrolmentCode,
+            userId,
+            userRole,
+            userSchoolId);
     }
 
-    async updateStudent(studentId: string, courseId: string, studentName: string, studentEnrolmentCode: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+    async updateStudent(studentId: string,
+                        courseId: string,
+                        studentFirstName: string,
+                        studentMiddleName: string,
+                        studentFirstLastName: string,
+                        studentSecondLastName: string,
+                        studentEnrolmentCode: string,
+                        userId: string,
+                        userRole: string,
+                        userSchoolId: string): Promise<void> {
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
-        if (!courseId || !studentEnrolmentCode || !studentName) throw new ValidationError("Faltan campos obligatorios");
+        if (!courseId ||
+            !studentEnrolmentCode ||
+            !studentFirstName ||
+            !studentMiddleName ||
+            !studentFirstLastName ||
+            !studentSecondLastName
+        ) throw new ValidationError("Faltan campos obligatorios");
 
-        return await this.studentService.updateStudent(studentId, courseId, studentName, studentEnrolmentCode, userId, userRole, userSchoolId);
+        return await this.studentService.updateStudent(
+            studentId,
+            courseId,
+            studentFirstName,
+            studentMiddleName,
+            studentFirstLastName,
+            studentSecondLastName,
+            studentEnrolmentCode,
+            userId,
+            userRole,
+            userSchoolId);
     }
 
     async deleteStudent(studentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {

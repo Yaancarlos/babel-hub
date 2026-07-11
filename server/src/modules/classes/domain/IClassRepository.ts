@@ -5,6 +5,6 @@ export interface IClassRepository {
     createClass(courseId: string, subjectId: string, teacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateClass>;
     updateClass(classId: string, teacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;
     deleteClass(classId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;
-    getTeacherClasses(teacherId: string, teacherSchoolId: string): Promise<TeacherClasses[]>;
+    getTeacherClasses(teacherId: string, teacherSchoolId: string, isActive: boolean): Promise<TeacherClasses[]>;
     getTeacherClassDetails(classId: string, teacherId: string, teacherSchoolId: string): Promise<TeacherClassDetails | null>;
 }

@@ -10,8 +10,9 @@ export class AttendanceController {
             const classId = request.params.classId as string;
             const schoolId = request.user!.schoolId as string;
             const date = request.query.date as string;
+            const isActive = true;
 
-            const records = await this.attendanceService.getDailyClassAttendance(classId, schoolId, date);
+            const records = await this.attendanceService.getDailyClassAttendance(classId, schoolId, date, isActive);
             response.status(200).json({ date, records });
         } catch (error : any) {
             next(error)
@@ -24,8 +25,9 @@ export class AttendanceController {
 
             const courseId = request.params.courseId as string;
             const date = request.query.date as string;
+            const isActive = true;
 
-            const records = await this.attendanceService.getDailyCourseAttendance(courseId, schoolId, date);
+            const records = await this.attendanceService.getDailyCourseAttendance(courseId, schoolId, date, isActive);
 
             response.status(200).json({ date, records });
         } catch (error : any) {
@@ -54,8 +56,9 @@ export class AttendanceController {
             const schoolId = request.user!.schoolId as string;
             const startDate = request.query.startDate as string;
             const endDate = request.query.endDate as string;
+            const isActive = true;
 
-            const record = await this.attendanceService.getAttendanceSummary(schoolId, startDate, endDate);
+            const record = await this.attendanceService.getAttendanceSummary(schoolId, startDate, endDate, isActive);
             response.status(200).json({ attendanceSummary: record });
         } catch (error : any) {
             next(error)
