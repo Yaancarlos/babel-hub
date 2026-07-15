@@ -12,14 +12,9 @@ export function authorizedRoles (
         }
 
         try {
-            const result = await pool.query(
-                `SELECT id, email, role, school_id FROM profile WHERE auth_profile_id = $1`
-                , [req.user.authUserId]);
+            const result = await pool.query(`SELECT id, email, role, school_id FROM profile WHERE auth_profile_id = $1`, [req.user.authUserId]);
 
-
-            if (result.rows.length === 0) {
-                return res.status(403).json({ message: "Usuario no registrado" });
-            }
+            if (result.rows.length === 0) return res.status(403).json({ message: "Usuario no registrado" });
 
             const user = result.rows[0];
 

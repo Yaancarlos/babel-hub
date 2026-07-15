@@ -93,10 +93,13 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                UPDATE subject
+                UPDATE subject s
                 SET name = $1, area_id = $2, grading_template_id = $3
-                WHERE id = $4
-            `, [subjectName, subjectAreaId, gradingTemplateId, subjectId]);
+                FROM area a
+                WHERE s.id = $4
+                AND s.area_id = a.id
+                AND a.school_id = $5
+            `, [subjectName, subjectAreaId, gradingTemplateId, subjectId, userSchoolId]);
 
             if (result.rowCount === 0) throw new NotFoundError("No se encontro la asignatura para su actualización");
 
@@ -127,7 +130,7 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
             const subjectCheck = await client.query(`
                 SELECT 1
                 FROM subject s
-                         JOIN area a ON s.area_id = a.id
+                JOIN area a ON s.area_id = a.id
                 WHERE s.id = $1 AND a.school_id = $2
             `, [subjectId, userSchoolId]);
 

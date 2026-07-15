@@ -7,13 +7,13 @@ export class PrincipalController {
 
     createPrincipal = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { email, password, firstName, middleName, FirstLastName, secondLastName } = request.body;
+            const { email, password, firstName, middleName, firstLastName, secondLastName } = request.body;
 
             const userId = request.user!.userId as string;
             const userRole = request.user!.role as string;
             const userSchoolId = request.user!.schoolId as string;
 
-            const record = await this.principalService.createPrincipal(email, password, firstName, middleName, FirstLastName, secondLastName, userId, userRole, userSchoolId);
+            const record = await this.principalService.createPrincipal(email, password, firstName, middleName, firstLastName, secondLastName, userId, userRole, userSchoolId);
             response.status(201).json({ principal: record });
         } catch (error : any) {
             next(error);

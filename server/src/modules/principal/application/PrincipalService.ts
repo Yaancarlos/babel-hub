@@ -9,9 +9,9 @@ export class PrincipalService {
         principalEmail: string,
         principalPassword: string,
         principalFirstName: string,
-        principalMiddleName: string,
+        principalMiddleName: string | null | undefined,
         principalFirstLastName: string,
-        principalSecondLastName: string,
+        principalSecondLastName: string | null | undefined,
         userId: string,
         userRole: string,
         userSchoolId: string
@@ -19,9 +19,7 @@ export class PrincipalService {
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
         if (!principalEmail ||
             !principalFirstName ||
-            !principalMiddleName ||
             !principalFirstLastName ||
-            !principalSecondLastName ||
             !principalPassword
         ) throw new ValidationError("Todos los campos deben estar llenos");
 
@@ -29,9 +27,9 @@ export class PrincipalService {
             principalEmail,
             principalPassword,
             principalFirstName,
-            principalMiddleName,
+            principalMiddleName ?? null,
             principalFirstLastName,
-            principalSecondLastName,
+            principalSecondLastName ?? null,
             userId,
             userRole,
             userSchoolId

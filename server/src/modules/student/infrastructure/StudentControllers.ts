@@ -32,13 +32,13 @@ export class StudentControllers {
 
     createStudent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { email,  password, firstName, middleName, FirstLastName, secondLastName, enrollmentCode, courseId } = request.body;
+            const { email,  password, firstName, middleName, firstLastName, secondLastName, enrollmentCode, courseId } = request.body;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            const record = await this.studentService.createStudent(courseId, firstName, middleName, FirstLastName, secondLastName, email, password, enrollmentCode, userId, userRole, userSchoolId);
+            const record = await this.studentService.createStudent(courseId, firstName, middleName, firstLastName, secondLastName, email, password, enrollmentCode, userId, userRole, userSchoolId);
             response.status(201).json({ student: record });
         } catch (error : any) {
             next(error)
@@ -48,13 +48,13 @@ export class StudentControllers {
     updateStudent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const id = request.params.id as string;
-            const { firstName, middleName, FirstLastName, secondLastName, enrollmentCode, courseId } = request.body;
+            const { firstName, middleName, firstLastName, secondLastName, enrollmentCode, courseId } = request.body;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            await this.studentService.updateStudent(id, courseId, firstName, middleName, FirstLastName, secondLastName, enrollmentCode, userId, userRole, userSchoolId);
+            await this.studentService.updateStudent(id, courseId, firstName, middleName, firstLastName, secondLastName, enrollmentCode, userId, userRole, userSchoolId);
             response.status(204).send();
         } catch (error : any) {
             next(error)

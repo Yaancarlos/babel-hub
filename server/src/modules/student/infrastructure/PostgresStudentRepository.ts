@@ -77,12 +77,12 @@ export class PostgresStudentRepository implements IStudentRepository {
 
     async createStudent(courseId: string,
                         studentFirstName: string,
-                        studentMiddleName: string,
+                        studentMiddleName: string | null,
                         studentFirstLastName: string,
-                        studentSecondLastName: string,
+                        studentSecondLastName: string | null,
                         studentEmail: string,
                         studentPassword: string,
-                        studentEnrolmentCode: string,
+                        studentEnrollmentCode: string | null,
                         userId: string,
                         userRole: string,
                         userSchoolId: string): Promise<CreateStudent> {
@@ -119,7 +119,7 @@ export class PostgresStudentRepository implements IStudentRepository {
             await client.query(`
                 INSERT INTO student (profile_id, enrollment_code, course_id)
                 VALUES ($1, $2, $3)
-            `, [profileId, studentEnrolmentCode, courseId]);
+            `, [profileId, studentEnrollmentCode, courseId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,
@@ -128,9 +128,9 @@ export class PostgresStudentRepository implements IStudentRepository {
                 targetUserId: profileId,
                 schoolId: userSchoolId,
                 metadata: {
+                    name: [studentFirstName, studentMiddleName ?? "", studentFirstLastName, studentSecondLastName ?? ""].join(" "),
                     email: studentEmail,
                     courseId,
-                    enrolment: studentEnrolmentCode
                 }
             });
 
@@ -162,10 +162,10 @@ export class PostgresStudentRepository implements IStudentRepository {
     async updateStudent(studentId: string,
                         courseId: string,
                         studentFirstName: string,
-                        studentMiddleName: string,
+                        studentMiddleName: string | null,
                         studentFirstLastName: string,
-                        studentSecondLastName: string,
-                        studentEnrolmentCode: string,
+                        studentSecondLastName: string | null,
+                        studentEnrollmentCode: string | null,
                         userId: string,
                         userRole: string,
                         userSchoolId: string): Promise<void> {
@@ -195,7 +195,7 @@ export class PostgresStudentRepository implements IStudentRepository {
                 UPDATE student
                 SET enrollment_code = $1, course_id = $2
                 WHERE id = $3
-            `, [studentEnrolmentCode, courseId, studentId]);
+            `, [studentEnrollmentCode, courseId, studentId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,
@@ -205,7 +205,7 @@ export class PostgresStudentRepository implements IStudentRepository {
                 schoolId: userSchoolId,
                 metadata: {
                     studentId: studentId,
-                    name: [studentFirstName, studentMiddleName, studentFirstLastName, studentSecondLastName].join(" "),
+                    name: [studentFirstName, studentMiddleName ?? "", studentFirstLastName, studentSecondLastName ?? ""].join(" "),
                     course: courseId
                 }
             });
@@ -263,7 +263,7 @@ export class PostgresStudentRepository implements IStudentRepository {
                 schoolId: userSchoolId,
                 metadata: {
                     studentId,
-                    name: [student_first_name, student_middle_name, student_first_last_name, student_second_last_name].join(" ")
+                    name: [student_first_name, student_middle_name ?? "", student_first_last_name, student_second_last_name ?? ""].join(" ")
                 }
             });
 

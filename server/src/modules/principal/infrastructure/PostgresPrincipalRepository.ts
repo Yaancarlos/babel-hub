@@ -9,9 +9,9 @@ export class PostgresPrincipalRepository implements IPrincipalRepository {
     async createPrincipal(principalEmail: string,
                           principalPassword: string,
                           principalFirstName: string,
-                          principalMiddleName: string,
+                          principalMiddleName: string | null,
                           principalFirstLastName: string,
-                          principalSecondLastName: string,
+                          principalSecondLastName: string | null,
                           userId: string,
                           userRole: string,
                           userSchoolId: string): Promise<CreatePrincipal> {
@@ -53,7 +53,7 @@ export class PostgresPrincipalRepository implements IPrincipalRepository {
                 action: "CREATE_PRINCIPAL",
                 metadata: {
                     id: profileId,
-                    name:  [principalFirstName, principalMiddleName, principalFirstLastName, principalSecondLastName].join(" "),
+                    name:  [principalFirstName, principalMiddleName ?? "", principalFirstLastName, principalSecondLastName ?? ""].join(" "),
                     email: principalEmail,
                 }
             });

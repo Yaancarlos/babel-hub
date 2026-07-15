@@ -5,9 +5,9 @@ export interface IPrincipalRepository {
         principalEmail: string,
         principalPassword: string,
         principalFirstName: string,
-        principalMiddleName: string,
+        principalMiddleName: string | null | undefined,
         principalFirstLastName: string,
-        principalSecondLastName: string,
+        principalSecondLastName: string | null | undefined,
         userId: string,
         userRole: string,
         userSchoolId: string

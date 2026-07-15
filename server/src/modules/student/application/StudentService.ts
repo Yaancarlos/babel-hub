@@ -23,35 +23,32 @@ export class StudentService {
 
     async createStudent(courseId: string,
                         studentFirstName: string,
-                        studentMiddleName: string,
+                        studentMiddleName: string | null | undefined,
                         studentFirstLastName: string,
-                        studentSecondLastName: string,
+                        studentSecondLastName: string | null | undefined,
                         studentEmail: string,
                         studentPassword: string,
-                        studentEnrolmentCode: string,
+                        studentEnrollmentCode: string | null | undefined,
                         userId: string,
                         userRole: string,
                         userSchoolId: string): Promise<CreateStudent> {
         if (!courseId ||
             !studentEmail ||
             !studentPassword ||
-            !studentEnrolmentCode ||
             !studentFirstName ||
-            !studentMiddleName ||
-            !studentFirstLastName ||
-            !studentSecondLastName
+            !studentFirstLastName
         ) throw new ValidationError("Faltan campos obligatorios");
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
 
         return await this.studentService.createStudent(
             courseId,
             studentFirstName,
-            studentMiddleName,
+            studentMiddleName ?? null,
             studentFirstLastName,
-            studentSecondLastName,
+            studentSecondLastName ?? null,
             studentEmail,
             studentPassword,
-            studentEnrolmentCode,
+            studentEnrollmentCode ?? null,
             userId,
             userRole,
             userSchoolId);
@@ -60,30 +57,27 @@ export class StudentService {
     async updateStudent(studentId: string,
                         courseId: string,
                         studentFirstName: string,
-                        studentMiddleName: string,
+                        studentMiddleName: string | null | undefined,
                         studentFirstLastName: string,
-                        studentSecondLastName: string,
-                        studentEnrolmentCode: string,
+                        studentSecondLastName: string | null | undefined,
+                        studentEnrollmentCode: string | null | undefined,
                         userId: string,
                         userRole: string,
                         userSchoolId: string): Promise<void> {
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
         if (!courseId ||
-            !studentEnrolmentCode ||
             !studentFirstName ||
-            !studentMiddleName ||
-            !studentFirstLastName ||
-            !studentSecondLastName
+            !studentFirstLastName
         ) throw new ValidationError("Faltan campos obligatorios");
 
         return await this.studentService.updateStudent(
             studentId,
             courseId,
             studentFirstName,
-            studentMiddleName,
+            studentMiddleName ?? null,
             studentFirstLastName,
-            studentSecondLastName,
-            studentEnrolmentCode,
+            studentSecondLastName ?? null,
+            studentEnrollmentCode ?? null,
             userId,
             userRole,
             userSchoolId);

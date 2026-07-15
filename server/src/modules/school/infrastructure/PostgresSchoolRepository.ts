@@ -8,9 +8,9 @@ import { ValidationError } from "../../errors/domain/CustomErrors.js";
 export class PostgresSchoolRepository implements ISchoolRepository {
     async createSchool(schoolName: string,
                        principalFirstName: string,
-                       principalMiddleName: string,
+                       principalMiddleName: string | null,
                        principalFirstLastName: string,
-                       principalSecondLastName: string,
+                       principalSecondLastName: string | null,
                        principalEmail: string,
                        principalPassword: string,
                        userId: string,

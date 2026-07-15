@@ -8,9 +8,9 @@ export class SchoolService {
 
     async createSchool(schoolName: string,
                        principalFirstName: string,
-                       principalMiddleName: string,
+                       principalMiddleName: string | null | undefined,
                        principalFirstLastName: string,
-                       principalSecondLastName: string,
+                       principalSecondLastName: string | null | undefined,
                        principalEmail: string,
                        principalPassword: string,
                        userId: string,
@@ -20,18 +20,16 @@ export class SchoolService {
         if (!schoolName ||
             !principalEmail ||
             !principalFirstName ||
-            !principalMiddleName ||
             !principalFirstLastName ||
-            !principalSecondLastName ||
             !principalPassword
         ) throw new ValidationError("Todos los campos deben estar llenos");
 
         return await this.schoolRepository.createSchool(
             schoolName,
             principalFirstName,
-            principalMiddleName,
+            principalMiddleName ?? null,
             principalFirstLastName,
-            principalSecondLastName,
+            principalSecondLastName ?? null,
             principalEmail,
             principalPassword,
             userId,

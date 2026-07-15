@@ -3,9 +3,9 @@ import type {CreateSchool} from "./School.types.js";
 export interface ISchoolRepository {
     createSchool(schoolName: string,
                  principalFirstName: string,
-                 principalMiddleName: string,
+                 principalMiddleName: string | null | undefined,
                  principalFirstLastName: string,
-                 principalSecondLastName: string,
+                 principalSecondLastName: string | null | undefined,
                  principalEmail: string,
                  principalPassword: string,
                  userId: string,
