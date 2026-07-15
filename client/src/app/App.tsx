@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 
 import Login from "../pages/auth/login.tsx";
+import BlockUi from "../pages/misc/blockUi.tsx";
 import TeacherDashboard from "../pages/teacher/dashboard/TeacherDashboard.tsx";
 import PrincipalDashboard from "../pages/principal/dashboard/PrincipalDashboard.tsx";
 import NotFoundPage from "../pages/misc/notFoundPage.tsx";
@@ -58,7 +59,8 @@ function App() {
 
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={ <Navigate to="/login" replace /> } />
+                    <Route path="/" element={ <Navigate to="/updating-babel" replace /> } />
+                    <Route path="/updating-babel" element={ <BlockUi /> } />
                     <Route path="/login" element={ <Login /> } />
                     <Route
                         path="/principal"
