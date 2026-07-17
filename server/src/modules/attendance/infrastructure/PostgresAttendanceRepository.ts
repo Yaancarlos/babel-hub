@@ -112,7 +112,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
             WITH LastRecord AS (
                     SELECT
                         a.student_id,
-                        MAX(date) as last_record
+                        MAX(a.date) as last_record
                     FROM attendance a
                     JOIN student s ON a.student_id = s.id
                     JOIN profile p ON s.profile_id = p.id
@@ -171,7 +171,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                 SELECT 
                     d.calendar_date::date AS DATE,
                     CASE 
-                        WHEN count(a.id) = 0 THEN 'no_data'
+                        WHEN COUNT(a.id) = 0 THEN 'no_data'
                         WHEN bool_or(a.status = 'absent') THEN 'absent'
                         WHEN bool_or(a.status = 'late') THEN 'late'
                         WHEN bool_or(a.status = 'excused') THEN 'excused'

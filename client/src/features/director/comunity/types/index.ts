@@ -1,11 +1,15 @@
 export interface StudentProps {
-    student_id: string;
-    enrollment_code: string;
-    full_name: string;
-    created_at: string;
+    course_id: string;
     course_name: string;
-    course_id?: string;
+    student_id: string;
+    student_first_name: string;
+    student_middle_name: string | null;
+    student_first_last_name: string;
+    student_second_last_name: string | null;
     email: string;
+    is_active: boolean;
+    enrollment_code: string | null;
+    created_at: string;
 }
 
 export interface StudentRowProps {
@@ -16,25 +20,34 @@ export interface StudentRowProps {
 }
 
 export interface CreateStudent {
-    fullName: string;
+    firstName: string;
+    middleName: string;
+    firstLastName: string;
+    secondLastName: string;
     email: string;
     password: string;
-    enrolmentCode: string;
+    enrollmentCode: string;
     courseId: string
 }
 
 export interface UpdateStudent {
-    fullName: string;
-    enrolmentCode: string;
+    firstName: string;
+    middleName: string;
+    firstLastName: string;
+    secondLastName: string;
+    enrollmentCode: string;
     courseId: string
 }
 
 export interface Teacher {
     id: string;
-    user_id: string;
-    created_at: string;
-    full_name: string;
+    teacher_first_name: string;
+    teacher_middle_name: string | null;
+    teacher_first_last_name: string;
+    teacher_second_last_name: string | null;
+    is_active: boolean;
     email: string;
+    created_at: string;
     total_classes: number;
 }
 export interface TeacherRowProps {
@@ -45,20 +58,30 @@ export interface TeacherRowProps {
 }
 
 export interface CreateTeacher {
-    fullName: string;
+    firstName: string;
+    middleName: string;
+    firstLastName: string;
+    secondLastName: string;
     email: string;
     password: string;
 }
 
 export interface UpdateTeacher {
-    fullName: string;
+    firstName: string;
+    middleName: string;
+    firstLastName: string;
+    secondLastName: string;
 }
 
 export interface TeacherItem {
     teacher_id: string;
-    created_at: string;
-    full_name: string;
+    teacher_first_name: string;
+    teacher_middle_name: string | null;
+    teacher_first_last_name: string;
+    teacher_second_last_name: string | null;
     email: string;
+    is_active: boolean;
+    created_at: string;
 }
 
 export interface ClassItem {

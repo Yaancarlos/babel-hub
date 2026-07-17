@@ -207,14 +207,14 @@ export class PostgresClassRepository implements IClassRepository {
                 FROM class cl
                 JOIN subject s ON cl.subject_id = s.id
                 JOIN course co ON cl.course_id = co.id
-                LEFT JOIN student st ON co.id = st.course_id
                 JOIN teacher t ON cl.teacher_id = t.id
+                LEFT JOIN student st ON co.id = st.course_id
                 WHERE t.profile_id = $1 AND cl.is_active = $2 AND co.school_id = $3
                 GROUP BY cl.id,
                          s.name,
-                         co.name,
-                         co.id
-                ORDER BY co.name::integer, s.name;
+                         co.id,
+                         co.name
+                ORDER BY co.name::integer ASC;
             `, [teacherId, isActive, teacherSchoolId]);
 
             return result.rows;

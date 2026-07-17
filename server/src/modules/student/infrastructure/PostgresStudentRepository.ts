@@ -19,8 +19,9 @@ export class PostgresStudentRepository implements IStudentRepository {
                     p.first_last_name as student_first_last_name,
                     p.second_last_name as student_second_last_name,
                     p.email,
+                    p.is_active,
                     s.enrollment_code,
-                    s.created_at
+                    p.created_at
                 FROM student s
                 JOIN profile p ON s.profile_id = p.id
                 JOIN course c ON s.course_id = c.id

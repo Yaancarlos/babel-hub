@@ -1,22 +1,29 @@
 import { memo } from "react";
-import { formateDate, getInitials, reverseName } from "../../../../../types";
+import { formateDate } from "../../../../../types";
 import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { StudentRowProps } from "../../types";
 
 export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNavigate }: StudentRowProps){
+    const studentName = [
+        student.student_first_last_name,
+        student.student_second_last_name ?? "",
+        student.student_first_name,
+        student.student_middle_name ?? ""
+    ].join(" ");
+
     return (
         <tr key={student.student_id} className="hover:bg-gray-50 transition-colors">
             <td className="p-4">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary font-bold text-sm">
-                        {getInitials(student.full_name)}
+                        {`${student.student_first_name.charAt(0)}${student.student_first_last_name.charAt(0)}`}
                     </div>
                     <button
                         onClick={() => onNavigate(`${student.student_id}`)}
                         className="overflow-hidden text-sm xl:text-base text-left cursor-pointer"
                     >
-                        <p className="font-bold capitalize text-custom-black truncate" title={student.full_name}>
-                            {reverseName(student.full_name)}
+                        <p className="font-bold capitalize text-custom-black truncate" title={studentName}>
+                            {studentName}
                         </p>
                         <p className="text-gray-500 text-xs truncate" title={student.email}>
                             {student.email}

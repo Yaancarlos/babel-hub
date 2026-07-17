@@ -19,8 +19,11 @@ const formRegExp = [
 
 export function StudentFormModal({ mode, initialData, onClose, onSuccess }: StudentFormModalProps) {
     const [formData, setFormData] = useState({
-        fullName: initialData?.full_name || "",
-        enrolmentCode: initialData?.enrollment_code || "",
+        firstName: initialData?.student_first_name || "",
+        middleName: initialData?.student_middle_name || "",
+        firstLastName: initialData?.student_first_last_name || "",
+        secondLastName: initialData?.student_second_last_name || "",
+        enrollmentCode: initialData?.enrollment_code || "",
         courseId: initialData?.course_id || "",
         email: "",
         password: ""
@@ -55,7 +58,21 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         const emailRegExp = formRegExp.find(r => r.label === "email")?.regExp;
         const passwordRegExp = formRegExp.find(r => r.label === "password")?.regExp;
 
-        if (nameRegExp && !nameRegExp.test(formData.fullName)) {
+        if (nameRegExp && !nameRegExp.test(formData.firstName)) {
+            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+            return;
+        }
+
+        if (nameRegExp && !nameRegExp.test(formData.firstLastName)) {
+            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+            return;
+        }
+
+        if (formData.secondLastName && nameRegExp && !nameRegExp.test(formData.secondLastName)) {
+            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+            return;
+        }
+        if (formData.middleName && nameRegExp && !nameRegExp.test(formData.middleName)) {
             setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
             return;
         }
@@ -73,8 +90,11 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
 
         const payload = {
             ...formData,
-            fullName: formData.fullName.trim().toLowerCase(),
-            enrolmentCode: formData.enrolmentCode.trim().toUpperCase()
+            firstName: formData.firstName.trim().toLowerCase(),
+            middleName: formData.middleName.trim().toLowerCase(),
+            firstLastName: formData.firstLastName.trim().toLowerCase(),
+            secondLastName: formData.secondLastName.trim().toLowerCase(),
+            enrollmentCode: formData.enrollmentCode.trim().toUpperCase()
         };
 
         await submitStudent(mode, initialData?.student_id || null, payload);
@@ -82,8 +102,11 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
 
     // @ts-ignore
     const studentFields: FormField[] = [
-        { name: "enrolmentCode", label: "Código del estudiante", type: "text", placeholder: "STU-101", required: true },
-        { name: "fullName", label: "Nombre", type: "text", placeholder: "Cristian Garcia", required: true },
+        { name: "enrollmentCode", label: "Código del estudiante", type: "text", placeholder: "STU-101", required: true },
+        { name: "firstName", label: "Primer Nombre", type: "text", placeholder: "Cristian", required: true },
+        { name: "middleName", label: "Segundo Nombre", type: "text", placeholder: "Antonio", required: false },
+        { name: "firstLastName", label: "Primer Apellido", type: "text", placeholder: "Garcia", required: true },
+        { name: "secondLastName", label: "Segundo Apellido", type: "text", placeholder: "Perez", required: false },
         { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true },
         { name: "password", label: "Contraseña", type: "password", required: true },
         {
