@@ -1,9 +1,9 @@
-import {LoadingContent} from "../../../../../components/ui/Loadings.tsx";
+import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
 import type { ClassDetailsData } from "../../types";
 import { StudentAttendanceRow } from "../ui/StudentAttendaceRow.tsx";
-import {useTakeAttendance} from "../../hooks/useTakeAttendance.ts";
-import {NoResults} from "../../../../../components/ui/blocks/NoResults.tsx";
-import {PrimaryButton} from "../../../../../components/ui/buttons/Buttons.tsx";
+import { useTakeAttendance } from "../../hooks/useTakeAttendance.ts";
+import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
+import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 
 
 interface RegisterAttendanceProps {

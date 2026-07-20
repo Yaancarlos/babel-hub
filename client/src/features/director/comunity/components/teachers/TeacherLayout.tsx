@@ -23,7 +23,8 @@ export function TeacherLayout() {
     const { deleteTeacherById, loading: loadingDelete } = useDeleteTeacher(reload);
 
     const filteredTeachers = teachers.filter((teacher: Teacher) =>
-        teacher.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        teacher.teacher_first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        teacher.teacher_first_last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

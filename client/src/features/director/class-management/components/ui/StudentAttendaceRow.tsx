@@ -1,5 +1,5 @@
-import {memo} from "react";
-import {getInitials, reverseName} from "../../../../../types";
+import { memo } from "react";
+import { reverseName } from "../../../../../types";
 import type { Student } from "../../types";
 
 export const StudentAttendanceRow = memo(function StudentAttendanceRow({
@@ -15,10 +15,15 @@ export const StudentAttendanceRow = memo(function StudentAttendanceRow({
         <li key={student.student_id} className="p-4 flex flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
             <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
-                    {getInitials(student.full_name)}
+                    {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
                 </div>
                 <span className="font-medium capitalize text-sm md:text-base text-custom-black leading-tight">
-                    {reverseName(student.full_name)}
+                    {reverseName({
+                        firstName: student.first_name,
+                        middleName: student.middle_name,
+                        firstLastName: student.first_last_name,
+                        secondLastName: student.second_last_name
+                    })}
                 </span>
             </div>
 

@@ -1,6 +1,13 @@
 export type UserRole = "principal" | "admin" | "teacher" | "student" | "parent" | null;
 export type ModalModeTypes = 'create' | 'edit' | 'none';
 
+interface NameInput {
+    firstName: string;
+    middleName?: string | null | undefined;
+    firstLastName: string;
+    secondLastName?: string | null | undefined;
+}
+
 export function formateDate(date: string) {
     return  new Date(date).toLocaleDateString('es-ES', {
         year: 'numeric',
@@ -33,12 +40,16 @@ export const getInitials = (name: string) => {
     return name[0].toUpperCase();
 };
 
-export function reverseName(fullName: string, firstNameCount = 2) {
-    const parts = fullName.trim().split(/\s+/);
-    const firstNames = parts.slice(0, firstNameCount).join(" ");
-    const lastNames = parts.slice(firstNameCount).join(" ");
+export function reverseName(nameObj: NameInput): string {
+    const lastNames = [nameObj.firstLastName, nameObj.secondLastName]
+        .filter(Boolean)
+        .join(" ");
 
-    return `${lastNames} ${firstNames}`.trim();
+    const firstNames = [nameObj.firstName, nameObj.middleName]
+        .filter(Boolean)
+        .join(" ");
+
+    return [lastNames, firstNames].filter(Boolean).join(" ");
 }
 
 export const formatterDate = new Intl.DateTimeFormat('en-CA', {

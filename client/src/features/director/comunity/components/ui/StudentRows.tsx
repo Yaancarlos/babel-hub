@@ -1,15 +1,15 @@
 import { memo } from "react";
-import { formateDate } from "../../../../../types";
+import { formateDate, reverseName } from "../../../../../types";
 import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { StudentRowProps } from "../../types";
 
 export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNavigate }: StudentRowProps){
-    const studentName = [
-        student.student_first_last_name,
-        student.student_second_last_name ?? "",
-        student.student_first_name,
-        student.student_middle_name ?? ""
-    ].join(" ");
+    const formattedName = reverseName({
+        firstName: student.student_first_name,
+        middleName: student.student_middle_name,
+        firstLastName: student.student_first_last_name,
+        secondLastName: student.student_second_last_name
+    });
 
     return (
         <tr key={student.student_id} className="hover:bg-gray-50 transition-colors">
@@ -22,8 +22,8 @@ export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNaviga
                         onClick={() => onNavigate(`${student.student_id}`)}
                         className="overflow-hidden text-sm xl:text-base text-left cursor-pointer"
                     >
-                        <p className="font-bold capitalize text-custom-black truncate" title={studentName}>
-                            {studentName}
+                        <p className="font-bold capitalize text-custom-black truncate" title={formattedName}>
+                            {formattedName}
                         </p>
                         <p className="text-gray-500 text-xs truncate" title={student.email}>
                             {student.email}

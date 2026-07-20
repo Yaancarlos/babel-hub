@@ -11,13 +11,15 @@ interface StudentFormModalProps {
     onSuccess: () => void;
 }
 
-const formRegExp = [
-    { label: "name", regExp: /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']{2,50}$/ },
-    { label: "email", regExp: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
-    { label: "password", regExp: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{7,}$/ },
-];
+const FORM_REGEX = {
+    name: /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']{2,50}$/,
+    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+};
 
 export function StudentFormModal({ mode, initialData, onClose, onSuccess }: StudentFormModalProps) {
+    const isCreateMode = mode === "create";
+
     const [formData, setFormData] = useState({
         firstName: initialData?.student_first_name || "",
         middleName: initialData?.student_middle_name || "",
@@ -54,47 +56,45 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
     const handleModalSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const nameRegExp = formRegExp.find(r => r.label === "name")?.regExp;
-        const emailRegExp = formRegExp.find(r => r.label === "email")?.regExp;
-        const passwordRegExp = formRegExp.find(r => r.label === "password")?.regExp;
-
-        if (nameRegExp && !nameRegExp.test(formData.firstName)) {
-            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+        if (!FORM_REGEX.name.test(formData.firstName)) {
+            setError("El primer nombre debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
-
-        if (nameRegExp && !nameRegExp.test(formData.firstLastName)) {
-            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+        if (!FORM_REGEX.name.test(formData.firstLastName)) {
+            setError("El primer apellido debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
-
-        if (formData.secondLastName && nameRegExp && !nameRegExp.test(formData.secondLastName)) {
-            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+        if (formData.middleName.trim() && !FORM_REGEX.name.test(formData.middleName)) {
+            setError("El segundo nombre debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
-        if (formData.middleName && nameRegExp && !nameRegExp.test(formData.middleName)) {
-            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+        if (formData.secondLastName.trim() && !FORM_REGEX.name.test(formData.secondLastName)) {
+            setError("El segundo apellido debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
 
         if (mode === 'create') {
-            if (emailRegExp && !emailRegExp.test(formData.email)) {
+            if (!FORM_REGEX.email.test(formData.email)) {
                 setError("Por favor, ingresa un correo electrónico válido.");
                 return;
             }
-            if (passwordRegExp && !passwordRegExp.test(formData.password)) {
+            if (!FORM_REGEX.password.test(formData.password)) {
                 setError("La contraseña debe tener mínimo 8 caracteres, letras, números y un carácter especial.");
                 return;
             }
         }
 
         const payload = {
-            ...formData,
             firstName: formData.firstName.trim().toLowerCase(),
             middleName: formData.middleName.trim().toLowerCase(),
             firstLastName: formData.firstLastName.trim().toLowerCase(),
             secondLastName: formData.secondLastName.trim().toLowerCase(),
-            enrollmentCode: formData.enrollmentCode.trim().toUpperCase()
+            courseId: formData.courseId.trim().toLowerCase(),
+            enrollmentCode: formData.enrollmentCode.trim().toLowerCase(),
+            ...(isCreateMode && {
+                password: formData.password,
+                email: formData.email.trim().toLowerCase(),
+            })
         };
 
         await submitStudent(mode, initialData?.student_id || null, payload);
@@ -107,16 +107,17 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         { name: "middleName", label: "Segundo Nombre", type: "text", placeholder: "Antonio", required: false },
         { name: "firstLastName", label: "Primer Apellido", type: "text", placeholder: "Garcia", required: true },
         { name: "secondLastName", label: "Segundo Apellido", type: "text", placeholder: "Perez", required: false },
-        { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true },
-        { name: "password", label: "Contraseña", type: "password", required: true },
         {
             name: "courseId",
             label: "Curso",
             type: "select",
             required: true,
             options: availableCourses.map(c => ({ value: c.id, label: c.course_name }))
-        }
-    ].filter(field => mode === 'create' || (field.name !== 'email' && field.name !== 'password'));
+        },
+        ... (isCreateMode ? [
+            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true } as FormField,
+            { name: "password", label: "Contraseña", type: "password", required: true } as FormField]: [])
+    ];
 
     return (
         <DynamicModalForm

@@ -4,6 +4,7 @@ import { HiOutlineCalendar, HiOutlineClipboardList, HiOutlineDocumentText, HiOut
 import { useNavigate } from "react-router-dom";
 import type { ClassDetailsData } from "../../types";
 import type {TabTypes} from "../../../types/types.ts";
+import {reverseName} from "../../../../../types";
 
 interface ClassLayout {
     children: React.ReactNode;
@@ -27,7 +28,16 @@ export function ClassLayout({ children, data, activeTab, onTabChange }: ClassLay
                                 <span className="text-gray-400 font-normal ml-2">| {data.details.course_name}</span>
                             </h1>
                             <p className="text-gray-500 mt-1 text-xs md:text-sm">
-                                Profesor: <span className="font-medium text-gray-700">{data.details.teacher_name}</span>
+                                Profesor: <span className="font-medium text-gray-700">
+                                {
+                                    reverseName({
+                                        middleName: data.details.teacher_middle_name,
+                                        secondLastName: data.details.teacher_second_last_name,
+                                        firstName: data.details.teacher_first_name,
+                                        firstLastName: data.details.teacher_first_last_name
+                                    })
+                                }
+                            </span>
                             </p>
                         </div>
                     </div>

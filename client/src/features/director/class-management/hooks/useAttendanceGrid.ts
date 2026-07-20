@@ -9,6 +9,16 @@ interface AttendanceGridProps {
     endDate: string
 }
 
+export interface CourseAttendance {
+    student_id: string;
+    student_first_name: string;
+    student_middle_name: string | null;
+    student_first_last_name: string;
+    student_second_last_name: string | null;
+    date: string;
+    status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
+}
+
 export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: AttendanceGridProps) => {
     const [loading, setLoading] = useState(false);
     const [attendance, setAttendance] = useState<any[]>([]);
@@ -38,13 +48,16 @@ export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: Att
                 const datesSet = new Set<string>();
                 const studentMap = new Map();
 
-                data.forEach((row: any) => {
+                data.forEach((row: CourseAttendance) => {
                     datesSet.add(row.date);
 
                     if (!studentMap.has(row.student_id)) {
                         studentMap.set(row.student_id, {
                             student_id: row.student_id,
-                            name: row.name,
+                            firstName: row.student_first_name,
+                            middleName: row.student_middle_name,
+                            firstLastName: row.student_first_last_name,
+                            secondLastName: row.student_second_last_name,
                             records: []
                         });
                     }

@@ -71,7 +71,12 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                                 <tr key={student.student_id} className="hover:bg-gray-50/50 transition-colors">
                                     <td className="sticky left-0 bg-white p-4 border-r border-gray-100 z-10">
                                         <div className="truncate max-w-[200px] capitalize font-medium text-custom-black text-sm" title={reverseName(student.name)}>
-                                            {reverseName(student.name)}
+                                            {reverseName({
+                                                middleName: student.middleName,
+                                                secondLastName: student.secondLastName,
+                                                firstName: student.firstName,
+                                                firstLastName: student.firstLastName
+                                            })}
                                         </div>
                                     </td>
 

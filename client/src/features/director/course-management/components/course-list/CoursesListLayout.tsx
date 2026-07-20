@@ -22,8 +22,6 @@ export function CoursesListLayout() {
     const { loading, courses, fetchCourses } = useCourseData();
     const { loadingDelete, deleteCourseById } = useDeleteCourse(fetchCourses);
 
-    console.log(courses)
-
     const handleEdit = useCallback((course: any) => {
         setCourseToEdit(course);
         setTeacherToEdit(course.director_id);
