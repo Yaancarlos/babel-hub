@@ -3,18 +3,19 @@ import React, { useState } from "react";
 import { useAvailableTeachers } from "../../hooks/course-list/useAvailableTeachers.ts";
 import { useUpsertCourse } from "../../hooks/course-list/useUpsertCourse.ts";
 import type { modeTypes } from "../../../types/types.ts";
+import type { CoursesListData } from "../../types";
 
 interface CourseListFormModalProps {
     mode: modeTypes
     teacherId: string | null;
-    course: any;
+    course: CoursesListData;
     onClose: () => void;
     onSuccess: () => void;
 }
 
-const formRegExp = [
-    { label: "name", regExp: /^(?:\d{1,4}|\d{1,3}[A-Z])$/i },
-];
+const FORM_REGEX = {
+    name: /^(?:\d{1,4}|\d{1,3}[A-Z])$/i,
+};
 
 export function CourseListFormModal({ mode, teacherId, course, onClose, onSuccess }: CourseListFormModalProps) {
     const [formData, setFormData] = useState({
@@ -41,9 +42,7 @@ export function CourseListFormModal({ mode, teacherId, course, onClose, onSucces
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const nameRegExp = formRegExp.find(r => r.label === "name")?.regExp;
-
-        if (nameRegExp && !nameRegExp.test(formData.name)) {
+        if (FORM_REGEX.name.test(formData.name)) {
             setError("El nombre del curso debe ser alfanumerico. Ej 10A, 305, 407, 11B etc.");
             return;
         }

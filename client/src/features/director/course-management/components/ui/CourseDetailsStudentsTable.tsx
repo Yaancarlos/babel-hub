@@ -1,6 +1,6 @@
-import {getInitials, getStatusDotColor, reverseName} from "../../../../../types";
-import type {Student} from "../../types";
-import {NoResults} from "../../../../../components/ui/blocks/NoResults.tsx";
+import { getStatusDotColor, reverseName } from "../../../../../types";
+import type { Student } from "../../types";
+import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
 
 interface StudentsTableProps {
     students: Student[];
@@ -29,11 +29,16 @@ export function CourseDetailsStudentsTable({ students, attendance }: StudentsTab
                                     <td className="py-3 px-6">
                                         <div className="flex items-center text-left gap-3">
                                             <div className="w-9 h-9 rounded-full bg-primary-shadow text-primary-darker flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
-                                                {getInitials(student.full_name)}
+                                                {`${student.first_name}${student.first_last_name}`}
                                             </div>
                                             <div className="max-w-48 py-0.5">
                                                     <span className="block font-medium capitalize truncate text-custom-black text-sm md:text-base leading-normal">
-                                                        {reverseName(student.full_name)}
+                                                        {reverseName({
+                                                            middleName: student.middle_name,
+                                                            secondLastName: student.second_last_name,
+                                                            firstName: student.first_name,
+                                                            firstLastName: student.first_last_name
+                                                        })}
                                                     </span>
                                                 <span className="text-xs text-gray-400 block truncate">{student.email}</span>
                                             </div>

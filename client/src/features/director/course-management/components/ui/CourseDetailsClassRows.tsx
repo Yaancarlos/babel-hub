@@ -1,6 +1,7 @@
 import {memo} from "react";
 import {HiDotsVertical} from "react-icons/hi";
 import type { ClassItem } from "../../types";
+import {reverseName} from "../../../../../types";
 
 interface ClassRowProps {
     cls: ClassItem;
@@ -33,7 +34,16 @@ export const CourseDetailsClassRows = memo(function ClassRowItem({
             >
                 <div className="text-left">
                     <p className="font-medium text-custom-black">{cls.subject_name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Prof: {cls.teacher_name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                        Prof: {
+                            reverseName({
+                                middleName: cls.middle_name,
+                                secondLastName: cls.second_last_name,
+                                firstName: cls.first_name,
+                                firstLastName: cls.first_last_name
+                            })
+                        }
+                    </p>
                 </div>
             </button>
             <button

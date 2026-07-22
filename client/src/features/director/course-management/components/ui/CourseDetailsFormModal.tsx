@@ -15,6 +15,7 @@ interface CourseDetailsFormProps {
 }
 
 export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSuccess, onClose }: CourseDetailsFormProps) => {
+    const isCreateMode = mode === "create";
     const { teachers, subjects } = useModalData(id);
     const { loading, error, setError, upsertClass } = useUpsertClass(onSuccess);
 
@@ -24,21 +25,18 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
         teacherId: ""
     });
 
-    //@ts-ignore
     const assignClassFields: FormField[] = [
-        {
-            name: "courseId",
-            label: "Curso",
-            type: "text",
-            disabled: true,
-        },
-        {
-            name: "subjectId",
-            label: "Materia",
-            type: "select",
-            required: true,
-            options: subjects.map((s: any) => ({ value: s.id, label: s.name }))
-        },
+        ...(isCreateMode
+            ? [
+                { name: "courseId", label: "Curso", type: "text", disabled: true },
+                {
+                    name: "subjectId",
+                    label: "Materia",
+                    type: "select",
+                    required: true,
+                    options: subjects.map((s: any) => ({ value: s.id, label: s.name }))
+                }
+            ] as FormField[] : []),
         {
             name: "teacherId",
             label: "Profesor",
@@ -46,12 +44,12 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
             required: true,
             options: teachers.map((t: any) => ({ value: t.id, label: t.full_name }))
         }
-    ].filter(field => mode === "create" || (field.name !== 'courseId' && field.name !== 'subjectId'));
+    ];
 
     const handleUpsertClass = async (e: React.FormEvent) => {
         e.preventDefault();
         const payload = { newTeacher: formData.teacherId }
-        await upsertClass(mode, classToEdit?.class_id, mode === 'create' ? formData : payload);
+        await upsertClass(mode, classToEdit?.class_id, isCreateMode ? formData : payload);
     }
 
     const handleFormChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -63,7 +61,7 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
     return (
         <DynamicModalForm
             isOpen={true}
-            title={mode === 'create' ? "Crear Nueva Clase" : "Editar Profesor de Clase"}
+            title={isCreateMode ? "Crear Nueva Clase" : "Editar Profesor de Clase"}
             fields={assignClassFields}
             formData={{...formData, courseId: courseName || formData.courseId }}
             formError={error}

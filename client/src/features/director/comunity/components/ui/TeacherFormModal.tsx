@@ -77,7 +77,6 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
         await teacherSubmit(mode, initialData?.id, payload);
     }
 
-    //@ts-ignore
     const teacherFields: FormField[] = [
         { name: "firstName", label: "Primer Nombre", type: "text", placeholder: "Cristian", required: true },
         { name: "middleName", label: "Segundo Nombre", type: "text", placeholder: "Antonio", required: false },

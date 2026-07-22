@@ -5,10 +5,11 @@ import { getAttendance, getCourse } from "../../api";
 
 export interface CourseDataProps {
     course: {
+        is_active: boolean;
         id: string;
         name: string;
+        year: string;
         created_at: string;
-        year: string | number;
     };
     students: Student[];
     classes: ClassItem[];

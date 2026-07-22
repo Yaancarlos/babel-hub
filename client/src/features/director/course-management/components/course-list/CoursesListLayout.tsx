@@ -8,7 +8,8 @@ import { LoadingPage } from "../../../../../components/ui/Loadings.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { CourseListFormModal } from "../ui/CourseListFormModal.tsx";
 import type { ModalModeTypes } from "../../../../../types";
-import {NoOutletInfo} from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
+import { NoOutletInfo } from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
+import type { CoursesListData } from "../../types";
 
 export function CoursesListLayout() {
     const navigate = useNavigate();
@@ -22,16 +23,15 @@ export function CoursesListLayout() {
     const { loading, courses, fetchCourses } = useCourseData();
     const { loadingDelete, deleteCourseById } = useDeleteCourse(fetchCourses);
 
-    const handleEdit = useCallback((course: any) => {
+    const handleEdit = useCallback((course: CoursesListData) => {
         setCourseToEdit(course);
         setTeacherToEdit(course.director_id);
         setModalMode('edit');
     }, []);
 
-    const handleDelete = useCallback((courseId: string) => {
-        const course = courses.find((s: any) => s.id === courseId);
-        setCourseToDelete(course || null);
-    }, [courses]);
+    const handleDelete = useCallback((course: CoursesListData) => {
+        setCourseToDelete(course);
+    }, []);
 
     const handleNavigate = useCallback((id: string) => {
         navigate(`${id}`);

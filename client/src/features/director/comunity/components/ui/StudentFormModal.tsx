@@ -100,7 +100,6 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         await submitStudent(mode, initialData?.student_id || null, payload);
     };
 
-    // @ts-ignore
     const studentFields: FormField[] = [
         { name: "enrollmentCode", label: "Código del estudiante", type: "text", placeholder: "STU-101", required: true },
         { name: "firstName", label: "Primer Nombre", type: "text", placeholder: "Cristian", required: true },
