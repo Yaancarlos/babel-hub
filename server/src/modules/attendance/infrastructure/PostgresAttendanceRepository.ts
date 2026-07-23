@@ -169,7 +169,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
         try {
             const result = await client.query(`
                 SELECT 
-                    d.calendar_date::date AS DATE,
+                    d.calendar_date::date AS date,
                     CASE 
                         WHEN COUNT(a.id) = 0 THEN 'no_data'
                         WHEN bool_or(a.status = 'absent') THEN 'absent'

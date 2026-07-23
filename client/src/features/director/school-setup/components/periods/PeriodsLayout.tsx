@@ -1,6 +1,6 @@
 import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import { usePeriods } from "../../../../../shared/hooks/usePeriods.ts";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { ModalModeTypes } from "../../../../../types";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import type { PeriodProps } from "../../types";
@@ -17,16 +17,16 @@ export function PeriodsLayout() {
 
     const handleCreatePeriod = () => {
         setModalMode('create');
-    }
+    };
 
-    const handleEditPeriod = useCallback((period: any) => {
+    const handleEditPeriod = (period: any) => {
         setPeriodToEdit(period);
         setModalMode('edit');
-    }, [])
+    };
 
-    const handleDeletePeriod = useCallback((period: any) => {
+    const handleDeletePeriod = (period: any) => {
         setPeriodToDelete(period);
-    }, [])
+    };
 
     return (
         <div className="w-full">
@@ -37,7 +37,12 @@ export function PeriodsLayout() {
                         className="w-full text-left py-2 px-3 rounded-lg text-sm font-medium text-custom-black hover:bg-gray-50 transition-colors"
                     >
                         <div className="flex items-center justify-between">
-                            <p className="capitalize text-xs md:text-sm">{period.name} <span className="text-gray-500 text-xs font-normal ml-2">({period.start_date.split('T')[0]} - {period.end_date.split('T')[0]})</span></p>
+                            <p className="capitalize text-xs md:text-sm">
+                                {period.name}{" "}
+                                <span className="text-gray-500 text-xs font-normal ml-2">
+                                    ({period.start_date.split('T')[0]} - {period.end_date.split('T')[0]})
+                                </span>
+                            </p>
                             <div className="flex gap-2">
                                 <EditButton onClick={() => handleEditPeriod(period)} />
                                 <DeleteButton onClick={() => handleDeletePeriod(period)} />
@@ -85,5 +90,5 @@ export function PeriodsLayout() {
                 />
             )}
         </div>
-    )
+    );
 }

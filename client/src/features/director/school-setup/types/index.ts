@@ -15,4 +15,5 @@ export interface SubjectsProps {
     id: string;
     name: string;
     area_id: string;
+    grading_template_id: string;
 }

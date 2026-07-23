@@ -1,8 +1,9 @@
-import {DeleteButton, EditButton} from "../../../../../components/ui/buttons/Buttons.tsx";
-import {LoadingContent} from "../../../../../components/ui/Loadings.tsx";
+import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
+import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
+import type { SubjectsProps } from "../../types";
 
 interface AreaDetailsRowsProps {
-    subjects: any[];
+    subjects: SubjectsProps[];
     loading: boolean;
     onEdit: (area: any) => void;
     onDelete: (area: any) => void;

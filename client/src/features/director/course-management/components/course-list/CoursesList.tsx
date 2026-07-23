@@ -36,7 +36,7 @@ export const CoursesList = memo(function CoursesList({
                         middleName: course.director_middle_name,
                         secondLastName: course.director_second_last_name,
                         firstName: course.director_first_name,
-                        firstLastName: course.director_first_last_name,
+                        firstLastName: course.director_first_last_name
                     }) || "Sin director"} • ${course.student_count || 0} Est.`}
                     menuOptions={[
                         {

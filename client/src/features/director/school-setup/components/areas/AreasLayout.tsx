@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import { useAreas } from "../../../../../shared/hooks/useAreas.ts";
 import { useDeleteArea } from "../../hooks/areas/useDeleteArea.ts";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { AreaProps } from "../../types";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import type { ModalModeTypes } from "../../../../../types";
@@ -17,26 +17,26 @@ export function AreasLayout() {
     const { areas, reloadAreas } = useAreas();
     const { loadingDelete, deleteAreaById } = useDeleteArea(reloadAreas);
 
-    const handleNavigate = useCallback((url: any) => {
+    const handleNavigate = (url: any) => {
         navigate(`areas/${url}`);
-    }, [navigate]);
+    };
 
-    const handleEdit = useCallback((area: AreaProps) => {
+    const handleEdit = (area: AreaProps) => {
         setAreaToEdit(area);
         setModalMode('edit');
-    }, []);
+    };
 
-    const handleDelete = useCallback((area: AreaProps) => {
+    const handleDelete = (area: AreaProps) => {
         setAreaToDelete(area);
-    }, []);
+    };
 
     const handleCreate = () => {
         setAreaToEdit(undefined);
         setModalMode("create");
-    }
+    };
 
     return (
-        <div className="f-full">
+        <div className="w-full">
             <ul className="flex flex-col gap-1">
                 {areas.map(area => (
                     <li
@@ -97,5 +97,5 @@ export function AreasLayout() {
                 />
             )}
         </div>
-    )
+    );
 }

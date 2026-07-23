@@ -1,13 +1,6 @@
-import { memo, useCallback, useEffect, useState } from "react";
-import api from "../../../../../api/client.ts";
 import { getStatusDotColor } from "../../../../../types";
-import axios from "axios";
 import type { Period } from "../../types";
-
-interface AttendanceByCalendar {
-    date: string;
-    daily_status: string;
-}
+import { useAttendanceStudentCalendar } from "../../hooks/useAttendanceStudentCalendar.ts";
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -18,35 +11,12 @@ const formatDate = (dateString: string) => {
     };
 };
 
-const StudentCalendarCardComponent = ({ studentId, period }: { studentId: string, period: Period }) => {
-    const [calendarData, setCalendarData] = useState<AttendanceByCalendar[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    const fetchCalendar = useCallback(async (signal?: AbortSignal) => {
-        setLoading(true);
-        try {
-            const response = await api.get(`/attendance/summary/calendar?startDate=${period.start_date}&endDate=${period.end_date}&studentId=${studentId}`, { signal });
-
-            setCalendarData(response.data.attendanceByCalendar || response.data);
-            setLoading(false);
-        } catch (error: any) {
-            if (axios.isCancel(error) || (error as Error).name === 'AbortError') return;
-
-            console.error(error);
-            setError(error.response?.data?.message || error.message || "Error al cargar...");
-
-            setLoading(false);
-        }
-    }, [studentId, period]);
-
-    useEffect(() => {
-        const controller = new AbortController()
-
-        fetchCalendar(controller.signal);
-
-        return () => controller.abort();
-    }, [fetchCalendar]);
+export default function StudentCalendarCardComponent ({ studentId, period }: { studentId: string, period: Period }){
+    const { attendance, loading, error } = useAttendanceStudentCalendar({
+        endDate: period.end_date,
+        startDate: period.start_date,
+        studentId: studentId
+    })
 
     if (loading) return <div className="p-4 text-center text-sm text-gray-500">Cargando...</div>;
     if (error) return <div className="p-4 text-center text-sm text-red-500">{error}</div>;
@@ -54,7 +24,7 @@ const StudentCalendarCardComponent = ({ studentId, period }: { studentId: string
     return (
         <div className="py-2 px-3 bg-white rounded-xl no-scrollbar mr-3 overflow-x-auto">
             <div className="flex gap-1.5">
-                {[...calendarData].reverse().map(day => {
+                {[...attendance].reverse().map(day => {
                     const statusColor = getStatusDotColor(day.daily_status);
                     const { dayNum, month, weekday } = formatDate(day.date);
 
@@ -77,7 +47,3 @@ const StudentCalendarCardComponent = ({ studentId, period }: { studentId: string
         </div>
     );
 };
-
-const StudentCalendarCard = memo(StudentCalendarCardComponent);
-
-export default StudentCalendarCard;
