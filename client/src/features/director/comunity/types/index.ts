@@ -62,8 +62,8 @@ export interface CreateTeacher {
     middleName: string;
     firstLastName: string;
     secondLastName: string;
-    email: string;
-    password: string;
+    password?: string;
+    email?: string;
 }
 
 export interface UpdateTeacher {

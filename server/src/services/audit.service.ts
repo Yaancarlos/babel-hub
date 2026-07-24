@@ -12,7 +12,7 @@ export async function createAuditLog(
     data: AuditLogInputs) {
     await client.query(
         `
-        INSERT INTO audit_logs (
+        INSERT INTO audit_log (
           actor_profile_id,
           actor_role,
           action,

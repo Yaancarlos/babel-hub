@@ -25,7 +25,8 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
         firstLastName: initialData?.teacher_first_last_name || "",
         secondLastName: initialData?.teacher_second_last_name || "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: ""
     });
 
     const { loading, error, setError, teacherSubmit } = useTeacherSubmit(onSuccess);
@@ -60,6 +61,11 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
                 setError("La contraseña debe tener mínimo 8 caracteres, e incluir al menos una letra, un número y un carácter especial.");
                 return;
             }
+
+            if (formData.password !== formData.confirmPassword) {
+                setError("Las contraseñas no coinciden.");
+                return;
+            }
         }
 
 
@@ -83,8 +89,10 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
         { name: "firstLastName", label: "Primer Apellido", type: "text", placeholder: "Garcia", required: true },
         { name: "secondLastName", label: "Segundo Apellido", type: "text", placeholder: "Perez", required: false },
         ...(isCreateMode ? [
-            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true } as FormField,
-            { name: "password", label: "Contraseña", type: "password", required: true } as FormField] : [])
+            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true },
+            { name: "password", label: "Contraseña", type: "password", required: true },
+            { name: "confirmPassword", label: "Confirmar Contraseña", type: "password", required: true }
+        ] as FormField[] : [])
     ];
 
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -96,6 +104,7 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
     return (
         <DynamicModalForm
             isOpen={true}
+            profileCreated={true}
             title={isCreateMode ? "Crear Nuevo Profesor" : "Editar Profesor"}
             fields={teacherFields}
             formData={formData}

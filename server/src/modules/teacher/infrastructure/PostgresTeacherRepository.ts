@@ -49,6 +49,7 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                     p.first_last_name,
                     p.second_last_name,
                     p.is_active,
+                    p.email,
                     p.created_at
                 ORDER BY p.first_last_name ASC;
             `;
@@ -144,7 +145,7 @@ export class PostgresTeacherRepository implements ITeacherRepository {
             const teacherId = teacher.rows[0].id;
 
             await createAuditLog(client, {
-                targetUserId: teacherId,
+                targetUserId: profileId,
                 actorUserId: userId,
                 actorRole: userRole,
                 action: "CREATE_TEACHER",

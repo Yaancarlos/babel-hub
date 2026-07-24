@@ -4,17 +4,14 @@ import { type JSX } from "react";
 
 interface CancelButtonProps {
     title: string;
-    full?: boolean;
     onClick?: () => void;
 }
 
-export const CancelButton = ({ title, onClick, full }: CancelButtonProps) => {
+export const CancelButton = ({ title, onClick }: CancelButtonProps) => {
     return (
         <button
             onClick={onClick}
-            className={`bg-red-shadow text-sm md:text-base hover:bg-red-error text-red-error hover:text-white px-5 py-2 rounded-xl font-semibold transition-colors shadow-sm cursor-pointer
-                        ${full ? "w-full" : "w-full md:w-auto"}
-            `}
+            className='bg-gray-100 text-sm md:text-base hover:bg-gray-200 text-custom-black border border-gray-300 px-5 py-2 rounded-lg transition-colors cursor-pointer w-full'
         >
             {title}
         </button>
@@ -38,7 +35,7 @@ export const PrimaryButton = ({ title, onClick, full, type, disabled, form, clas
             type={type}
             disabled={disabled}
             onClick={onClick}
-            className={`bg-primary-shadow text-sm xl:text-base hover:bg-primary text-primary-darker hover:text-white md:px-3 lg:px-5 py-2 rounded-xl font-semibold transition-colors ${className || ''} shadow-sm cursor-pointer
+            className={`bg-primary-shadow text-sm xl:text-base hover:bg-primary text-primary-darker hover:text-white md:px-3 lg:px-5 py-2 rounded-lg font-semibold transition-colors ${className || ''} shadow-sm cursor-pointer
                         ${full ? "w-full" : "w-full md:w-auto"}
             `}
         >

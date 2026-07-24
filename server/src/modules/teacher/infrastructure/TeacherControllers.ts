@@ -35,13 +35,13 @@ export class TeacherControllers {
 
     createTeacher = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { email, password, firstName, middleName, lastName, secondLastName } = request.body;
+            const { email, password, firstName, middleName, firstLastName, secondLastName } = request.body;
 
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
 
-            const record = await this.teacherServices.createTeacher(firstName, middleName, lastName, secondLastName, password, email, userId, userRole, userSchoolId);
+            const record = await this.teacherServices.createTeacher(firstName, middleName, firstLastName, secondLastName, password, email, userId, userRole, userSchoolId);
             response.status(201).json({ teacher: record });
         } catch (error : any) {
             next(error);

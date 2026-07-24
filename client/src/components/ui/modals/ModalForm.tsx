@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { CancelButton, PrimaryButton } from "../buttons/Buttons.tsx";
+import React, { useState, useEffect } from "react";
+import { CancelButton } from "../buttons/Buttons.tsx";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
+import toast from "react-hot-toast";
 
 
 export interface FormField {
@@ -15,6 +16,7 @@ export interface FormField {
 
 interface DynamicModalFormProps {
     isOpen: boolean;
+    profileCreated?: Boolean;
     title: string;
     fields: FormField[];
     formData: any;
@@ -27,6 +29,7 @@ interface DynamicModalFormProps {
 
 export default function DynamicModalForm({
                                              isOpen,
+                                             profileCreated,
                                              title,
                                              fields,
                                              formData,
@@ -37,34 +40,43 @@ export default function DynamicModalForm({
                                              onSubmit
                                          }: DynamicModalFormProps) {
     if (!isOpen) return null;
+    const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
+    const [policyAccepted, setPolicyAccepted] = useState(false);
 
-    const [passwordEye, setPasswordEye] = useState<boolean>(false);
+    useEffect(() => {
+        if (formError) toast.error(formError);
+    }, [formError])
+
+    const togglePassword = (fieldName: string) => {
+        setPasswordVisibility((prev) => ({
+            ...prev,
+            [fieldName]: !prev[fieldName]
+        }));
+    };
+
+    const isSubmitDisabled = formLoading || (profileCreated && !policyAccepted);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="flex justify-between items-center p-5 border-b border-gray-100">
+                <div className="flex justify-between items-center p-3 border-b border-gray-100">
                     <h3 className="text-xl font-bold text-custom-black">{title}</h3>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer"
+                        className="text-gray-400 hover:bg-gray-100 border border-transparent transition-colors hover:border-gray-300 rounded-md hover:text-gray-500 cursor-pointer p-1 flex items-center justify-center"
                     >
-                        &times;
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
                 <div className="p-5 overflow-y-auto">
-                    {formError && (
-                        <div className="mb-4 bg-red-100 text-red-600 p-3 rounded-lg text-sm">
-                            {formError}
-                        </div>
-                    )}
-
                     <form id="dynamic-form" onSubmit={onSubmit} className="flex flex-col gap-4">
                         {fields.map((field) => (
                             <div key={field.name} className="flex flex-col gap-1.5">
                                 <label htmlFor={`${field.name}_`} className="text-sm font-semibold text-gray-700">
-                                    {field.label}
+                                    {field.label} {field.required && <span className="text-red-500">*</span>}
                                 </label>
 
                                 {field.type === "select" ? (
@@ -84,19 +96,19 @@ export default function DynamicModalForm({
                                         ))}
                                     </select>
                                 ) : field.type === "date" ? (
-                                        <input
-                                            id={`${field.name}_`}
-                                            type="date"
-                                            name={field.name}
-                                            value={formData[field.name] || ""}
-                                            onChange={onChange}
-                                            className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
-                                        />
+                                    <input
+                                        id={`${field.name}_`}
+                                        type="date"
+                                        name={field.name}
+                                        value={formData[field.name] || ""}
+                                        onChange={onChange}
+                                        className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
+                                    />
                                 ) : field.type === "password" ? (
                                     <div className="w-full relative">
                                         <input
                                             id={`${field.name}_`}
-                                            type={passwordEye ? "text" : field.type}
+                                            type={passwordVisibility[field.name] ? "text" : "password"}
                                             name={field.name}
                                             required={field.required}
                                             placeholder={field.placeholder}
@@ -108,10 +120,10 @@ export default function DynamicModalForm({
                                         <div className="absolute right-4 top-3.5">
                                             <button
                                                 type="button"
-                                                className="text-xl"
-                                                onClick={() => setPasswordEye(!passwordEye)}
+                                                className="text-xl text-gray-500 hover:text-gray-700 cursor-pointer"
+                                                onClick={() => togglePassword(field.name)}
                                             >
-                                                {passwordEye ? <LuEye /> : <LuEyeClosed />}
+                                                {passwordVisibility[field.name] ? <LuEye /> : <LuEyeClosed />}
                                             </button>
                                         </div>
                                     </div>
@@ -131,12 +143,49 @@ export default function DynamicModalForm({
                                 }
                             </div>
                         ))}
+
+                        {profileCreated && (
+                            <label
+                                htmlFor="policy"
+                                className="checkbox-wrapper-13 flex items-start gap-3 mt-2 cursor-pointer group"
+                            >
+                                <input
+                                    type="checkbox"
+                                    id="policy"
+                                    name="policy"
+                                    required
+                                    checked={policyAccepted}
+                                    onChange={(e) => setPolicyAccepted(e.target.checked)}
+                                />
+                                <span className="text-sm text-gray-600 leading-snug select-none">
+                                    Al hacer clic en guardar aceptas los{' '}
+                                    <a href="#" className="text-primary font-semibold hover:underline">
+                                        Términos y Condiciones
+                                    </a>{' '}
+                                    de Babel.
+                                </span>
+                            </label>
+                        )}
                     </form>
                 </div>
 
-                <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                <div className="p-3 flex justify-end gap-3">
                     <CancelButton title="Cancelar" onClick={onClose} />
-                    <PrimaryButton type="submit" form="dynamic-form" title={formLoading ? "Guardando..." : "Guardar"} />
+                    <button
+                        type="submit"
+                        form="dynamic-form"
+                        disabled={isSubmitDisabled}
+                        className={`bg-primary text-sm md:text-base text-white border border-primary px-5 py-2 rounded-lg transition-colors cursor-pointer w-full
+                                    ${isSubmitDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                        {formLoading ? "Guardando..." : "Guardar"}
+                    </button>
+                    {/*<PrimaryButton
+                        type="submit"
+                        form="dynamic-form"
+                        title={formLoading ? "Guardando..." : "Guardar"}
+                        disabled={isSubmitDisabled}
+                    />*/}
                 </div>
             </div>
         </div>
