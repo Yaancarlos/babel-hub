@@ -3,8 +3,8 @@ import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevro
 import { HiOutlineCalendar, HiOutlineClipboardList, HiOutlineDocumentText, HiOutlineUsers } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import type { ClassDetailsData } from "../../types";
-import type {TabTypes} from "../../../types/types.ts";
-import {reverseName} from "../../../../../types";
+import type { TabTypes } from "../../../../types/types.ts";
+import { reverseName } from "../../../../../types";
 
 interface ClassLayout {
     children: React.ReactNode;

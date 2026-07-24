@@ -1,7 +1,8 @@
-import {useState, useEffect, useCallback} from "react";
-import {getDailyAttendance, saveBulkAttendance} from "../api";
+import { useState, useEffect, useCallback } from "react";
+import { getDailyAttendance, saveBulkAttendance } from "../api";
 import toast from "react-hot-toast";
 import type { Student } from "../types";
+import type { AttendanceStatus } from "../../../types/types.ts";
 
 interface TakeAttendanceProps {
     classId: string;
@@ -43,7 +44,7 @@ export const useTakeAttendance = ({ classId, date, students }: TakeAttendancePro
         loadDate()
     }, [classId, attendanceDate]);
 
-    const updateRecords = useCallback((studentId: string, status: 'present' | 'absent' | 'late') => {
+    const updateRecords = useCallback((studentId: string, status: AttendanceStatus) => {
         setRecords(prev => ({...prev, [studentId]: status }));
     }, []);
 

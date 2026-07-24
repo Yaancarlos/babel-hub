@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 import { createSubject, updateSubject } from "../../api";
 import toast from "react-hot-toast";
 

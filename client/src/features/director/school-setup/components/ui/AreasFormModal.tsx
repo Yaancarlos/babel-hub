@@ -2,7 +2,7 @@ import DynamicModalForm, { type FormField } from "../../../../../components/ui/m
 import React, { useState } from "react";
 import type { AreaProps } from "../../types";
 import { useUpsertArea } from "../../hooks/areas/useUpsertArea.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 interface AreasFormModalProps {
     mode: modeTypes;

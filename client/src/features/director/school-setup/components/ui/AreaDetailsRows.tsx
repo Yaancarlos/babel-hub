@@ -20,7 +20,10 @@ export function AreaDetailsRows ({ subjects, onEdit, loading, onDelete }: AreaDe
                 <ul className="divide-y divide-gray-100">
                     {subjects.map((subject) => (
                         <li key={subject.id} className="py-4 flex justify-between items-center hover:bg-gray-50 px-4 rounded-lg transition-colors">
-                            <span className="font-medium text-custom-black">{subject.name}</span>
+                            <div>
+                                <p className="font-medium text-base text-custom-black">{subject.name}</p>
+                                <span className="font-base text-xs uppercase text-gray-300">{subject.grading_template_id}</span>
+                            </div>
 
                             <div className="space-x-4">
                                 <EditButton onClick={() => onEdit(subject)} />

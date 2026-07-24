@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { reverseName } from "../../../../../types";
 import type { Student } from "../../types";
+import type { AttendanceStatus } from "../../../../types/types";
 
 export const StudentAttendanceRow = memo(function StudentAttendanceRow({
                                                                     student,
@@ -9,7 +10,7 @@ export const StudentAttendanceRow = memo(function StudentAttendanceRow({
                                                                 }:{
     student: Student;
     status: string;
-    onUpdate: (id: string, status: 'present' | 'absent' | 'late') => void
+    onUpdate: (id: string, status: AttendanceStatus) => void
 }) {
     return (
         <li key={student.student_id} className="p-4 flex flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">

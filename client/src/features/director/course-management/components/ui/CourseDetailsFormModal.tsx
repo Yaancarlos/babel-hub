@@ -3,7 +3,7 @@ import type { ClassItem } from "../../types";
 import React, { useState } from "react";
 import { useUpsertClass } from "../../hooks/course-details/useUpsertClass.ts";
 import { useModalData } from "../../hooks/course-details/useModalData.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 interface CourseDetailsFormProps {
     id: string;

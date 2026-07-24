@@ -5,13 +5,12 @@ import {
     Students,
     ViewAttendance
 } from "../../../features/teacher/class-management";
-import {useClassData} from "../../../features/teacher/class-management/class-details/hooks/useClassData.ts";
-import {useParams} from "react-router-dom";
-import {useState} from "react";
-import {LoadingContent} from "../../../components/ui/Loadings.tsx";
-import {formatterDate} from "../../../types";
-
-type TabTypes = 'students' | 'register attendance' | 'see attendance' | 'assignments';
+import { useClassData } from "../../../features/teacher/class-management/class-details/hooks/useClassData.ts";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { LoadingContent } from "../../../components/ui/Loadings.tsx";
+import { formatterDate } from "../../../types";
+import type { TabTypes } from "../../../features/types/types.ts";
 
 export default function ClassDetails() {
     const { id: classId } = useParams();

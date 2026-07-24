@@ -1,5 +1,5 @@
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 import React, {  useState  } from "react";
 import { useUpsertSubject } from "../../hooks/areas/useUpsertSubject.ts";
 import type { SubjectsProps } from "../../types";

@@ -2,7 +2,7 @@ import DynamicModalForm, { type FormField } from "../../../../../components/ui/m
 import React, { useState } from "react";
 import { useAvailableTeachers } from "../../hooks/course-list/useAvailableTeachers.ts";
 import { useUpsertCourse } from "../../hooks/course-list/useUpsertCourse.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 import type { CoursesListData } from "../../types";
 
 interface CourseListFormModalProps {

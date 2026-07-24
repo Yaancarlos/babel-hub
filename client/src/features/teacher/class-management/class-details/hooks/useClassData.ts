@@ -8,15 +8,18 @@ export const useClassData = (classId: string) => {
     const [classData, setClassData] = useState<ClassDetailsData>();
 
     useEffect(() => {
+        if (!classId) return;
+
         const controller = new AbortController();
 
         const loadClassData = async () => {
-            if (!classId) return;
-
             setLoading(true);
             try {
                 const teacherClass: ClassDetailsData = await getTeacherClass(classId, controller);
-                setClassData(teacherClass);
+
+                if (!controller.signal.aborted) {
+                    setClassData(teacherClass);
+                }
             } catch (error : any) {
                 if (axios.isCancel(error) || error.name === 'AbortError') return;
                 console.error("Error loading class and attendance:", error);

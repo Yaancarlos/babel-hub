@@ -7,7 +7,7 @@ export interface TeacherCourse {
 export interface TeacherClass {
     class_id: string;
     subject_name: string;
-    course_name: string;
     course_id: string;
+    course_name: string;
     total_students: number;
 }

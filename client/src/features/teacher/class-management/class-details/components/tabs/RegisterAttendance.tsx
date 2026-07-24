@@ -1,9 +1,9 @@
 import { LoadingContent } from "../../../../../../components/ui/Loadings.tsx";
-import {useTakeAttendance} from "../../hooks/useTakeAttendance.ts";
-import type {ClassDetailsData} from "../../types";
-import {StudentAttendanceRow} from "../ui/StudentAttendanceRow.tsx";
-import {PrimaryButton} from "../../../../../../components/ui/buttons/Buttons.tsx";
-import {NoResults} from "../../../../../../components/ui/blocks/NoResults.tsx";
+import { useTakeAttendance } from "../../hooks/useTakeAttendance.ts";
+import type { ClassDetailsData } from "../../types";
+import { StudentAttendanceRow } from "../ui/StudentAttendanceRow.tsx";
+import { PrimaryButton } from "../../../../../../components/ui/buttons/Buttons.tsx";
+import { NoResults } from "../../../../../../components/ui/blocks/NoResults.tsx";
 
 interface RegisterAttendanceProps {
     classId: string;
@@ -23,7 +23,8 @@ export function RegisterAttendance({ classId, classData, date }: RegisterAttenda
     } = useTakeAttendance({
         classId,
         date,
-        students: classData.students });
+        students: classData.students
+    });
 
     return (
         <div className="max-w-4xl mx-auto space-y-4">

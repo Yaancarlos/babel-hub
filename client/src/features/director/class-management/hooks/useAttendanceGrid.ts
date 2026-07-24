@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {getAttendanceClass} from "../api";
 import toast from "react-hot-toast";
+import type { AttendanceStatus } from "../../../types/types";
 
 interface AttendanceGridProps {
     courseId: string,
@@ -16,7 +17,7 @@ export interface CourseAttendance {
     student_first_last_name: string;
     student_second_last_name: string | null;
     date: string;
-    status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
+    status: AttendanceStatus;
 }
 
 export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: AttendanceGridProps) => {

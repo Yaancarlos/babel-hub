@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { uploadStudent, createStudent } from "../../api";
 import toast from "react-hot-toast";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 export const useStudentSubmit = (onSuccess: () => void) => {
     const [loading, setLoading] = useState<boolean>(false);

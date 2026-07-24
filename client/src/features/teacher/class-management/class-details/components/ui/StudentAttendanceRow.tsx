@@ -1,6 +1,7 @@
 import { memo } from "react";
-import { getInitials, reverseName } from "../../../../../../types";
+import { reverseName } from "../../../../../../types";
 import type { Student } from "../../types";
+import type { AttendanceStatus } from "../../../../../types/types.ts";
 
 export const StudentAttendanceRow = memo(function StudentAttendanceRow({
                                                                     student,
@@ -9,16 +10,24 @@ export const StudentAttendanceRow = memo(function StudentAttendanceRow({
                                                                 }: {
     student: Student;
     status: string;
-    onUpdateStatus: (id: string, status: 'present' | 'absent' | 'late') => void
+    onUpdateStatus: (id: string, status: AttendanceStatus) => void
 }) {
     return (
         <li className="p-4 flex flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
             <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
-                    {getInitials(student.student_name)}
+                    {`${student.student_first_name.charAt(0)}${student.student_first_last_name.charAt(0)}`}
                 </div>
                 <span className="font-medium text-sm md:text-base capitalize text-custom-black leading-tight">
-                    {reverseName(student.student_name)}
+                    {
+                        reverseName({
+                            firstLastName: student.student_first_last_name,
+                            firstName:student.student_first_name,
+                            middleName: student.student_middle_name,
+                            secondLastName: student.student_second_last_name
+
+                        })
+                    }
                 </span>
             </div>
 

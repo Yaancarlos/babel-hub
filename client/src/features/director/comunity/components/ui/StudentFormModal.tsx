@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
 import { useStudentSubmit } from "../../hooks/students/useStudentSubmit.ts";
 import { getCourses } from "../../api";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 interface StudentFormModalProps {
     mode: modeTypes;

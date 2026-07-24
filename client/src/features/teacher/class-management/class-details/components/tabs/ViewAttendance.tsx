@@ -47,7 +47,7 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                         <table className="w-full text-left border-collapse min-w-max">
                             <thead>
                             <tr className="bg-gray-50 text-gray-600 text-[10px] uppercase tracking-wider">
-                                <th className="sticky left-0 bg-gray-50 p-4 border-b border-r border-gray-100 z-10 font-bold min-w-[200px]">
+                                <th className="sticky left-0 bg-gray-50 p-4 border-b border-r border-gray-100 z-20 font-bold min-w-[200px]">
                                     Estudiante
                                 </th>
                                 {calendarDates.map(date => {
@@ -66,42 +66,54 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                             </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                            {periodAttendance.map((student) => (
-                                <tr key={student.student_id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="sticky left-0 bg-white p-4 border-r border-gray-100 z-10">
-                                        <div className="truncate max-w-[200px] font-medium capitalize text-custom-black text-sm"
-                                             title={reverseName(student.name)}>
-                                            {reverseName(student.name)}
-                                        </div>
-                                    </td>
-                                    {student.records.map((record: any, idx: number) => {
-                                        let bg = "bg-gray-100";
-                                        if (record.status === 'present') bg = "bg-green-500 shadow-sm";
-                                        if (record.status === 'absent') bg = "bg-red-500 shadow-sm";
-                                        if (record.status === 'late') bg = "bg-yellow-300 shadow-sm";
+                            {
+                                periodAttendance.length > 0 ? (
+                                    periodAttendance.map((student) => {
+                                        const formattedName = reverseName({
+                                            firstLastName: student.firstLastName,
+                                            firstName: student.firstName,
+                                            middleName: student.middleName,
+                                            secondLastName: student.secondLastName
+                                        })
 
                                         return (
-                                            <td key={idx} className="p-2 text-center border-r border-gray-50 last:border-0">
-                                                <div className={`w-3.5 h-3.5 mx-auto rounded-full ${bg}`} title={`${record.date.split('T')[0]}: ${record.status}`}></div>
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            ))}
-                            {periodAttendance.length === 0 && (
-                                <tr>
-                                    <td colSpan={calendarDates.length > 0 ? calendarDates.length + 1 : 2} className="p-5 md:p-10 text-center text-sm md:text-base text-gray-500">
-                                        {
-                                            (selectedPeriod?.start_date && new Date() < new Date(selectedPeriod.start_date))
-                                                ? "Este periodo aún no ha comenzado."
-                                                : "No hay datos de asistencia para este periodo."
-                                        }
-                                    </td>
-                                </tr>
-                            )}
+                                            <tr key={student.student_id} className="hover:bg-gray-50/50 transition-colors">
+                                                <td className="sticky left-0 bg-white p-4 border-r border-gray-100 z-10">
+                                                    <div className="truncate max-w-[200px] font-medium capitalize text-custom-black text-sm" title={formattedName}>
+                                                        {formattedName}
+                                                    </div>
+                                                </td>
+                                                {student.records.map((record: any, idx: number) => {
+                                                    let bg = "bg-gray-100";
+                                                    if (record.status === 'present') bg = "bg-green-500 shadow-sm";
+                                                    if (record.status === 'absent') bg = "bg-red-500 shadow-sm";
+                                                    if (record.status === 'late') bg = "bg-yellow-300 shadow-sm";
+
+                                                    return (
+                                                        <td key={idx} className="p-2 text-center border-r border-gray-50 last:border-0">
+                                                            <div className={`w-3.5 h-3.5 mx-auto rounded-full ${bg}`} title={`${record.date.split('T')[0]}: ${record.status}`}></div>
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        )
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan={calendarDates.length > 0 ? calendarDates.length + 1 : 2} className="p-5 md:p-10 text-center text-sm md:text-base text-gray-500">
+                                            {
+                                                (selectedPeriod?.start_date && new Date() < new Date(selectedPeriod.start_date))
+                                                    ? "Este periodo aún no ha comenzado."
+                                                    : "No hay datos de asistencia para este periodo."
+                                            }
+                                        </td>
+                                    </tr>
+                                )
+                            }
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             )}
         </div>

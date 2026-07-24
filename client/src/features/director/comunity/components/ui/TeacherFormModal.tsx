@@ -1,7 +1,7 @@
-import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
 import React, { useState } from "react";
 import { useTeacherSubmit } from "../../hooks/teachers/useTeacherSubmit.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 interface TeacherFormModalProps {
     mode: modeTypes;
