@@ -15,9 +15,9 @@ export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate
         <tr key={teacher.id} className="hover:bg-gray-50 transition-colors">
             <td className="p-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary-darker font-bold text-sm">
+                    <p className="w-10 uppercase h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary-darker font-bold text-sm">
                         {`${teacher.teacher_first_name.charAt(0)}${teacher.teacher_first_last_name.charAt(0)}`}
-                    </div>
+                    </p>
                     <button
                         onClick={() => onNavigate(`${teacher.id}`)}
                         className="overflow-hidden text-sm xl:text-base text-left cursor-pointer"
@@ -44,7 +44,7 @@ export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate
 
             <td className="md:p-4 pr-3 text-right space-x-1 xl:space-x-3">
                 <EditButton onClick={() => onEdit(teacher)} />
-                <DeleteButton onClick={() => onDelete(teacher.id)} />
+                <DeleteButton onClick={() => onDelete(teacher)} />
             </td>
         </tr>
     );

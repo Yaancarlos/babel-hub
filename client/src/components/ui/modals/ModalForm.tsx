@@ -60,7 +60,7 @@ export default function DynamicModalForm({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="flex justify-between items-center p-3 border-b border-gray-100">
-                    <h3 className="text-xl font-bold text-custom-black">{title}</h3>
+                    <h3 className="text-xl pl-2 font-bold text-custom-black">{title}</h3>
                     <button
                         type="button"
                         onClick={onClose}
@@ -71,7 +71,7 @@ export default function DynamicModalForm({
                         </svg>
                     </button>
                 </div>
-                <div className="p-5 overflow-y-auto">
+                <div className="px-5 py-3 overflow-y-auto">
                     <form id="dynamic-form" onSubmit={onSubmit} className="flex flex-col gap-4">
                         {fields.map((field) => (
                             <div key={field.name} className="flex flex-col gap-1.5">
@@ -169,7 +169,7 @@ export default function DynamicModalForm({
                     </form>
                 </div>
 
-                <div className="p-3 flex justify-end gap-3">
+                <div className="px-5 pb-3 flex justify-end gap-3">
                     <CancelButton title="Cancelar" onClick={onClose} />
                     <button
                         type="submit"

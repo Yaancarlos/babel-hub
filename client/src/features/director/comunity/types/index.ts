@@ -53,7 +53,7 @@ export interface Teacher {
 export interface TeacherRowProps {
     teacher: Teacher;
     onEdit: (teacher: Teacher) => void;
-    onDelete: (id: string) => void;
+    onDelete: (teacher: Teacher) => void;
     onNavigate: (id: string) => void;
 }
 

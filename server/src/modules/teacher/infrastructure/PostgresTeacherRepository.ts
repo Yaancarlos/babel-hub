@@ -215,7 +215,7 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                 actorUserId: userId,
                 actorRole: userRole,
                 action: 'UPDATE_TEACHER',
-                targetUserId: teacherId,
+                targetUserId: teacherUserId,
                 schoolId: userSchoolId,
                 metadata: { teacherId: teacherId, name: [teacherFirstName, teacherMiddleName ?? "", teacherFirstLastName, teacherSecondLastName ?? ""].join(" ") }
             });
@@ -289,12 +289,13 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                 console.error(`[CRITICAL] Uncertain state deleting teacher, profile_id may still exist while Supabase user was deleted. Manual reconciliation needed.`);
             }
 
-            if (error.code === '23503') throw new ConflictError("No se puede eliminar el maestro porque tiene clases o información guardada.");
-
+            if (error.code === '23503') {
+                console.error('[DEBUG] FK violation detail:', error.detail, '| constraint:', error.constraint);
+                throw new ConflictError("No se puede eliminar el maestro porque tiene clases o información guardada.");
+            }
             throw error;
         } finally {
             client.release();
         }
     }
-
 }

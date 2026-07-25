@@ -9,12 +9,12 @@ import { useDeleteTeacher } from "../../hooks/teachers/useDeleteTeacher.ts";
 import { TeacherTable } from "./TeacherTable.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { TeacherFormModal } from "../ui/TeacherFormModal.tsx";
-import type { ModalModeTypes } from "../../../../../types";
+import {type ModalModeTypes, reverseName} from "../../../../../types";
 
 export function TeacherLayout() {
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [teacherToEdit, setTeacherToEdit] = useState<any>(null);
-    const [teacherToDelete, setTeacherToDelete] = useState<any>(null);
+    const [teacherToEdit, setTeacherToEdit] = useState<Teacher | null>(null);
+    const [teacherToDelete, setTeacherToDelete] = useState<Teacher | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
 
     const navigate = useNavigate();
@@ -33,8 +33,7 @@ export function TeacherLayout() {
         setModalMode('edit');
     }, []);
 
-    const handleDelete = useCallback((id: string) => {
-        const teacher = teachers.find((t: any) => t.id === id)
+    const handleDelete = useCallback((teacher: Teacher) => {
         setTeacherToDelete(teacher);
     }, []);
 
@@ -85,7 +84,16 @@ export function TeacherLayout() {
                 isOpen={teacherToDelete !== null}
                 onClose={() => setTeacherToDelete(null)}
                 title="¿Estás seguro?"
-                message={`¿Quieres eliminar al profesor ${teacherToDelete?.full_name}? Esta acción no se puede deshacer.`}
+                message={`¿Quieres eliminar al profesor ${
+                    teacherToDelete
+                        ? reverseName({
+                            firstLastName: teacherToDelete.teacher_first_last_name,
+                            firstName: teacherToDelete.teacher_first_name,
+                            middleName: teacherToDelete.teacher_middle_name,
+                            secondLastName: teacherToDelete.teacher_second_last_name
+                        })
+                        : "Unknow"
+                }? Esta acción no se puede deshacer.`}
                 onConfirm={async () => {
                     if (teacherToDelete) {
                         await deleteTeacherById(teacherToDelete.id);

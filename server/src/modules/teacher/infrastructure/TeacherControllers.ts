@@ -52,13 +52,13 @@ export class TeacherControllers {
         try {
             const id = request.params.id as string;
 
-            const { firstName, middleName, lastName, secondLastName } = request.body;
+            const { firstName, middleName, firstLastName, secondLastName } = request.body;
 
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
 
-            await this.teacherServices.updateTeacher(id, firstName, middleName, lastName, secondLastName, userId, userRole, userSchoolId);
+            await this.teacherServices.updateTeacher(id, firstName, middleName, firstLastName, secondLastName, userId, userRole, userSchoolId);
             response.status(204).send();
         } catch (error : any) {
             next(error);
