@@ -1,7 +1,6 @@
 import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevrowBack.tsx";
 import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import { useNavigate } from "react-router-dom";
-import { useTeacherData } from "../../hooks/teachers/useTeacherrData.ts";
 import { useCallback, useState } from "react";
 import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
 import type { Teacher } from "../../types";
@@ -10,6 +9,7 @@ import { TeacherTable } from "./TeacherTable.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { TeacherFormModal } from "../ui/TeacherFormModal.tsx";
 import {type ModalModeTypes, reverseName} from "../../../../../types";
+import {useTeachers} from "../../../../../shared/hooks/useTeachers.ts";
 
 export function TeacherLayout() {
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
@@ -19,7 +19,7 @@ export function TeacherLayout() {
 
     const navigate = useNavigate();
 
-    const { loading, teachers, reload } = useTeacherData();
+    const { loading, teachers, reload } = useTeachers();
     const { deleteTeacherById, loading: loadingDelete } = useDeleteTeacher(reload);
 
     const filteredTeachers = teachers.filter((teacher: Teacher) =>

@@ -104,7 +104,7 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
     return (
         <DynamicModalForm
             isOpen={true}
-            profileCreated={true}
+            profileCreated={isCreateMode}
             title={isCreateMode ? "Crear Nuevo Profesor" : "Editar Profesor"}
             fields={teacherFields}
             formData={formData}

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAreas } from "../api/areasApi.ts";
+import { getAreas } from "../api";
 
 export const useAreas = () => {
     const {

@@ -15,6 +15,11 @@ export interface CourseDataProps {
     classes: ClassItem[];
 }
 
+interface CourseDailyAttendance {
+    student_id: string;
+    daily_status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
+}
+
 export const useCourseData = (id: string | undefined, date: string) => {
     const [loading, setLoading] = useState(false);
     const [course, setCourse] = useState<CourseDataProps | null>(null);
@@ -36,7 +41,7 @@ export const useCourseData = (id: string | undefined, date: string) => {
                 const fetchedCourse: CourseDataProps = await getCourse(id, controller);
                 setCourse(fetchedCourse);
 
-                const fetchedAttendance = await getAttendance(id, date, controller);
+                const fetchedAttendance: CourseDailyAttendance[] = await getAttendance(id, date, controller);
 
                 const attendanceMap: Record<string, string> = {};
 

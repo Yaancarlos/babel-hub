@@ -3,8 +3,8 @@ import type { StudentProps } from "../../types";
 
 interface StudentsTableProps {
     students: StudentProps[];
-    onEdit: (payload: any) => void;
-    onDelete: (id: string) => void;
+    onEdit: (student: StudentProps) => void;
+    onDelete: (student: StudentProps) => void;
     onNavigate: (id: string) => void;
 }
 

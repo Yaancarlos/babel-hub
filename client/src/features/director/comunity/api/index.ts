@@ -1,9 +1,9 @@
 import api from "../../../../api/client.ts";
-import type { CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent } from "../types";
+import type { CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent, Courses, StudentProps } from "../types";
 
 //Students Endpoints
 
-export const getStudents = async () => {
+export const getStudents = async (): Promise<StudentProps[]> => {
     const response = await api.get("/student");
     return response.data.students;
 }
@@ -13,7 +13,7 @@ export const getStudentById = async (id: string) => {
     return response.data.record;
 }
 
-export const getCourses = async () => {
+export const getCourses = async (): Promise<Courses[]> => {
     const response = await api.get('/courses');
     return response.data.courses;
 }
@@ -31,11 +31,6 @@ export const deleteStudent = async (id: string) => {
 }
 
 //Teachers Endpoint
-
-export const getTeachers = async () => {
-    const response = await api.get("/teacher");
-    return response.data.teachers;
-}
 
 export const getTeacherById = async (id: string) => {
     const response = await api.get(`/teacher/${id}`);

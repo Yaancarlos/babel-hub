@@ -7,6 +7,7 @@ export interface Students {
     student_first_last_name: string;
     student_second_last_name: string | null;
     email: string;
+    is_active: boolean;
     enrollment_code: string | null;
     created_at: string;
 }

@@ -16,9 +16,9 @@ export function CoursesListLayout() {
     const { id: activeCourseId } = useParams<{ id: string }>();
 
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [courseToEdit, setCourseToEdit] = useState<any>(null);
-    const [teacherToEdit, setTeacherToEdit ] = useState<any>(null);
-    const [courseToDelete, setCourseToDelete] = useState<any>(null);
+    const [courseToEdit, setCourseToEdit] = useState<CoursesListData | null>(null);
+    const [teacherToEdit, setTeacherToEdit ] = useState<string | null>(null);
+    const [courseToDelete, setCourseToDelete] = useState<CoursesListData | null>(null);
 
     const { loading, courses, fetchCourses } = useCourseData();
     const { loadingDelete, deleteCourseById } = useDeleteCourse(fetchCourses);

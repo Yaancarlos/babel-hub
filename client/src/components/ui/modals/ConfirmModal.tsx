@@ -13,7 +13,7 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, message, loadi
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center bg-black/20 backdrop-blur-sm justify-center">
+        <div className="fixed inset-0 z-50 flex items-center bg-black/50 justify-center">
             <div className="bg-white shadow-xl flex flex-col justify-center items-center text-center gap-5 rounded-lg p-6 w-80 md:w-86 max-w-full mx-4">
                 <div className="p-3 rounded-full text-red-error bg-red-100 text-5xl">
                     <IoWarningOutline />

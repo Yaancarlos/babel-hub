@@ -1,9 +1,10 @@
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
-import type { ClassItem } from "../../types";
+import type {AvailableSubjects, ClassItem, Teacher} from "../../types";
 import React, { useState } from "react";
 import { useUpsertClass } from "../../hooks/course-details/useUpsertClass.ts";
 import { useModalData } from "../../hooks/course-details/useModalData.ts";
 import type { modeTypes } from "../../../../types/types.ts";
+import {reverseName} from "../../../../../types";
 
 interface CourseDetailsFormProps {
     id: string;
@@ -34,7 +35,7 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
                     label: "Materia",
                     type: "select",
                     required: true,
-                    options: subjects.map((s: any) => ({ value: s.id, label: s.name }))
+                    options: subjects.map((s: AvailableSubjects) => ({ value: s.id, label: s.name }))
                 }
             ] as FormField[] : []),
         {
@@ -42,7 +43,12 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
             label: "Profesor",
             type: "select",
             required: true,
-            options: teachers.map((t: any) => ({ value: t.id, label: t.full_name }))
+            options: teachers.map((t: Teacher) => ({ value: t.id, label: reverseName({
+                    middleName: t.teacher_middle_name,
+                    secondLastName: t.teacher_second_last_name,
+                    firstName: t.teacher_first_name,
+                    firstLastName: t.teacher_first_last_name
+                }) }))
         }
     ];
 

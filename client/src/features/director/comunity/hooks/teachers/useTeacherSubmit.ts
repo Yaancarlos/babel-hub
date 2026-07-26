@@ -12,7 +12,6 @@ export const useTeacherSubmit = (onSuccess: () => void) => {
         setLoading(true);
         try {
             if (mode === "edit" && teacherId) {
-                console.log(payload);
                 await updateTeacher(teacherId, payload);
             } else if (mode === "create") {
                 await createTeacher(payload);

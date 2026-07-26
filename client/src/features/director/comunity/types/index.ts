@@ -15,7 +15,7 @@ export interface StudentProps {
 export interface StudentRowProps {
     student: StudentProps;
     onEdit: (student: StudentProps) => void;
-    onDelete: (id: string) => void;
+    onDelete: (student: StudentProps) => void;
     onNavigate: (id: string) => void;
 }
 
@@ -82,6 +82,20 @@ export interface TeacherItem {
     email: string;
     is_active: boolean;
     created_at: string;
+}
+
+export interface Courses {
+    id: string;
+    course_name: string;
+    created_at: string;
+    year: string;
+    is_active: boolean;
+    director_id: string;
+    director_first_name: string;
+    director_middle_name: string | null;
+    director_first_last_name: string;
+    director_second_last_name: string | null;
+    student_count: number;
 }
 
 export interface ClassItem {

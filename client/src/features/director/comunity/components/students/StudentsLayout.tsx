@@ -9,7 +9,8 @@ import { StudentFormModal } from "../ui/StudentFormModal.tsx";
 import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
 import { useStudentsData } from "../../hooks/students/useStudentsData.ts";
 import { useStudentDelete } from "../../hooks/students/useStudentDelete.ts";
-import type { ModalModeTypes } from "../../../../../types";
+import {type ModalModeTypes, reverseName} from "../../../../../types";
+import type {StudentProps} from "../../types";
 
 export function StudentsLayout() {
     const navigate = useNavigate();
@@ -19,8 +20,8 @@ export function StudentsLayout() {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [studentToEdit, setStudentToEdit] = useState<any>(null);
-    const [studentToDelete, setStudentToDelete] = useState<any>(null);
+    const [studentToEdit, setStudentToEdit] = useState<StudentProps | null>(null);
+    const [studentToDelete, setStudentToDelete] = useState<StudentProps | null>(null);
 
     const filteredStudents = students.filter((student: any) =>
         student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,13 +29,12 @@ export function StudentsLayout() {
         (student.enrollment_code && student.enrollment_code.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const handleOpenEdit = useCallback((student: any) => {
+    const handleOpenEdit = useCallback((student: StudentProps) => {
         setStudentToEdit(student);
         setModalMode('edit');
     }, []);
 
-    const handleOpenDelete = useCallback((studentId: string) => {
-        const student = students.find((s: any) => s.student_id === studentId);
+    const handleOpenDelete = useCallback((student: StudentProps) => {
         setStudentToDelete(student || null);
     }, [students]);
 
@@ -84,7 +84,15 @@ export function StudentsLayout() {
                 isOpen={studentToDelete !== null}
                 onClose={() => setStudentToDelete(null)}
                 title="¿Estás seguro?"
-                message={`¿Quieres eliminar al estudiante ${studentToDelete?.full_name}? Esta acción no se puede deshacer.`}
+                message={`¿Quieres eliminar al estudiante ${
+                    studentToDelete ?
+                        reverseName({
+                            middleName: studentToDelete.student_middle_name,
+                            secondLastName: studentToDelete.student_second_last_name,
+                            firstName: studentToDelete.student_first_name,
+                            firstLastName: studentToDelete.student_first_last_name
+                        }) : "Unknow"
+                }? Esta acción no se puede deshacer.`}
                 onConfirm={async () => {
                     if (studentToDelete) {
                         await deleteStudentById(studentToDelete.student_id);

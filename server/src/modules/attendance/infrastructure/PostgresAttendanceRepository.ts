@@ -44,7 +44,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                         ELSE 'no_data'
                     END as daily_status
                 FROM student s
-                JOIN profile p ON s.user_id = p.id
+                JOIN profile p ON s.profile_id = p.id
                 LEFT JOIN class c ON c.course_id = s.course_id
                 LEFT JOIN attendance a ON a.student_id = s.id AND a.class_id = c.id AND a.date = $1
                 WHERE s.course_id = $2 AND p.school_id = $3 AND p.is_active = $4

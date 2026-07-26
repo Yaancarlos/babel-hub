@@ -32,7 +32,7 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
             const subjects = await client.query<AvailableSubjects>(`
                 SELECT 
                     s.id, 
-                    s.name 
+                    s.name
                 FROM subject s
                 JOIN area a ON s.area_id = a.id
                 WHERE a.school_id = $1

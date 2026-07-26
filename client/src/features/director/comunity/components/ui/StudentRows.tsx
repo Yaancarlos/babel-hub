@@ -54,7 +54,7 @@ export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNaviga
 
             <td className="md:p-4 pr-3 text-right space-x-1 xl:space-x-3">
                 <EditButton onClick={() => onEdit(student)} />
-                <DeleteButton onClick={() => onDelete(student.student_id)} />
+                <DeleteButton onClick={() => onDelete(student)} />
             </td>
         </tr>
     );

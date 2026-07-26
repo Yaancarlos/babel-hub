@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getAvailableSubjects } from "../../api";
-import { useTeachers } from "./useTeachers.ts";
+import { useTeachers } from "../../../../../shared/hooks/useTeachers.ts";
+import type { AvailableSubjects } from "../../types";
 
 export const useModalData = (id: string) => {
-    const [subjects, setSubjects] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [subjects, setSubjects] = useState<AvailableSubjects[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
     const { teachers } = useTeachers();
 
     useEffect(() => {

@@ -3,8 +3,8 @@ import { TeacherRow } from "../ui/TeacherRows.tsx";
 
 interface TeacherTableProps {
     teachers: Teacher[];
-    onEdit: (teacher: any) => void;
-    onDelete: (id: any) => void;
+    onEdit: (teacher: Teacher) => void;
+    onDelete: (teacher: Teacher) => void;
     onNavigate: (id: any) => void;
 }
 

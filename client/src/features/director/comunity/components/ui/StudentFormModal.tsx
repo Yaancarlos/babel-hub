@@ -3,10 +3,11 @@ import DynamicModalForm, { type FormField } from "../../../../../components/ui/m
 import { useStudentSubmit } from "../../hooks/students/useStudentSubmit.ts";
 import { getCourses } from "../../api";
 import type { modeTypes } from "../../../../types/types.ts";
+import type { Courses, StudentProps } from "../../types";
 
 interface StudentFormModalProps {
     mode: modeTypes;
-    initialData: any | null;
+    initialData: StudentProps | null;
     onClose: () => void;
     onSuccess: () => void;
 }
@@ -28,10 +29,11 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         enrollmentCode: initialData?.enrollment_code || "",
         courseId: initialData?.course_id || "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: "",
     });
 
-    const [availableCourses, setAvailableCourses] = useState<any[]>([]);
+    const [availableCourses, setAvailableCourses] = useState<Courses[]>([]);
 
     const { submitStudent, loading, error, setError } = useStudentSubmit(onSuccess);
 
@@ -82,6 +84,11 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
                 setError("La contraseña debe tener mínimo 8 caracteres, letras, números y un carácter especial.");
                 return;
             }
+
+            if (formData.password !== formData.confirmPassword) {
+                setError("Las contraseñas no coinciden.");
+                return;
+            }
         }
 
         const payload = {
@@ -114,13 +121,15 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
             options: availableCourses.map(c => ({ value: c.id, label: c.course_name }))
         },
         ... (isCreateMode ? [
-            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true } as FormField,
-            { name: "password", label: "Contraseña", type: "password", required: true } as FormField]: [])
+            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true },
+            { name: "password", label: "Contraseña", type: "password", required: true },
+            { name: "confirmPassword", label: "Confirmar Contraseña", type: "password", required: true }] as FormField[] : [])
     ];
 
     return (
         <DynamicModalForm
             isOpen={true}
+            profileCreated={isCreateMode}
             title={mode === 'create' ? "Crear Nuevo Estudiante" : "Editar Estudiante"}
             fields={studentFields}
             formData={formData}

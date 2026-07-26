@@ -1,15 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllTeachers } from "../../api";
+import { getTeachers } from "../api";
 
 export const useTeachers = () => {
     const {
         data: teachers = [],
-        refetch: reloadTeachers,
+        isLoading: loading,
+        refetch: reload,
     } = useQuery({
         queryKey: ['teachers'],
-        queryFn: async () => await getAllTeachers(),
+        queryFn: async () => await getTeachers(),
         staleTime: 1000 * 60 * 15,
     });
 
-    return { teachers, reloadTeachers };
+    return { teachers, reload, loading };
 }

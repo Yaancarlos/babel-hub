@@ -61,7 +61,7 @@ export function InteractiveHomeList({ isActive, key, onClick, avatarText, title,
                     <h3 className={`font-bold text-base truncate ${isActive ? 'text-primary-900' : 'text-custom-black'}`}>
                         {title}
                     </h3>
-                    <p className="text-gray-500 text-xs truncate">
+                    <p className="text-gray-500 capitalize text-xs truncate">
                         {subtitle}
                     </p>
                 </div>

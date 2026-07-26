@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPeriods } from "../api/periodsApi.ts";
+import { getPeriods } from "../api";
 
 export const usePeriods = () => {
     const {
