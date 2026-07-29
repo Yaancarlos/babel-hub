@@ -7,7 +7,7 @@ export const useUpsertSubject = (onSuccess: () => void) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const upsertSubject = async (mode: modeTypes, subjectId: string | undefined, payload: any) => {
+    const upsertSubject = async (mode: modeTypes, subjectId: string | null, payload: any) => {
         setLoading(true);
         try {
             if (mode === 'edit' && subjectId) {

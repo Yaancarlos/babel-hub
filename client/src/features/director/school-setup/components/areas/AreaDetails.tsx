@@ -19,16 +19,18 @@ export function AreaDetails() {
     const { loading, areaDetails, subjects, refetch } = useAreaDetails(areaId);
     const { loadingDelete, deleteSubjectById } = useDeleteSubject(refetch);
 
+    console.log(areaDetails, subjects);
+
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | undefined>(undefined);
+    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | null>(null);
     const [subjectToDelete, setSubjectToDelete] = useState<SubjectsProps | null>(null);
 
-    const handleEdit = (subject: any) => {
+    const handleEdit = (subject: SubjectsProps) => {
         setSubjectToEdit(subject);
         setModalMode('edit');
     }
 
-    const handleDelete = (subject: any) => {
+    const handleDelete = (subject: SubjectsProps) => {
         setSubjectToDelete(subject);
     }
 
@@ -77,14 +79,14 @@ export function AreaDetails() {
                 <AreaDetailsFormModal
                     mode={modalMode}
                     onSuccess={async () => {
-                        setSubjectToEdit(undefined);
+                        setSubjectToEdit(null);
                         setModalMode('none');
                         refetch();
                     }}
                     areaId={areaId}
                     subject={subjectToEdit}
                     onClose={() => {
-                        setSubjectToEdit(undefined);
+                        setSubjectToEdit(null);
                         setModalMode('none');
                     }}
                 />

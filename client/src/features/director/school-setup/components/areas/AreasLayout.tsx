@@ -41,12 +41,12 @@ export function AreasLayout() {
                 {areas.map(area => (
                     <li
                         key={area.id}
-                        className="w-full text-left py-2 px-3 rounded-lg text-sm font-medium text-custom-black hover:bg-gray-50 transition-colors"
+                        className="w-full text-left p-2 rounded-lg text-sm font-medium text-custom-black hover:bg-gray-50 transition-colors"
                     >
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => handleNavigate(area.id)}
-                                className="cursor-pointer capitalize py-2 px-3 text-sm font-medium"
+                                className="cursor-pointer capitalize text-sm font-medium"
                             >
                                 {area.name}
                             </button>

@@ -3,23 +3,33 @@ import type { modeTypes } from "../../../../types/types.ts";
 import React, {  useState  } from "react";
 import { useUpsertSubject } from "../../hooks/areas/useUpsertSubject.ts";
 import type { SubjectsProps } from "../../types";
+import type {AvailableSubjects} from "../../../course-management/types";
 
 interface AreaDetailsFormModalProps {
     mode: modeTypes;
     onSuccess: () => void;
-    subject: SubjectsProps | undefined;
+    subject: SubjectsProps | null;
     onClose: () => void;
     areaId: string;
 }
 
-const subjectFormItems: FormField[] = [
-    { name: "name", label: "Nombre de la Materia", type: "text", placeholder: "Ej. Biología", required: true }
-];
-
 export function AreaDetailsFormModal({ mode, onSuccess, subject, onClose, areaId }: AreaDetailsFormModalProps) {
+    const isCreateMode = mode === "create";
     const [formData, setFormData] = useState({
-        name: subject?.name  || ""
+        name: subject?.name  || "",
+        gradingTemplateId: subject?.grading_template_id || ""
     });
+
+    const subjectFormItems: FormField[] = [
+        { name: "name", label: "Nombre de la Materia", type: "text", placeholder: "Ej. Biología", required: true },
+        {
+            name: "gradingTemplateId",
+            label: "Tipo de Nota",
+            type: "select",
+            required: true,
+            options: subjects.map((s: AvailableSubjects) => ({ value: s.id, label: s.name }))
+        }
+    ];
 
     const { loading, error, setError, upsertSubject } = useUpsertSubject(onSuccess);
 
@@ -34,7 +44,7 @@ export function AreaDetailsFormModal({ mode, onSuccess, subject, onClose, areaId
 
         const payload = { name: formData.name.trim().toLowerCase(), areaId: areaId };
 
-        await upsertSubject(mode, subject?.id, payload);
+        await upsertSubject(mode, subject?.id || null, payload);
     }
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -46,7 +56,7 @@ export function AreaDetailsFormModal({ mode, onSuccess, subject, onClose, areaId
     return (
         <DynamicModalForm
             isOpen={true}
-            title={mode === 'create' ? `Añadir asignatura` : `Editar asignatura`}
+            title={isCreateMode ? `Añadir asignatura` : `Editar asignatura`}
             fields={subjectFormItems}
             formData={formData}
             formError={error}

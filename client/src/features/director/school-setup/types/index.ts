@@ -7,8 +7,8 @@ export interface PeriodProps {
 
 export interface AreaProps {
     id: string;
-    school_id: string;
     name: string;
+    school_id: string;
 }
 
 export interface SubjectsProps {
