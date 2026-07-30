@@ -17,3 +17,10 @@ export interface SubjectsProps {
     area_id: string;
     grading_template_id: string;
 }
+
+export interface GradingTemplate {
+    id: string
+    name: string
+    school_id: string
+    scale_id: string
+}

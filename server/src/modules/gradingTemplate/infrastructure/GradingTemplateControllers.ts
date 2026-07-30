@@ -10,7 +10,7 @@ export class GradingTemplateController {
             const userSchoolId = request.user!.schoolId as string;
 
             const records = await this.gradingTemplateService.getGradingTemplates(userSchoolId);
-            response.status(200).send({ gradings: records });
+            response.status(200).json({ gradings: records });
         } catch (error:any) {
             next(error);
         }
@@ -22,7 +22,7 @@ export class GradingTemplateController {
             const userSchoolId = request.user!.schoolId as string;
 
             const records = await this.gradingTemplateService.getGradingTemplateDetails(gradingId, userSchoolId);
-            response.status(200).send({ gradings_details: records });
+            response.status(200).json({ gradings_details: records });
         } catch (error:any) {
             next(error);
         }
