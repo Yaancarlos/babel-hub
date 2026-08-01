@@ -18,6 +18,7 @@ import SchoolRoutes from "./modules/school/infrastructure/school.routes.js";
 import userRoutes from "./modules/user/infrastucture/user.routes.js";
 import gradingTemplateRoutes from "./modules/gradingTemplate/infrastructure/gradingTemplate.routes.js";
 import assessmentRouter from "./modules/assessmentCriteria/infrastructure/assessment.router.js";
+import scaleRoutes from "./modules/scales/infrastructure/scale.routes.js";
 
 dotenv.config();
 
@@ -54,8 +55,9 @@ app.use("/classes", classesRoutes);
 app.use("/subjects", subjectRoutes);
 app.use("/areas", areaRoutes);
 app.use("/periods", periodRoutes);
-app.use("/grading_template", gradingTemplateRoutes);
+app.use("/grading_templates", gradingTemplateRoutes);
 app.use("assessments", assessmentRouter);
+app.use("/scales", scaleRoutes)
 
 app.use(globalErrorHandler);
 

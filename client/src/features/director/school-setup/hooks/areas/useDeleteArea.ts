@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {deleteArea} from "../../api";
+import { useState } from "react";
+import { deleteArea } from "../../api";
 import toast from "react-hot-toast";
 
 export const useDeleteArea = (onSuccess: () => void) => {

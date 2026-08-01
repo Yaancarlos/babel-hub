@@ -17,7 +17,7 @@ export function AreasLayout() {
     const { areas, reloadAreas } = useAreas();
     const { loadingDelete, deleteAreaById } = useDeleteArea(reloadAreas);
 
-    const handleNavigate = (url: any) => {
+    const handleNavigate = (url: string) => {
         navigate(`areas/${url}`);
     };
 

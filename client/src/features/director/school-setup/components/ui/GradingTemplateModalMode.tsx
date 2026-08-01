@@ -1,0 +1,71 @@
+import type { GradingTemplate, Scale } from "../../types";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
+import { useState } from "react";
+import { useGradingTemplateModalData } from "../../hooks/grading-templates/useGradingTemplateModalData.ts";
+import {useUpsertGradingTemplate} from "../../hooks/grading-templates/useUpsertGradingTemplate.ts";
+import type {modeTypes} from "../../../../types/types.ts";
+
+interface GradingTemplateModalModeProps {
+    mode: modeTypes;
+    gradingTemplate: GradingTemplate | null;
+    gradingTemplateId: string | null;
+    onSuccess: () => void;
+    onCancel: () => void;
+}
+
+export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, gradingTemplateId, onSuccess }: GradingTemplateModalModeProps) {
+    const isCreateMode = mode === "create";
+    const { scales } = useGradingTemplateModalData();
+    const { loading, upsertGradingTemplate, error, setError } = useUpsertGradingTemplate(onSuccess);
+    const [formModal, setFormModal] = useState({
+        name: gradingTemplate?.name || "",
+        scaleId: gradingTemplate?.scale_id || ""
+    });
+
+    const gradingFields: FormField[] = [
+        { name: "name", label: "Nombre de la Materia", type: "text", placeholder: "Ej. Biología", required: true },
+        {
+            name: "scaleId",
+            label: "Tipo de Escala",
+            type: "select",
+            required: true,
+            options: scales.map((s: Scale) => ({ value: s.id, label: `${s.min_value} - ${s.max_value}` })),
+        }
+    ]
+
+    const handleUpsertGradingTemplate = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!formModal.name.trim() || !formModal.scaleId) {
+            setError("Ingresa los campos obligatorios");
+            return;
+        }
+
+        const payload = {
+            ...formModal,
+            name: formModal.name.trim().toLowerCase()
+        }
+
+        await upsertGradingTemplate(mode, gradingTemplateId, payload);
+    }
+
+    const formChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormModal({...formModal, [name]: value});
+        setError("");
+    }
+
+    return (
+        <DynamicModalForm
+            isOpen={true}
+            title={isCreateMode ? `Añadir template` : `Editar template`}
+            fields={gradingFields}
+            formData={formModal}
+            formError={error}
+            formLoading={loading}
+            onClose={onCancel}
+            onChange={formChange}
+            onSubmit={handleUpsertGradingTemplate}
+        />
+    )
+}

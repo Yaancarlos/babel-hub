@@ -1,5 +1,5 @@
 import api from "../../../../api/client.ts";
-import type {AreaProps, GradingTemplate, SubjectsProps} from "../types";
+import type {AreaProps, GradingTemplate, Scale, SubjectsProps} from "../types";
 
 // Area Endpoints
 
@@ -54,16 +54,21 @@ export const deletePeriod = async (id: string): Promise<void> => {
 // Grading Template Endpoints
 
 export const getGradingTemplates = async (): Promise<GradingTemplate[]> => {
-    const response = await api.get(`/grading_template`);
+    const response = await api.get(`/grading_templates`);
     return response.data.gradings;
 }
 
+export const getScales = async (): Promise<Scale[]> => {
+    const response = await api.get(`/scales`);
+    return response.data.scales;
+}
+
 export const createGradingTemplate = async (payload: any): Promise<void> => {
-    await api.post(`/grading_template`, payload);
+    await api.post(`/grading_templates`, payload);
 }
 
 export const updateGradingTemplate = async (gradingId: string, payload: any): Promise<void> => {
-    await api.put(`/grading_template/${gradingId}`, payload);
+    await api.put(`/grading_templates/${gradingId}`, payload);
 }
 
 export const deleteGradingTemplate = async (gradingId: string): Promise<void> => {

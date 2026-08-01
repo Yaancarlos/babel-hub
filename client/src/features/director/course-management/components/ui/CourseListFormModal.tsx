@@ -16,7 +16,6 @@ interface CourseListFormModalProps {
 
 const FORM_REGEX = {
     name: /^\d{1,4}$/
-    /*name: /^(?:\d{1,4}|\d{1,3}[A-Z])$/i,*/
 };
 
 export function CourseListFormModal({ mode, teacherId, course, onClose, onSuccess }: CourseListFormModalProps) {
@@ -63,7 +62,6 @@ export function CourseListFormModal({ mode, teacherId, course, onClose, onSucces
             name: formData.name.trim().toLowerCase()
         }
 
-        console.log(course);
         await upsertCourse(mode, course?.id || null, payload);
     }
 

@@ -19,8 +19,16 @@ export interface SubjectsProps {
 }
 
 export interface GradingTemplate {
-    id: string
-    name: string
-    school_id: string
-    scale_id: string
+    id: string;
+    name: string;
+    school_id: string;
+    scale_id: string;
+}
+
+export interface Scale {
+    id: string;
+    name: string;
+    min_value: number;
+    max_value: number;
+    passing_value: number;
 }
