@@ -86,7 +86,7 @@ export default function DynamicModalForm({
                                         required={field.required}
                                         value={formData[field.name] || ""}
                                         onChange={onChange}
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
+                                        className="w-full bg-gray-50 capitalize border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
                                     >
                                         <option value="" disabled>Seleccione una opción...</option>
                                         {field.options?.map((opt) => (

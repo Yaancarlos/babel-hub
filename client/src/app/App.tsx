@@ -26,6 +26,7 @@ import Details from "../pages/principal/files/areas/Details.tsx";
 import TeacherClasses from "../pages/teacher/courses/Classes.tsx";
 import ClassesDetails from "../pages/principal/courses/classes/ClassesDetails.tsx";
 import ClassDetails from "../pages/teacher/courses/ClassDetails.tsx";
+import GradingTemplateDetails from "../features/director/school-setup/components/grading-templates/GradingTemplateDetails.tsx";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ function App() {
 
                         <Route path="formatos" element={<Setup />} />
                         <Route path="formatos/areas/:areaId" element={<Details />} />
+                        <Route path="formatos/grading-templates/:gradingId" element={<GradingTemplateDetails />} />
 
                         <Route path="notificaciones" element={<NotificationCenter />} />
                         <Route path="notificaciones/asistencia" element={<AttendanceCenter />} />

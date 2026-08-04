@@ -23,13 +23,13 @@ export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, grad
     });
 
     const gradingFields: FormField[] = [
-        { name: "name", label: "Nombre de la Materia", type: "text", placeholder: "Ej. Biología", required: true },
+        { name: "name", label: "Nombre del Template", type: "text", placeholder: "Ej. 70/20/10", required: true },
         {
             name: "scaleId",
             label: "Tipo de Escala",
             type: "select",
             required: true,
-            options: scales.map((s: Scale) => ({ value: s.id, label: `${s.min_value} - ${s.max_value}` })),
+            options: scales.map((s: Scale) => ({ value: s.id, label: `${s.name} (${s.min_value}-${s.max_value})` })),
         }
     ]
 

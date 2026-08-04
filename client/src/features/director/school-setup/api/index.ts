@@ -1,5 +1,5 @@
 import api from "../../../../api/client.ts";
-import type {AreaProps, GradingTemplate, Scale, SubjectsProps} from "../types";
+import type {AreaProps, GradingDetails, GradingTemplate, Scale, SubjectsProps} from "../types";
 
 // Area Endpoints
 
@@ -58,6 +58,11 @@ export const getGradingTemplates = async (): Promise<GradingTemplate[]> => {
     return response.data.gradings;
 }
 
+export const getGradingDetails = async (gradingId: string): Promise<GradingDetails> => {
+    const response = await api.get(`/grading_templates/${gradingId}`);
+    return response.data.gradings_details;
+}
+
 export const getScales = async (): Promise<Scale[]> => {
     const response = await api.get(`/scales`);
     return response.data.scales;
@@ -73,4 +78,10 @@ export const updateGradingTemplate = async (gradingId: string, payload: any): Pr
 
 export const deleteGradingTemplate = async (gradingId: string): Promise<void> => {
     await api.delete(`/grading_templates/${gradingId}`);
+}
+
+// Assessment Criteria Endpoint
+
+export const deleteAssessmentCriteria = async (id: string): Promise<void> => {
+    await api.delete(`/assessments/${id}`);
 }

@@ -51,7 +51,7 @@ export function GradingTemplateLayout() {
                                     onClick={() => handleNavigate(gradingTemplate.id)}
                                     className="cursor-pointer capitalize text-sm font-medium"
                                 >
-                                    {gradingTemplate.name}
+                                    {gradingTemplate.name} <span className="text-xs text-gray-600">{`(${gradingTemplate.scale_min}-${gradingTemplate.scale_max})`}</span>
                                 </button>
                                 <div className="flex gap-2">
                                     <EditButton onClick={() => handleEdit(gradingTemplate)} />
