@@ -10,13 +10,16 @@ export class PostgresGradingTemplateRepository implements IGradingTemplateReposi
         try {
             const result = await client.query(`
                 SELECT
-                    id,
-                    name,
-                    school_id,
-                    scale_id
-                FROM grading_template
-                WHERE school_id = $1
-                ORDER BY name ASC;
+                    g.id,
+                    g.name,
+                    g.school_id,
+                    s.id AS scale_id,
+                    s.min_value AS scale_min,
+                    s.max_value AS scale_max
+                FROM grading_template g
+                JOIN scale s ON g.scale_id = s.id
+                WHERE g.school_id = $1
+                ORDER BY g.name ASC;
             `, [userSchoolId]);
 
             return result.rows;
@@ -41,7 +44,8 @@ export class PostgresGradingTemplateRepository implements IGradingTemplateReposi
                 SELECT
                     id,
                     name,
-                    weight
+                    weight,
+                    grading_template_id
                 FROM assessment_criteria
                 WHERE grading_template_id = $1
                 ORDER BY name ASC;

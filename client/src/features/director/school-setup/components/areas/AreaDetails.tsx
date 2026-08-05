@@ -4,11 +4,11 @@ import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevro
 import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { ModalModeTypes } from "../../../../../types";
 import {  useState  } from "react";
-import { AreaDetailsRows } from "../ui/AreaDetailsRows.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { useDeleteSubject } from "../../hooks/areas/useDeleteSubject.ts";
 import type { SubjectsProps } from "../../types";
 import { AreaDetailsFormModal } from "../ui/AreaDetailsFormModal.tsx";
+import { ListRows } from "../../../../../components/ui/lists/SetupList.tsx";
 
 export function AreaDetails() {
     const { areaId } = useParams<{ areaId: string }>();
@@ -54,9 +54,13 @@ export function AreaDetails() {
                 </div>
             </div>
 
-            <AreaDetailsRows
+            <ListRows
+                items={subjects}
                 loading={loading}
-                subjects={subjects}
+                emptyMessage="No hay materias registradas en esta área todavía."
+                getKey={(s) => s.id}
+                getTitle={(s) => s.name}
+                getSubtitle={(s) => s.grading_template_id}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />

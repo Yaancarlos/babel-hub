@@ -4,7 +4,7 @@ import { getGradingDetails } from "../../api";
 
 export const useGradingTemplateDetails = (gradingId: string) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [gradingTemplateDetails, setGradingTemplateDetails] = useState<GradingDetails>();
+    const [gradingTemplateDetails, setGradingTemplateDetails] = useState<GradingDetails | undefined>(undefined);
     const [trigger, setTrigger] = useState<number>(0);
 
     const refetch = useCallback(() => {

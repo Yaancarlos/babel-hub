@@ -56,7 +56,7 @@ app.use("/subjects", subjectRoutes);
 app.use("/areas", areaRoutes);
 app.use("/periods", periodRoutes);
 app.use("/grading_templates", gradingTemplateRoutes);
-app.use("assessments", assessmentRouter);
+app.use("/assessments", assessmentRouter);
 app.use("/scales", scaleRoutes)
 
 app.use(globalErrorHandler);

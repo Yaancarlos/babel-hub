@@ -85,3 +85,11 @@ export const deleteGradingTemplate = async (gradingId: string): Promise<void> =>
 export const deleteAssessmentCriteria = async (id: string): Promise<void> => {
     await api.delete(`/assessments/${id}`);
 }
+
+export const createAssessmentCriteria = async (payload: any): Promise<void> => {
+    await api.post(`/assessments`, payload);
+}
+
+export const updateAssessmentCriteria = async (id: string, payload: any): Promise<void> => {
+    await api.put(`/assessments/${id}`, payload);
+}

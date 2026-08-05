@@ -4,24 +4,25 @@ import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevro
 import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { ModalModeTypes } from "../../../../../types";
 import { useState } from "react";
-import { AssessmentRows } from "../ui/AssessmentRows.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import type { Assessment } from "../../types";
 import { AssessmentFormModal } from "../ui/AssessmentFormModal.tsx";
 import { useDeleteAssessment } from "../../hooks/assessment-criteria/useDeleteAssessment.ts";
+import { ListRows } from "../../../../../components/ui/lists/SetupList.tsx";
 
 export default function GradingTemplateDetails() {
     const { gradingId } = useParams<{ gradingId: string }>();
     const navigate = useNavigate();
 
-    const { loading, gradingTemplateDetails, refetch } = useGradingTemplateDetails(gradingId || "");
+    if (!gradingId) return null;
+
+    const { loading, gradingTemplateDetails, refetch } = useGradingTemplateDetails(gradingId);
     const { loadingDelete, deleteAssessmentById } = useDeleteAssessment(refetch);
 
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
     const [assessmentToEdit, setAssessmentToEdit] = useState<Assessment | null>(null);
     const [assessmentToDelete, setAssessmentToDelete] = useState<Assessment | null>(null);
 
-    if (!gradingId) return null;
 
     const handleEdit = (assessment: Assessment) => {
         setAssessmentToEdit(assessment);
@@ -57,9 +58,13 @@ export default function GradingTemplateDetails() {
                 </div>
             </div>
 
-            <AssessmentRows
+            <ListRows
+                items={gradingTemplateDetails ? gradingTemplateDetails.assessments : []}
                 loading={loading}
-                assessments={gradingTemplateDetails?.assessments}
+                emptyMessage="No hay criterios registrados en este template todavía."
+                getKey={(a) => a.id}
+                getTitle={(a) => a.name}
+                getSubtitle={(a) => `${a.weight}%`}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
@@ -86,7 +91,7 @@ export default function GradingTemplateDetails() {
                         setModalMode('none');
                         await refetch();
                     }}
-                    gradingTemplateId={gradingId}
+                    assessmentInfo={{ id: gradingId, name: gradingTemplateDetails?.grading_name || "" }}
                     assessment={assessmentToEdit}
                     onClose={() => {
                         setAssessmentToEdit(null);

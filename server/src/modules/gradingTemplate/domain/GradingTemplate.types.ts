@@ -3,6 +3,8 @@ export interface GradingTemplate {
     name: string;
     school_id: string;
     scale_id: string;
+    scale_min: string;
+    scale_max: string;
 }
 
 export interface AssessmentCriteria {
@@ -11,5 +13,6 @@ export interface AssessmentCriteria {
         id: string;
         name: string;
         weight: number;
+        grading_template_id: string;
     }[];
 }

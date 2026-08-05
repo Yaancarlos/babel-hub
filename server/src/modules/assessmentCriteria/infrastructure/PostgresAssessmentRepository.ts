@@ -25,6 +25,22 @@ export class PostgresAssessmentRepository implements IAssessmentRepository {
         }
     }
 
+    async getTotalWeightForTemplate(gradingTemplateId: string, excludeAssessmentId?: string): Promise<number> {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(`
+                SELECT COALESCE(SUM(weight), 0)::float AS total_weight
+                FROM assessment_criteria
+                WHERE grading_template_id = $1
+                AND id != COALESCE($2, '00000000-0000-0000-0000-000000000000'::uuid)
+            `, [gradingTemplateId, excludeAssessmentId ?? null]);
+
+            return result.rows[0].total_weight;
+        } finally {
+            client.release();
+        }
+    }
+
     async createAssessment(assessmentName: string, assessmentWeight: number, gradingTemplateId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
         const client = await pool.connect();
         try {
