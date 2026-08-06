@@ -14,8 +14,13 @@ export interface AreaProps {
 export interface SubjectsProps {
     id: string;
     name: string;
-    area_id: string;
     grading_template_id: string;
+    grading_template_name: string;
+}
+
+export interface AreaDetails {
+    area: AreaProps;
+    subjects: SubjectsProps[];
 }
 
 export interface GradingTemplate {

@@ -29,12 +29,12 @@ export function ListRows<T>({
             {items.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">{emptyMessage}</p>
             ) : (
-                <ul className="divide-y divide-gray-100">
+                <ul className="divide-gray-100 flex flex-col gap-2 divide-y">
                     {items.map((item) => (
-                        <li key={getKey(item)} className="py-4 flex justify-between items-center hover:bg-gray-50 px-4 rounded-lg transition-colors">
+                        <li key={getKey(item)} className="py-2 px-4 flex justify-between items-center hover:bg-gray-50 rounded-lg transition-colors">
                             <div>
                                 <p className="font-medium capitalize text-base text-custom-black">{getTitle(item)}</p>
-                                <span className="font-base text-xs uppercase text-gray-400">{getSubtitle(item)}</span>
+                                <span className="font-base text-xs text-gray-400">{getSubtitle(item)}</span>
                             </div>
 
                             <div className="space-x-4">

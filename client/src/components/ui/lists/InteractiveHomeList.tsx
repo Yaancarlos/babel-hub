@@ -15,11 +15,10 @@ interface InteractiveHomeListProps {
     avatarText: string;
     title: React.ReactNode;
     subtitle: React.ReactNode;
-    key?: string;
     menuOptions?: MenuOption[];
 }
 
-export function InteractiveHomeList({ isActive, key, onClick, avatarText, title, disabled, subtitle, menuOptions }: InteractiveHomeListProps) {
+export function InteractiveHomeList({ isActive, onClick, avatarText, title, disabled, subtitle, menuOptions }: InteractiveHomeListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState<'top' | 'bottom'>('bottom');
     const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +45,6 @@ export function InteractiveHomeList({ isActive, key, onClick, avatarText, title,
 
     return (
         <div
-            key={key}
             className={`w-full group px-2 xl:px-3 py-4 2xl:p-4 relative rounded-xl transition-colors flex items-center justify-between gap-2 2xl:gap-3 border ${
                 isActive ? 'bg-primary-shadow border-primary-shadow' : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-100'
             }`}

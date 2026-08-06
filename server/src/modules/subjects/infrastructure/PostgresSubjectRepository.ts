@@ -10,12 +10,15 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
         try {
             const result = await client.query(`
                 SELECT
+                    a.id AS area_id,
+                    a.name AS area_name,
                     s.id,
                     s.name,
-                    s.area_id,
-                    s.grading_template_id
+                    g.id AS grading_template_id,
+                    g.name AS grading_template_name
                 FROM subject s
                 JOIN area a ON s.area_id = a.id
+                JOIN grading_template g ON s.grading_template_id = g.id
                 WHERE s.area_id = $1 AND a.school_id = $2
                 ORDER BY s.name ASC
             `, [subjectAreaId, userSchoolId]);

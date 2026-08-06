@@ -44,8 +44,8 @@ export default function GradingTemplateDetails() {
                 <div className="flex items-center gap-3">
                     <ButtonChevronBack onClick={() => navigate(-1)} />
                     <div>
-                        <h1 className="text-2xl font-bold text-custom-black">
-                            Template: {gradingTemplateDetails?.grading_name}
+                        <h1 className="text-2xl capitalize font-bold text-custom-black">
+                            {gradingTemplateDetails?.grading_name}
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">Gestión de Criterios de Evaluación</p>
                     </div>

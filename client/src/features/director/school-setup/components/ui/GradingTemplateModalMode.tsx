@@ -17,7 +17,7 @@ export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, grad
     const isCreateMode = mode === "create";
     const { scales } = useGradingTemplateModalData();
     const { loading, upsertGradingTemplate, error, setError } = useUpsertGradingTemplate(onSuccess);
-    const [formModal, setFormModal] = useState({
+    const [formData, setFormData] = useState({
         name: gradingTemplate?.name || "",
         scaleId: gradingTemplate?.scale_id || ""
     });
@@ -36,14 +36,14 @@ export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, grad
     const handleUpsertGradingTemplate = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formModal.name.trim() || !formModal.scaleId) {
+        if (!formData.name.trim() || !formData.scaleId) {
             setError("Ingresa los campos obligatorios");
             return;
         }
 
         const payload = {
-            ...formModal,
-            name: formModal.name.trim().toLowerCase()
+            ...formData,
+            name: formData.name.trim().toLowerCase()
         }
 
         await upsertGradingTemplate(mode, gradingTemplateId, payload);
@@ -51,7 +51,7 @@ export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, grad
 
     const formChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormModal({...formModal, [name]: value});
+        setFormData({...formData, [name]: value});
         setError("");
     }
 
@@ -60,7 +60,7 @@ export function GradingTemplateModalMode({ mode, gradingTemplate, onCancel, grad
             isOpen={true}
             title={isCreateMode ? `Añadir template` : `Editar template`}
             fields={gradingFields}
-            formData={formModal}
+            formData={formData}
             formError={error}
             formLoading={loading}
             onClose={onCancel}

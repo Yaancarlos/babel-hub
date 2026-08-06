@@ -1,5 +1,5 @@
 import type { IAreaRepository } from "../domain/IAreaRepository.js";
-import type { Area } from "../domain/Areas.types.js"
+import type {Area, AreaDetails} from "../domain/Areas.types.js"
 import { createAuditLog } from "../../../services/audit.service.js";
 import { pool } from "../../../db/index.js";
 import { NotFoundError, ConflictError } from "../../errors/domain/CustomErrors.js";
@@ -20,17 +20,35 @@ export class PostgresAreaRepository implements IAreaRepository  {
         }
     }
 
-    async getAreaDetails(id: string, schoolId: string): Promise<Area | null> {
+    async getAreaDetails(id: string, schoolId: string): Promise<AreaDetails | null> {
         const client = await pool.connect();
         try {
-            const result = await client.query(`
-                SELECT * FROM area
+            const area = await client.query(`
+                SELECT
+                    id,
+                    name,
+                    school_id
+                FROM area
                 WHERE id = $1 AND school_id = $2;
             `, [id, schoolId]);
 
-            if (result.rowCount === 0) return null;
+            if (area.rowCount === 0) return null;
 
-            return result.rows[0];
+            const subjects = await client.query(`
+                SELECT
+                    s.id,
+                    s.name,
+                    g.id AS grading_template_id,
+                    g.name AS grading_template_name
+                FROM subject s
+                JOIN grading_template g ON s.grading_template_id = g.id
+                WHERE s.area_id = $1;
+            `, [id])
+
+            return {
+                area: area.rows[0],
+                subjects: subjects.rows
+            };
         } finally {
             client.release();
         }

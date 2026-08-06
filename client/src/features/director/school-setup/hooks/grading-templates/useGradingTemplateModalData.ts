@@ -14,7 +14,7 @@ export const useGradingTemplateModalData = () => {
                 const scales = await getScales();
                 setScales(scales);
             } catch (error : any) {
-                const msg = error?.response?.data?.message || "Error al cargar las escalas";
+                const msg = error?.response?.data?.message || error?.message || "Error al cargar las escalas";
                 console.error(msg);
                 toast.error(msg);
             } finally {

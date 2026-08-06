@@ -1,9 +1,9 @@
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
 import type { modeTypes } from "../../../../types/types.ts";
 import React, {  useState  } from "react";
-import { useUpsertSubject } from "../../hooks/areas/useUpsertSubject.ts";
-import type { SubjectsProps } from "../../types";
-import type {AvailableSubjects} from "../../../course-management/types";
+import { useUpsertSubject } from "../../hooks/subjects/useUpsertSubject.ts";
+import type { GradingTemplate, SubjectsProps } from "../../types";
+import { useAreaTemplates } from "../../hooks/areas/useAreaTemplates.ts";
 
 interface AreaDetailsFormModalProps {
     mode: modeTypes;
@@ -20,34 +20,40 @@ export function AreaDetailsFormModal({ mode, onSuccess, subject, onClose, areaId
         gradingTemplateId: subject?.grading_template_id || ""
     });
 
+    const { loading, error, setError, upsertSubject } = useUpsertSubject(onSuccess);
+    const { gradingTemplates } = useAreaTemplates();
+
     const subjectFormItems: FormField[] = [
-        { name: "name", label: "Nombre de la Materia", type: "text", placeholder: "Ej. Biología", required: true },
+        { name: "name", label: "Nombre de la Asignatura", type: "text", placeholder: "Ej. Biología", required: true },
         {
             name: "gradingTemplateId",
-            label: "Tipo de Nota",
+            label: "Template",
             type: "select",
             required: true,
-            options: subjects.map((s: AvailableSubjects) => ({ value: s.id, label: s.name }))
+            options: gradingTemplates.map((s: GradingTemplate) => ({ value: s.id, label: s.name }))
         }
     ];
 
-    const { loading, error, setError, upsertSubject } = useUpsertSubject(onSuccess);
 
     const handleUpsert = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
-        if (!formData.name.trim()) {
-            setError('Rellena los campos');
+        if (!formData.name.trim() || !formData.gradingTemplateId) {
+            setError("Ingresa los campos obligatorios");
             return;
         }
 
-        const payload = { name: formData.name.trim().toLowerCase(), areaId: areaId };
+        const payload = {
+            name: formData.name.trim().toLowerCase(),
+            areaId: areaId,
+            gradingTemplateId: formData.gradingTemplateId
+        };
 
-        await upsertSubject(mode, subject?.id || null, payload);
+        await upsertSubject(mode, subject ? subject.id : null, payload);
     }
 
-    const handleOnChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleFormChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
         setError('');
@@ -62,7 +68,7 @@ export function AreaDetailsFormModal({ mode, onSuccess, subject, onClose, areaId
             formError={error}
             formLoading={loading}
             onClose={onClose}
-            onChange={handleOnChange}
+            onChange={handleFormChange}
             onSubmit={handleUpsert}
         />
     )

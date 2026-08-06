@@ -22,7 +22,7 @@ export class AreaControllers {
             const id = request.params.id as string;
 
             const record = await this.areaService.getAreaDetails(id, schoolId);
-            response.status(200).json({ area: record });
+            response.status(200).json({ areaDetails: record });
         } catch (error: any) {
             next(error);
         }
