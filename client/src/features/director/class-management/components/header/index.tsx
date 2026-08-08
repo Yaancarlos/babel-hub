@@ -23,12 +23,12 @@ export function ClassLayout({ children, data, activeTab, onTabChange }: ClassLay
                     <div className="flex gap-4 items-center">
                         <ButtonChevronBack onClick={() => navigate(-1)} />
                         <div>
-                            <h1 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">
+                            <h1 className="text-xl md:text-1xl xl:text-2xl capitalize font-bold text-custom-black">
                                 {data.details.subject_name}
                                 <span className="text-gray-400 font-normal ml-2">| {data.details.course_name}</span>
                             </h1>
                             <p className="text-gray-500 mt-1 text-xs md:text-sm">
-                                Profesor: <span className="font-medium text-gray-700">
+                                Profesor: <span className="font-medium capitalize text-gray-700">
                                 {
                                     reverseName({
                                         middleName: data.details.teacher_middle_name,

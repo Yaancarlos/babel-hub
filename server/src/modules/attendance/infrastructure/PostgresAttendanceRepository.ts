@@ -21,7 +21,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                 JOIN student s ON s.course_id = c.course_id
                 JOIN profile p ON s.profile_id = p.id
                 LEFT JOIN attendance a ON a.student_id = s.id AND a.class_id = $1 AND a.date = $2
-                WHERE c.id = $1 AND p.school_id = $3, AND p.is_active = $4
+                WHERE c.id = $1 AND p.school_id = $3 AND p.is_active = $4
                 ORDER BY p.first_last_name ASC;
             `, [classId, date, schoolId, isActive]);
 

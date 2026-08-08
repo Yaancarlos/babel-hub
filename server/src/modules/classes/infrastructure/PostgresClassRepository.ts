@@ -62,24 +62,26 @@ export class PostgresClassRepository implements IClassRepository {
             await client.query('BEGIN');
 
             const ownershipCheck = await client.query(`
-                SELECT 1
+                SELECT p.id AS teacher_profile_id
                 FROM course c
                 JOIN subject s ON s.id = $2
                 JOIN area a ON s.area_id = a.id
                 JOIN teacher t ON t.id = $3
                 JOIN profile p ON t.profile_id = p.id
                 WHERE c.id = $1
-                    AND c.school_id = $4
-                    AND a.school_id = $4
-                    AND p.school_id = $4
+                  AND c.school_id = $4
+                  AND a.school_id = $4
+                  AND p.school_id = $4
             `, [courseId, subjectId, teacherId, userSchoolId]);
 
             if (ownershipCheck.rowCount === 0) throw new NotFoundError("La clase no se puede crear o no tienes acceso");
 
+            const teacherProfileId = ownershipCheck.rows[0].teacher_profile_id;
+
             const result = await client.query(`
                 INSERT INTO class (course_id, subject_id, teacher_id)
                 VALUES ($1, $2, $3)
-                RETURNING id
+                    RETURNING id
             `, [courseId, subjectId, teacherId]);
 
             const newClassId = result.rows[0].id;
@@ -88,7 +90,7 @@ export class PostgresClassRepository implements IClassRepository {
                 actorUserId: userId,
                 actorRole: userRole,
                 action: "CREATE_CLASS",
-                targetUserId: teacherId,
+                targetUserId: teacherProfileId,
                 schoolId: userSchoolId,
                 metadata: {
                     classId: newClassId,
@@ -98,7 +100,6 @@ export class PostgresClassRepository implements IClassRepository {
             });
 
             await client.query('COMMIT');
-
             return newClassId;
         } catch (error) {
             await client.query('ROLLBACK');

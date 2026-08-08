@@ -6,6 +6,7 @@ import type { AttendanceStatus } from "../../../types/types";
 interface AttendanceGridProps {
     courseId: string,
     classId: string,
+    students: number,
     startDate: string,
     endDate: string
 }
@@ -20,13 +21,13 @@ export interface CourseAttendance {
     status: AttendanceStatus;
 }
 
-export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: AttendanceGridProps) => {
+export const useAttendanceGrid = ({ courseId, classId, students, startDate, endDate }: AttendanceGridProps) => {
     const [loading, setLoading] = useState(false);
     const [attendance, setAttendance] = useState<any[]>([]);
     const [calendar, setCalendar] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!startDate || !endDate) return;
+        if (!startDate || !endDate || students === 0) return;
 
         const showAttendance = async () => {
             const today = new Date();

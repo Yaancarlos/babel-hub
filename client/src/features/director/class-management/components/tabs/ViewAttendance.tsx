@@ -19,6 +19,7 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
     const { loading, calendar, attendance } = useAttendanceGrid({
         courseId,
         classId: classData.details.id,
+        students: classData.students.length,
         startDate: selectedPeriod?.start_date || "",
         endDate: selectedPeriod?.end_date || ""
     });
