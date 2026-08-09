@@ -24,7 +24,8 @@ export function StudentsLayout() {
     const [studentToDelete, setStudentToDelete] = useState<StudentProps | null>(null);
 
     const filteredStudents = students.filter((student: any) =>
-        student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.student_first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.student_first_last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (student.enrollment_code && student.enrollment_code.toLowerCase().includes(searchTerm.toLowerCase()))
     );

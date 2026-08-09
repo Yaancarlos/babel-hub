@@ -33,7 +33,7 @@ export const CourseDetailsClassRows = memo(function ClassRowItem({
                 className="cursor-pointer flex justify-between items-center transition-colors w-full"
             >
                 <div className="text-left">
-                    <p className="font-medium capitaliza text-custom-black">{cls.subject_name}</p>
+                    <p className="font-medium capitalize text-custom-black">{cls.subject_name}</p>
                     <p className="text-xs text-gray-500 mt-0.5">
                         Prof: {
                             reverseName({

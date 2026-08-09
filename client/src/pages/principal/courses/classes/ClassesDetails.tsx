@@ -33,7 +33,7 @@ export default function ClassesDetails() {
             {tab === "students" && (<Students students={data.students} />)}
             {tab === "register attendance" && (<RegisterAttendance classData={data} date={initialDate} />)}
             {tab === "see attendance" && (<ViewAttendance classData={data} courseId={courseId} />)}
-            {tab === "assignments" && (<Assignments assignments={data.assignments} />)}
+            {tab === "assignments" && (<Assignments courseId={courseId} classId={id} />)}
         </ClassLayout>
     )
 }

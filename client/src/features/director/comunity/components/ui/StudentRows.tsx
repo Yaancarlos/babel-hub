@@ -15,7 +15,7 @@ export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNaviga
         <tr key={student.student_id} className="hover:bg-gray-50 transition-colors">
             <td className="p-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary font-bold text-sm">
+                    <div className="w-10 h-10 shrink-0 uppercase rounded-full bg-primary-shadow flex items-center justify-center text-primary font-bold text-sm">
                         {`${student.student_first_name.charAt(0)}${student.student_first_last_name.charAt(0)}`}
                     </div>
                     <button
@@ -34,7 +34,7 @@ export const StudentsRows = memo(function ({ student, onEdit, onDelete, onNaviga
 
             <td className="p-4">
                 {student.enrollment_code ? (
-                    <span className="bg-green-100 text-green-700 font-semibold px-2 py-1 rounded text-xs">
+                    <span className="bg-green-100 uppercase text-green-700 font-semibold px-2 py-1 rounded text-xs">
                         {student.enrollment_code}
                     </span>
                 ) : (

@@ -28,8 +28,8 @@ export function CourseDetailsStudentsTable({ students, attendance }: StudentsTab
                                 <tr key={student.student_id} className="hover:bg-gray-50 transition-colors">
                                     <td className="py-3 px-6">
                                         <div className="flex items-center text-left gap-3">
-                                            <div className="w-9 h-9 rounded-full bg-primary-shadow text-primary-darker flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
-                                                {`${student.first_name}${student.first_last_name}`}
+                                            <div className="w-9 h-9 rounded-full bg-primary-shadow uppercase text-primary-darker flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
+                                                {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
                                             </div>
                                             <div className="max-w-48 py-0.5">
                                                     <span className="block font-medium capitalize truncate text-custom-black text-sm md:text-base leading-normal">

@@ -15,7 +15,7 @@ export function Students({ students }: StudentsProps) {
                         {
                             students.map((student) => (
                                 <li key={student.student_id} className="py-3 px-5 flex items-center gap-4 hover:bg-gray-50">
-                                    <div className="w-10 h-10 rounded-full bg-primary-shadow text-primary-darker flex items-center justify-center text-sm font-bold shrink-0">
+                                    <div className="w-10 h-10 rounded-full uppercase bg-primary-shadow text-primary-darker flex items-center justify-center text-sm font-bold shrink-0">
                                         {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
                                     </div>
                                     <div>

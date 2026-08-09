@@ -218,8 +218,8 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                     cs.student_middle_name,
                     cs.student_first_last_name,
                     cs.student_second_last_name,
-                    cd.calendar_date as date,
-                    COALESCE(a.status, 'no_data') as status
+                    cd.calendar_date AS date,
+                    COALESCE(a.status, 'no_data') AS status
                 FROM CourseStudents cs
                 CROSS JOIN CalendarDates cd
                 LEFT JOIN attendance a

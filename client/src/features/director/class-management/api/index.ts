@@ -17,3 +17,10 @@ export const getDailyAttendance = async (classId: string, date: string) => {
     const response = await api.get(`/attendance/class/${classId}?date=${date}`);
     return response.data;
 };
+
+// Assignment Endpoints
+
+export const getAssignmentOverview = async (courseId: string, classId: string) => {
+    const response = await api.get(`/assignments/${courseId}/class/${classId}/overview`);
+    return response.data.assignments;
+}
