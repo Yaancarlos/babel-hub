@@ -18,7 +18,10 @@ export interface AssignmentsOverview {
         id: string;
         name: string;
         weight: number;
-        assignment_count: number;
+        assignments: {
+            id: string;
+            name: string;
+        }[];
     }[];
 }
 

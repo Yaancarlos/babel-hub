@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 export const useAssignmentOverview = (courseId: string, classId: string) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [assignments, setAssignments] = useState<AssignmentsOverview[]>([]);
+    const [assignmentsOverview, setAssignmentsOverview] = useState<AssignmentsOverview | null>(null);
 
     useEffect(() => {
         const getAssignments = async () => {
@@ -13,8 +13,8 @@ export const useAssignmentOverview = (courseId: string, classId: string) => {
 
             setLoading(true);
             try {
-                const records = await getAssignmentOverview(courseId, classId);
-                setAssignments(records);
+                const record = await getAssignmentOverview(courseId, classId);
+                setAssignmentsOverview(record);
             } catch (error : any) {
                 const msg = error.response?.data?.message || error.message || "Error al cargar los trabajos"
                 toast.error(msg);
@@ -24,7 +24,7 @@ export const useAssignmentOverview = (courseId: string, classId: string) => {
             }
         }
         getAssignments();
-    }, [])
+    }, [courseId, classId])
 
-    return { assignments, loading };
+    return { assignmentsOverview, loading };
 }

@@ -15,7 +15,7 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
                     p.second_last_name,
                     p.email
                 FROM student st
-                         JOIN profile p ON st.profile_id = p.id
+                JOIN profile p ON st.profile_id = p.id
                 WHERE st.course_id = $1 AND p.is_active = true
                 ORDER BY p.first_last_name ASC
             `, [courseId]);
@@ -24,11 +24,9 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
                 SELECT
                     ac.id,
                     ac.name,
-                    ac.weight::float AS weight,
-                    COUNT(asg.id)::int AS assignment_count
+                    ac.weight::float AS weight
                 FROM assessment_criteria ac
                 JOIN subject s ON ac.grading_template_id = s.grading_template_id
-                LEFT JOIN assignment asg ON ac.id = asg.assessment_criteria_id AND asg.class_id = $1
                 WHERE s.id = (SELECT subject_id FROM class WHERE id = $1)
                 GROUP BY ac.id, ac.name, ac.weight
                 ORDER BY ac.name ASC
@@ -36,7 +34,10 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
 
             return {
                 students: students.rows,
-                assessment_criteria: assessments.rows,
+                assessment_criteria: assessments.rows.map(row => ({
+                    ...row,
+                    assignments: []
+                })),
             }
         } finally {
             client.release();
