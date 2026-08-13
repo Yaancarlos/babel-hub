@@ -1,4 +1,5 @@
 import api from "../../../../api/client.ts";
+import type { AssignmentsOverview } from "../types";
 
 export const getClass = async (id: string) => {
     const response = await api.get(`/classes/${id}`);
@@ -20,7 +21,15 @@ export const getDailyAttendance = async (classId: string, date: string) => {
 
 // Assignment Endpoints
 
-export const getAssignmentOverview = async (courseId: string, classId: string) => {
+export const getAssignmentOverview = async (courseId: string, classId: string): Promise<AssignmentsOverview> => {
     const response = await api.get(`/assignments/${courseId}/class/${classId}/overview`);
     return response.data.assignments;
+}
+
+export const createAssignment = async (payload: any): Promise<void> => {
+    return await api.post(`/assignments`, payload);
+}
+
+export const deleteAssignment = async (assignmentId: string): Promise<void> => {
+    return await api.delete(`/assignments/${assignmentId}`);
 }

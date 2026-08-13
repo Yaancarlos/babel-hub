@@ -1,14 +1,22 @@
 import type { IAssignmentRepository } from "../domain/IAssignmentRepository.js";
 import type { AssignmentsOverview } from "../domain/Assignment.types.js";
 import { pool } from "../../../db/index.js";
+import { createAuditLog } from "../../../services/audit.service.js";
+import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
 
 export class PostgresAssigmentRepository implements IAssignmentRepository {
     async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
         const client = await pool.connect();
         try {
+            const ownershipCheck = await client.query(`
+                SELECT 1 FROM course WHERE id = $1 AND school_id = $2
+            `, [courseId, userSchoolId]);
+
+            if (ownershipCheck.rowCount === 0) throw new NotFoundError("Curso no encontrado o sin acceso");
+
             const students = await client.query(`
                 SELECT
-                    st.id,
+                    st.id AS student_id,
                     p.first_name,
                     p.middle_name,
                     p.first_last_name,
@@ -28,17 +36,91 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
                 FROM assessment_criteria ac
                 JOIN subject s ON ac.grading_template_id = s.grading_template_id
                 WHERE s.id = (SELECT subject_id FROM class WHERE id = $1)
-                GROUP BY ac.id, ac.name, ac.weight
                 ORDER BY ac.name ASC
             `, [classId]);
 
+            const assignments = await client.query(`
+                SELECT
+                    a.id,
+                    a.name,
+                    a.due_date,
+                    a.created_at,
+                    a.assessment_criteria_id
+                FROM assignment a
+                WHERE a.class_id = $1
+                ORDER BY a.name ASC
+            `, [classId]);
+
+            const assignmentsByCriteria = new Map<string, any[]>();
+
+            for (const asg of assignments.rows) {
+                const list = assignmentsByCriteria.get(asg.assessment_criteria_id) ?? [];
+                list.push({
+                    id: asg.id,
+                    name: asg.name,
+                    due_date: asg.due_date,
+                    created_at: asg.created_at
+                });
+                assignmentsByCriteria.set(asg.assessment_criteria_id, list);
+            }
+
             return {
                 students: students.rows,
-                assessment_criteria: assessments.rows.map(row => ({
-                    ...row,
-                    assignments: []
+                assessment_criteria: assessments.rows.map(ac => ({
+                    id: ac.id,
+                    name: ac.name,
+                    weight: ac.weight,
+                    assignments: assignmentsByCriteria.get(ac.id) ?? []
                 })),
             }
+        } finally {
+            client.release();
+        }
+    }
+
+    async createAssignment(
+        assignmentName: string,
+        assignmentDueAt: string,
+        classId: string,
+        assessmentId: string,
+        userId: string,
+        userRole: string,
+        userSchoolId: string): Promise<void> {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            const ownershipCheck = await client.query(`
+                SELECT 1
+                FROM class cl
+                         JOIN course c ON cl.course_id = c.id
+                         JOIN subject s ON cl.subject_id = s.id
+                         JOIN assessment_criteria ac ON ac.grading_template_id = s.grading_template_id
+                WHERE cl.id = $1 AND ac.id = $2 AND c.school_id = $3
+            `, [classId, assessmentId, userSchoolId]);
+
+            if (ownershipCheck.rowCount === 0) throw new NotFoundError("No se puede crear la asignación: clase o criterio inválido");
+
+            const assignment = await client.query(`
+            INSERT INTO assignment (name, due_date, class_id, assessment_criteria_id)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id
+        `, [assignmentName, assignmentDueAt, classId, assessmentId]);
+
+            await createAuditLog(client, {
+                actorUserId: userId,
+                actorRole: userRole,
+                action: "CREATE_ASSIGNMENT",
+                schoolId: userSchoolId,
+                metadata: { assignmentId: assignment.rows[0].id, assignmentName: assignmentName }
+            })
+
+            await client.query('COMMIT');
+            return;
+        } catch (error : any) {
+            await client.query('ROLLBACK');
+            if (error.code === '23503') throw new ConflictError("La clase o el criterio seleccionado no existe");
+            throw error;
         } finally {
             client.release();
         }

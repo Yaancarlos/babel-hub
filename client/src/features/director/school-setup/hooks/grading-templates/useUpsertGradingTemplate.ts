@@ -17,7 +17,7 @@ export const useUpsertGradingTemplate = (onSuccess: () => void) => {
             } else if (mode === "edit" && id) {
                 await updateGradingTemplate(id, payload);
             } else {
-                throw new Error("No se pudo determinar la acción a realizar (falta el ID para editar)");
+                throw new Error("No se pudo determinar la acción a realizar");
             }
 
             toast.success(`Template ${mode === "create" ? "creada" : "editada"} correctamente.`);

@@ -15,7 +15,7 @@ export const useDeleteClass = (onSuccess: () => void) => {
 
             onSuccess();
         } catch (error: any) {
-            const msg = error?.response?.data?.message || "Error al eliminar la clase.";
+            const msg = error?.response?.data?.message || error?.message || "Error al eliminar la clase.";
             console.error(msg);
             toast.error(msg);
         } finally {

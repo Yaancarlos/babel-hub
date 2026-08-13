@@ -1,28 +1,29 @@
 export interface Assignment {
     id: string;
-    title: string;
-    type: string;
+    name: string;
     due_date: string;
+    create_at: string;
+}
+
+export interface Student {
+    student_id: string;
+    first_name: string;
+    middle_name: string | null;
+    first_last_name: string;
+    second_last_name: string | null;
+    email: string;
+}
+
+export interface AssessmentCriteria {
+    id: string;
+    name: string;
+    weight: number;
+    assignments: Assignment[];
 }
 
 export interface AssignmentsOverview {
-    students: {
-        id: string;
-        first_name: string;
-        middle_name: string | null;
-        first_last_name: string;
-        second_last_name: string | null;
-        email: string;
-    }[];
-    assessment_criteria: {
-        id: string;
-        name: string;
-        weight: number;
-        assignments: {
-            id: string;
-            name: string;
-        }[];
-    }[];
+    students: Student[];
+    assessment_criteria: AssessmentCriteria[];
 }
 
 interface CLassDetails {
@@ -36,15 +37,6 @@ interface CLassDetails {
     teacher_first_last_name: string;
     teacher_second_last_name: string | null;
     created_at: string;
-}
-
-export interface Student {
-    student_id: string;
-    first_name: string;
-    middle_name: string | null;
-    first_last_name: string;
-    second_last_name: string | null;
-    email: string;
 }
 
 export interface ClassDetailsData {

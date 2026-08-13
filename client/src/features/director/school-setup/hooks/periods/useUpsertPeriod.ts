@@ -16,6 +16,8 @@ export const useUpsertPeriod = (onSuccess: () => void) => {
                 await updatePeriod(periodId, payload);
             } else if (mode === 'create') {
                 await createPeriod(payload);
+            } else {
+                throw new Error("No se pudo determinar la acción a realizar");
             }
             toast.success(`Periodo ${mode === "create" ? "creado" : "editado"} correctamente.`);
 
