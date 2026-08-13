@@ -1,6 +1,7 @@
 import type { AssignmentsOverview } from "../domain/Assignment.types.js";
 import type { IAssignmentRepository } from "../domain/IAssignmentRepository.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import { assertValidDueDate } from "../domain/Assignment.rules.js";
 
 export class AssignmentService {
     constructor(private readonly assignmentRepository: IAssignmentRepository) {}
@@ -22,10 +23,30 @@ export class AssignmentService {
         if (!classId || !assessmentId) throw new ValidationError('los datos de la clase y el criterio esta vacios');
         if (!assignmentName || !assignmentDueAt) throw new ValidationError('todos los campos obligatorios deben de estar llenos');
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('los datos del usario master son invalidos');
-
-        const today = new Date().toISOString().slice(0, 10);
-        if (assignmentDueAt < today) throw new ValidationError('no puedes colocar una fecha anterior al dia de hoy');
+        assertValidDueDate(assignmentDueAt);
 
         return this.assignmentRepository.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, userId, userRole, userSchoolId);
+    }
+
+    async updateAssignment(
+        assignmentId: string,
+        assignmentName: string,
+        assignmentDueAt: string,
+        userId: string,
+        userRole: string,
+        userSchoolId: string): Promise<void> {
+        if (!assignmentId) throw new ValidationError('los datos de la clase, criterio o asignación estan vacios');
+        if (!assignmentName || !assignmentDueAt) throw new ValidationError('todos los campos obligatorios deben de estar llenos');
+        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('los datos del usario master son invalidos');
+        assertValidDueDate(assignmentDueAt);
+
+        return this.assignmentRepository.updateAssignment(assignmentId, assignmentName, assignmentDueAt, userId, userRole, userSchoolId);
+    }
+
+    async deleteAssignment(assignmentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('los datos del usario master son invalidos');
+        if (!assignmentId) throw new ValidationError('El id de la asignación es invalido o esta vacio');
+
+        return await this.assignmentRepository.deleteAssignment(assignmentId, userId, userRole, userSchoolId);
     }
 }

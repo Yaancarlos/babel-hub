@@ -10,4 +10,13 @@ export interface IAssignmentRepository {
         userId: string,
         userRole: string,
         userSchoolId: string): Promise<void>;
+    updateAssignment(
+        assignmentId: string,
+        assignmentName: string,
+        assignmentDueAt: string,
+        userId: string,
+        userRole: string,
+        userSchoolId: string
+    ): Promise<void>;
+    deleteAssignment(assignmentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;
 }

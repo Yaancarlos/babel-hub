@@ -3,11 +3,11 @@ import { authorizedRoles } from "../../../middleware/role.middleware.js";
 import { authMiddleware } from "../../../middleware/auth.middleware.js";
 import { strictLimiter } from "../../../middleware/ratelimit.middleware.js";
 
-import { PostgresAssigmentRepository } from "./PostgersAssigmentRepository.js";
+import { PostgresAssignmentRepository } from "./PostgersAssigmentRepository.js";
 import { AssignmentController } from "./AssignmentController.js";
 import { AssignmentService } from "../application/AssignmentService.js";
 
-const repository = new PostgresAssigmentRepository();
+const repository = new PostgresAssignmentRepository();
 const service = new AssignmentService(repository);
 const controller = new AssignmentController(service);
 
@@ -26,6 +26,22 @@ router.post(
     authMiddleware,
     authorizedRoles(['principal', 'teacher']),
     controller.createAssignment
+)
+
+router.put(
+    "/:assignmentId",
+    strictLimiter,
+    authMiddleware,
+    authorizedRoles(['principal', 'teacher']),
+    controller.updateAssignment
+);
+
+router.delete(
+    "/:assignmentId",
+    strictLimiter,
+    authMiddleware,
+    authorizedRoles(['principal', 'teacher']),
+    controller.deleteAssignment
 )
 
 export default router;

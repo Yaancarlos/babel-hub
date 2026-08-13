@@ -4,7 +4,7 @@ import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
 
-export class PostgresAssigmentRepository implements IAssignmentRepository {
+export class PostgresAssignmentRepository implements IAssignmentRepository {
     async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
         const client = await pool.connect();
         try {
@@ -93,9 +93,9 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
             const ownershipCheck = await client.query(`
                 SELECT 1
                 FROM class cl
-                         JOIN course c ON cl.course_id = c.id
-                         JOIN subject s ON cl.subject_id = s.id
-                         JOIN assessment_criteria ac ON ac.grading_template_id = s.grading_template_id
+                JOIN course c ON cl.course_id = c.id
+                JOIN subject s ON cl.subject_id = s.id
+                JOIN assessment_criteria ac ON ac.grading_template_id = s.grading_template_id
                 WHERE cl.id = $1 AND ac.id = $2 AND c.school_id = $3
             `, [classId, assessmentId, userSchoolId]);
 
@@ -117,9 +117,107 @@ export class PostgresAssigmentRepository implements IAssignmentRepository {
 
             await client.query('COMMIT');
             return;
-        } catch (error : any) {
+        } catch (error: unknown) {
             await client.query('ROLLBACK');
-            if (error.code === '23503') throw new ConflictError("La clase o el criterio seleccionado no existe");
+            if (error instanceof Error && 'code' in error && error.code === '23503') {
+                throw new ConflictError("La clase o el criterio seleccionado no existe");
+            }
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
+    async updateAssignment(
+        assignmentId: string,
+        assignmentName: string,
+        assignmentDueAt: string,
+        userId: string,
+        userRole: string,
+        userSchoolId: string
+    ): Promise<void> {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            const ownershipCheck = await client.query(`
+                SELECT 1
+                FROM assignment a
+                JOIN class c ON a.class_id = c.id
+                JOIN course cr ON c.course_id = cr.id
+                WHERE a.id = $1
+                AND cr.school_id = $2
+            `, [assignmentId, userSchoolId]);
+
+            if (ownershipCheck.rowCount === 0) throw new NotFoundError("No se puede editar la asignación: clase o criterio inválido");
+
+            await client.query(`
+                UPDATE assignment
+                SET name = $1, due_date = $2
+                WHERE id = $3
+            `, [assignmentName, assignmentDueAt, assignmentId]);
+
+            await createAuditLog(client, {
+                actorUserId: userId,
+                actorRole: userRole,
+                action: "UPDATE_ASSIGNMENT",
+                schoolId: userSchoolId,
+                metadata: { assignmentId: assignmentId, assignmentName: assignmentName }
+            })
+
+            await client.query('COMMIT');
+            return;
+        } catch (error: unknown) {
+            await client.query('ROLLBACK');
+            if (error instanceof Error && 'code' in error && error.code === '23503') {
+                throw new ConflictError("La clase o el criterio seleccionado no existe");
+            }
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
+    async deleteAssignment(assignmentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            const ownershipCheck = await client.query(`
+                SELECT 1
+                FROM assignment a
+                JOIN class c ON a.class_id = c.id
+                JOIN course cr ON c.course_id = cr.id
+                WHERE a.id = $1
+                AND cr.school_id = $2
+            `, [assignmentId, userSchoolId]);
+
+            if (ownershipCheck.rowCount === 0) throw new NotFoundError("No se puede eliminar la asignación: clase o criterio inválido");
+
+            const assignment = await client.query(`
+                DELETE FROM assignment WHERE id = $1
+                RETURNING id, name
+            `, [assignmentId]);
+
+            if (assignment.rowCount === 0) {
+                throw new NotFoundError("La asignación no existe");
+            }
+
+            await createAuditLog(client, {
+                actorUserId: userId,
+                actorRole: userRole,
+                action: "DELETE_ASSIGNMENT",
+                schoolId: userSchoolId,
+                metadata: { assignmentId: assignmentId, assignmentName: assignment.rows[0].name }
+            })
+
+            await client.query('COMMIT');
+            return;
+        } catch (error: unknown) {
+            await client.query('ROLLBACK');
+            if (error instanceof Error && 'code' in error && error.code === '23503') {
+                throw new ConflictError("La clase o el criterio seleccionado no existe");
+            }
             throw error;
         } finally {
             client.release();

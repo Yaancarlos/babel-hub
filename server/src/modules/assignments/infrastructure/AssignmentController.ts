@@ -14,7 +14,7 @@ export class AssignmentController {
 
             const records = await this.assignmentService.getAssignmentsOverview(courseId, classId, userSchoolId);
             response.status(200).json({ assignments: records });
-        } catch (error : any) {
+        } catch (error) {
             next(error);
         }
     }
@@ -30,6 +30,37 @@ export class AssignmentController {
             await this.assignmentService.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, userId, userRole, userSchoolId);
             response.status(201).send();
         } catch (error: any) {
+            next(error);
+        }
+    }
+
+    updateAssignment = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const assignmentId = request.params.assignmentId as string;
+            const { assignmentName, assignmentDueAt } = request.body;
+
+            const userId = request.user!.userId as string;
+            const userRole = request.user!.role! as string;
+            const userSchoolId = request.user!.schoolId as string;
+
+            await this.assignmentService.updateAssignment(assignmentId, assignmentName, assignmentDueAt, userId, userRole, userSchoolId);
+            response.status(200).send();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    deleteAssignment = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const assignmentId = request.params.assignmentId as string;
+
+            const userId = request.user!.userId as string;
+            const userRole = request.user!.role! as string;
+            const userSchoolId = request.user!.schoolId as string;
+
+            await this.assignmentService.deleteAssignment(assignmentId, userId, userRole, userSchoolId);
+            response.status(200).send();
+        } catch (error) {
             next(error);
         }
     }
