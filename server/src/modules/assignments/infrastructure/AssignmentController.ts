@@ -43,7 +43,11 @@ export class AssignmentController {
             const userRole = request.user!.role! as string;
             const userSchoolId = request.user!.schoolId as string;
 
-            await this.assignmentService.updateAssignment(assignmentId, assignmentName, assignmentDueAt, userId, userRole, userSchoolId);
+            await this.assignmentService.updateAssignment(
+                assignmentId,
+                { assignmentName, assignmentDueAt },
+                userId, userRole, userSchoolId
+            );
             response.status(200).send();
         } catch (error) {
             next(error);

@@ -30,6 +30,10 @@ export const createAssignment = async (payload: any): Promise<void> => {
     return await api.post(`/assignments`, payload);
 }
 
+export const updateAssignment = async (assignmentId: string, payload: any): Promise<void> => {
+    return await api.patch(`/assignments/${assignmentId}`, payload);
+}
+
 export const deleteAssignment = async (assignmentId: string): Promise<void> => {
     return await api.delete(`/assignments/${assignmentId}`);
 }

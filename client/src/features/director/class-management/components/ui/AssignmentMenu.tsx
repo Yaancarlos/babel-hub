@@ -42,7 +42,7 @@ export function AssignmentMenu({
             {open && (
                 <div
                     role="menu"
-                    className="absolute right-0 top-full z-20 mt-1 w-36 overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-lg"
+                    className="absolute right-0 top-full z-20 mt-1 w-36 overflow-hidden p-1 rounded-xl border border-gray-200 bg-white text-left shadow-lg"
                 >
                     <button
                         role="menuitem"
@@ -50,7 +50,7 @@ export function AssignmentMenu({
                             setOpen(false)
                             onEditAssignment(assessmentCriteria, assignment)
                         }}
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-700 transition-colors hover:bg-gray-100"
                     >
                         <HiPencil className="size-3.5" /> Renombrar
                     </button>
@@ -60,7 +60,7 @@ export function AssignmentMenu({
                             setOpen(false)
                             onDeleteAssignment(assignment)
                         }}
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-red-600 transition-colors hover:bg-red-50"
                     >
                         <HiTrash className="size-3.5" /> Eliminar
                     </button>

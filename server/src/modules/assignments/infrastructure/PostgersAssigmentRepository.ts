@@ -1,8 +1,8 @@
 import type { IAssignmentRepository } from "../domain/IAssignmentRepository.js";
-import type { AssignmentsOverview } from "../domain/Assignment.types.js";
+import type {AssignmentsOverview, UpdateAssignmentDTO} from "../domain/Assignment.types.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
-import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
+import { ConflictError, NotFoundError, ValidationError } from "../../errors/domain/CustomErrors.js";
 
 export class PostgresAssignmentRepository implements IAssignmentRepository {
     async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
@@ -130,8 +130,7 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
 
     async updateAssignment(
         assignmentId: string,
-        assignmentName: string,
-        assignmentDueAt: string,
+        payload: UpdateAssignmentDTO,
         userId: string,
         userRole: string,
         userSchoolId: string
@@ -151,18 +150,40 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
 
             if (ownershipCheck.rowCount === 0) throw new NotFoundError("No se puede editar la asignación: clase o criterio inválido");
 
-            await client.query(`
+            const clauses: string[] = [];
+            const values: any[] = [];
+            let index = 1;
+
+            if (payload.assignmentName !== undefined) {
+                clauses.push(`name = $${index++}`);
+                values.push(payload.assignmentName);
+            }
+
+            if (payload.assignmentDueAt !== undefined) {
+                clauses.push(`due_date = $${index++}`);
+                values.push(payload.assignmentDueAt);
+            }
+
+            values.push(assignmentId);
+
+            if (clauses.length === 0) {
+                throw new ValidationError('Debe proporcionar al menos un campo para actualizar');
+            }
+
+            const query = `
                 UPDATE assignment
-                SET name = $1, due_date = $2
-                WHERE id = $3
-            `, [assignmentName, assignmentDueAt, assignmentId]);
+                SET ${clauses.join(', ')}
+                WHERE id = $${index}
+            `
+
+            await client.query(query, values);
 
             await createAuditLog(client, {
                 actorUserId: userId,
                 actorRole: userRole,
                 action: "UPDATE_ASSIGNMENT",
                 schoolId: userSchoolId,
-                metadata: { assignmentId: assignmentId, assignmentName: assignmentName }
+                metadata: { assignmentId: assignmentId, assignmentFields: payload }
             })
 
             await client.query('COMMIT');

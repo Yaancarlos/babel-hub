@@ -28,7 +28,7 @@ router.post(
     controller.createAssignment
 )
 
-router.put(
+router.patch(
     "/:assignmentId",
     strictLimiter,
     authMiddleware,

@@ -56,7 +56,7 @@ export const CourseDetailsClassRows = memo(function ClassRowItem({
                 <HiDotsVertical/>
             </button>
             {isOpen && (
-                <ul className={`absolute ${isLast ? "bottom-5" : "top-5"} right-10 z-50 w-32 h-fit p-2 text-sm md:text-base font-semibold bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl`}>
+                <ul className={`absolute ${isLast ? "bottom-5" : "top-5"} right-10 z-50 w-32 h-fit p-1 text-sm md:text-base font-semibold bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl`}>
                     <li>
                         <button onClick={() => onEdit(cls)} className="p-2 w-full text-left cursor-pointer hover:bg-gray-100 rounded-xl">
                             Editar

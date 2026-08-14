@@ -70,8 +70,8 @@ export function Assignments({classId, courseId}: AssignmentsProps) {
                         setAssignmentToDelete(null);
                     }
                 }}
-                title="¿Estás seguro?"
-                message={`¿Quieres eliminar la asignación ${assignmentToDelete?.name}? Esta acción no se puede deshacer.`}
+                title="Eliminar asignación"
+                message={`Se eliminará "${assignmentToDelete?.name}" y todas sus calificaciones. Esta acción no se puede deshacer.`}
                 loadingDelete={loadingDelete}
             />
 

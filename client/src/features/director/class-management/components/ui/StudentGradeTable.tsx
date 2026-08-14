@@ -95,34 +95,54 @@ export function StudentGradeTable({ assessments, students, onAddAssignment, onDe
                 </thead>
 
                 <tbody>
-                {students.map((student) => (
-                    <tr key={student.student_id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="sticky left-0 bg-white p-3 border-r border-gray-100 z-10">
-                            <div className="truncate max-w-[200px] capitalize font-medium text-custom-black text-sm">
-                                {reverseName({
-                                    firstName: student.first_name,
-                                    firstLastName: student.first_last_name,
-                                    middleName: student.middle_name,
-                                    secondLastName: student.second_last_name
-                                })}
-                            </div>
-                        </td>
+                {students.map((student) => {
+                    const displayName = reverseName({
+                        firstName: student.first_name,
+                        firstLastName: student.first_last_name,
+                        middleName: student.middle_name,
+                        secondLastName: student.second_last_name,
+                    })
+                    const final = finalGradeForStudent(overview, student.id)
+                    return (
+                        <tr key={student.student_id} className="border-t border-gray-100 transition-colors hover:bg-gray-50">
+                            <td className="sticky left-0 z-10 border-r border-gray-200 bg-white p-3">
+                                <div className="max-w-[220px] truncate text-sm font-medium capitalize text-gray-900">
+                                    {displayName}
+                                </div>
+                                <div className="truncate text-xs text-gray-500">{student.email}</div>
+                            </td>
 
-                        {assessments.map((ac) => (
-                            ac.assignments.length > 0 ? (
-                                ac.assignments.map((asg) => (
-                                    <td key={asg.id} className="text-center text-sm text-gray-400 p-4">
+                            {assessments.map((ac) =>
+                                ac.assignments.length > 0 ? (
+                                    ac.assignments.map((asg) => {
+                                        const grade = grades.find(
+                                            (g) => g.student_id === student.student_id && g.assignment_id === asg.id,
+                                        )
+                                        return (
+                                            <GradeCell
+                                                key={asg.id}
+                                                value={grade ? grade.value : null}
+                                                studentName={displayName}
+                                                assignmentName={asg.name}
+                                                onCommit={(v) => onGradeCommit(student.id, asg.id, v)}
+                                            />
+                                        )
+                                    })
+                                ) : (
+                                    <td key={`${ac.id}-empty`} className="p-1 text-center text-sm text-gray-300">
                                         —
                                     </td>
-                                ))
-                            ) : (
-                                <td key={`${ac.id}-empty`} className="text-center text-sm text-gray-300 p-4">
-                                    —
-                                </td>
-                            )
-                        ))}
-                    </tr>
-                ))}
+                                ),
+                            )}
+
+                            <td className="border-l border-gray-200 bg-white p-3 text-center">
+                              <span className={`text-sm font-bold tabular-nums ${tone(final)}`}>
+                                {final === null ? '—' : final.toFixed(1)}
+                              </span>
+                            </td>
+                        </tr>
+                    )
+                })}
                 </tbody>
             </table>
         </div>

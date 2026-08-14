@@ -75,7 +75,7 @@ export function InteractiveHomeList({ isActive, onClick, avatarText, title, disa
                     </button>
 
                     {isOpen && (
-                        <ul className={`absolute z-50 w-48 h-fit p-2 text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
+                        <ul className={`absolute z-50 w-48 h-fit p-1 text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
                             menuPosition === 'top' ? 'bottom-12' : 'top-12'
                         }`}>
                             {menuOptions.map((opt, idx) => (

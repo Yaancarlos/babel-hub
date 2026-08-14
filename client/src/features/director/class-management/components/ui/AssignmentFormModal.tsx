@@ -16,7 +16,7 @@ export function AssignmentFormModal({ mode, onSuccess, onClose, assignment, assi
     const isCreateMode = mode === "create";
     const [formData, setFormData] = useState({
         assignmentName: assignmentToEdit?.name || "",
-        assignmentDueAt: assignmentToEdit?.due_date || "",
+        assignmentDueAt: assignmentToEdit?.due_date.slice(0,10) || "",
         classId: assignment.classId,
         assessmentId: assignment.assessmentId,
     });
@@ -36,11 +36,15 @@ export function AssignmentFormModal({ mode, onSuccess, onClose, assignment, assi
             return;
         }
 
-        const payload = {
-            ...formData,
-            assignmentName: formData.assignmentName.trim().toLowerCase()
+        const payload: Record<string, string> = {
+            assignmentName: formData.assignmentName.trim().toLowerCase(),
+            assignmentDueAt: formData.assignmentDueAt
         }
 
+        if (!assignmentToEdit) {
+            payload.classId = formData.classId;
+            payload.assessmentId = formData.assessmentId;
+        }
 
         await upsertAssignment(mode, assignmentToEdit ? assignmentToEdit.id : null, payload);
     }

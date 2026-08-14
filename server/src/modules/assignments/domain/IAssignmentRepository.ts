@@ -1,4 +1,4 @@
-import type { AssignmentsOverview } from "./Assignment.types.js";
+import type {AssignmentsOverview, UpdateAssignmentDTO} from "./Assignment.types.js";
 
 export interface IAssignmentRepository {
     getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview>;
@@ -12,8 +12,7 @@ export interface IAssignmentRepository {
         userSchoolId: string): Promise<void>;
     updateAssignment(
         assignmentId: string,
-        assignmentName: string,
-        assignmentDueAt: string,
+        payload: UpdateAssignmentDTO,
         userId: string,
         userRole: string,
         userSchoolId: string

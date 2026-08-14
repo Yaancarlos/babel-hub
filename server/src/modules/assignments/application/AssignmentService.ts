@@ -1,4 +1,4 @@
-import type { AssignmentsOverview } from "../domain/Assignment.types.js";
+import type {AssignmentsOverview, UpdateAssignmentDTO} from "../domain/Assignment.types.js";
 import type { IAssignmentRepository } from "../domain/IAssignmentRepository.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
 import { assertValidDueDate } from "../domain/Assignment.rules.js";
@@ -30,17 +30,21 @@ export class AssignmentService {
 
     async updateAssignment(
         assignmentId: string,
-        assignmentName: string,
-        assignmentDueAt: string,
+        payload: UpdateAssignmentDTO,
         userId: string,
         userRole: string,
         userSchoolId: string): Promise<void> {
         if (!assignmentId) throw new ValidationError('los datos de la clase, criterio o asignación estan vacios');
-        if (!assignmentName || !assignmentDueAt) throw new ValidationError('todos los campos obligatorios deben de estar llenos');
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('los datos del usario master son invalidos');
-        assertValidDueDate(assignmentDueAt);
+        if (payload.assignmentName === undefined && payload.assignmentDueAt === undefined) {
+            throw new ValidationError('Debe proporcionar al menos un campo para actualizar');
+        }
 
-        return this.assignmentRepository.updateAssignment(assignmentId, assignmentName, assignmentDueAt, userId, userRole, userSchoolId);
+        if (payload.assignmentDueAt) {
+            assertValidDueDate(payload.assignmentDueAt);
+        }
+
+        return this.assignmentRepository.updateAssignment(assignmentId, payload, userId, userRole, userSchoolId);
     }
 
     async deleteAssignment(assignmentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {

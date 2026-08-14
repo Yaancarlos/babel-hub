@@ -17,3 +17,8 @@ export interface AssignmentsOverview {
         }[];
     }[];
 }
+
+export interface UpdateAssignmentDTO {
+    assignmentName?: string;
+    assignmentDueAt?: string;
+}
