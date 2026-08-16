@@ -45,7 +45,7 @@ export class AttendanceController {
             const { date, records } = request.body;
 
             await this.attendanceService.bulkUpsertAttendance(classId, records, date, userId, userRole, userSchoolId);
-            response.status(200).json({ message: "Successfully upserted attendance" });
+            response.status(201).json({ message: "Successfully upserted attendance" });
         } catch (error : any) {
             next(error)
         }

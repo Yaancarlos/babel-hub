@@ -1,11 +1,11 @@
 import api from "../../../../api/client.ts";
-import type { AssignmentsOverview } from "../types";
+import type { AssignmentsOverview, ClassDetailsData } from "../types";
 
-export const getClass = async (id: string) => {
+export const getClass = async (id: string): Promise<ClassDetailsData> => {
     const response = await api.get(`/classes/${id}`);
     return response.data;
 }
-export const saveBulkAttendance = async (id: string, date: string, records: any[]) => {
+export const saveBulkAttendance = async (id: string, date: string, records: any[]): Promise<void> => {
     return await api.post(`/attendance/class/${id}/bulk`, { date, records });
 };
 
@@ -36,4 +36,10 @@ export const updateAssignment = async (assignmentId: string, payload: any): Prom
 
 export const deleteAssignment = async (assignmentId: string): Promise<void> => {
     return await api.delete(`/assignments/${assignmentId}`);
+}
+
+// Grade Endpoint
+
+export const bulkGrades = async (assignmentId: string, payload: any): Promise<void> => {
+    return await api.post(`/grades/assignment/${assignmentId}`, payload);
 }

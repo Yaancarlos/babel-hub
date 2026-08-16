@@ -1,19 +1,20 @@
 import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
 import { useAssignmentOverview } from "../../hooks/useAssignmentOverview.ts";
 import {type ModalModeTypes} from "../../../../../types";
-import type { AssessmentCriteria, Assignment} from "../../types";
+import type { AssessmentCriteria, Assignment, ClassDetailsData } from "../../types";
 import { useState } from "react";
 import { StudentGradeTable } from "../ui/StudentGradeTable.tsx";
 import { AssignmentFormModal } from "../ui/AssignmentFormModal.tsx";
-import {ConfirmModal} from "../../../../../components/ui/modals/ConfirmModal.tsx";
-import {useAssignmentDelete} from "../../hooks/useAssignmentDelete.ts";
+import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
+import { useAssignmentDelete } from "../../hooks/useAssignmentDelete.ts";
 
 interface AssignmentsProps {
+    classData: ClassDetailsData;
     courseId: string;
     classId: string;
 }
 
-export function Assignments({classId, courseId}: AssignmentsProps) {
+export function Assignments({ classData, classId, courseId }: AssignmentsProps) {
     const [modalMode, setModalMode] = useState<ModalModeTypes>("none");
     const [assessmentId, setAssessmentId] = useState<string>("");
     const [assignmentToEdit, setAssignmentToEdit] = useState<Assignment | null>(null);
@@ -47,13 +48,14 @@ export function Assignments({classId, courseId}: AssignmentsProps) {
         setModalMode("edit");
     }
 
-    const {students, assessment_criteria} = assignmentsOverview;
+    const { assessment_criteria, grades } = assignmentsOverview;
+    console.log(assessment_criteria, grades)
 
     return (
         <div className="space-y-6">
-            {students.length > 0 && assessment_criteria.length > 0 && (
+            {classData.students.length > 0 && assessment_criteria.length > 0 && (
                 <StudentGradeTable
-                    students={students}
+                    students={classData.students}
                     assessments={assessment_criteria}
                     onAddAssignment={onAddAssignment}
                     onEditAssignment={onEditAssignment}

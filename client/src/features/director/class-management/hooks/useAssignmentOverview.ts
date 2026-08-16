@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AssignmentsOverview } from "../types";
-import { getAssignmentOverview } from "../api";
+import { getAssignmentOverview  } from "../api";
 import toast from "react-hot-toast";
 
 export const useAssignmentOverview = (courseId: string, classId: string) => {

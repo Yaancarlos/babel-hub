@@ -14,20 +14,6 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
 
             if (ownershipCheck.rowCount === 0) throw new NotFoundError("Curso no encontrado o sin acceso");
 
-            const students = await client.query(`
-                SELECT
-                    st.id AS student_id,
-                    p.first_name,
-                    p.middle_name,
-                    p.first_last_name,
-                    p.second_last_name,
-                    p.email
-                FROM student st
-                JOIN profile p ON st.profile_id = p.id
-                WHERE st.course_id = $1 AND p.is_active = true
-                ORDER BY p.first_last_name ASC
-            `, [courseId]);
-
             const assessments = await client.query(`
                 SELECT
                     ac.id,
@@ -65,7 +51,6 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
             }
 
             return {
-                students: students.rows,
                 assessment_criteria: assessments.rows.map(ac => ({
                     id: ac.id,
                     name: ac.name,

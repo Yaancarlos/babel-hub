@@ -5,6 +5,14 @@ export interface Assignment {
     create_at: string;
 }
 
+export interface GradeByAssignment {
+    id: string;
+    student_id: string;
+    assignment_id: string;
+    value: number;
+    comment: string | null;
+}
+
 export interface Student {
     student_id: string;
     first_name: string;
@@ -22,8 +30,8 @@ export interface AssessmentCriteria {
 }
 
 export interface AssignmentsOverview {
-    students: Student[];
     assessment_criteria: AssessmentCriteria[];
+    grades: GradeByAssignment[];
 }
 
 interface CLassDetails {
@@ -42,5 +50,4 @@ interface CLassDetails {
 export interface ClassDetailsData {
     details: CLassDetails;
     students:   Student[];
-    assignments: Assignment[];
 }

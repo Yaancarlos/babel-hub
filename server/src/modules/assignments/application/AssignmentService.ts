@@ -1,15 +1,25 @@
-import type {AssignmentsOverview, UpdateAssignmentDTO} from "../domain/Assignment.types.js";
+import type {AssignmentsOverview, AssignmentsStructure, UpdateAssignmentDTO} from "../domain/Assignment.types.js";
 import type { IAssignmentRepository } from "../domain/IAssignmentRepository.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
 import { assertValidDueDate } from "../domain/Assignment.rules.js";
 
+// From Grade Module
+import type { IGradeRepository } from "../../grade/domain/IGradeRepository.js";
+
 export class AssignmentService {
-    constructor(private readonly assignmentRepository: IAssignmentRepository) {}
+    constructor(
+        private readonly assignmentRepository: IAssignmentRepository,
+        private readonly gradeRepository: IGradeRepository
+    ) {}
+    async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsStructure> {
+        if (!classId || !courseId) throw new ValidationError('Los datos son inválidos');
 
-    async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
-        if (!classId || !courseId) throw new ValidationError('Los datos del usario master son invalidos');
+        const [overview, grades] = await Promise.all([
+            this.assignmentRepository.getAssignmentsOverview(courseId, classId, userSchoolId),
+            this.gradeRepository.getGradesByClass(classId)
+        ]);
 
-        return this.assignmentRepository.getAssignmentsOverview(courseId, classId, userSchoolId);
+        return { ...overview, grades };
     }
 
     async createAssignment(

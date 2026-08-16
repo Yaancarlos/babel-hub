@@ -49,7 +49,6 @@ export class PostgresClassRepository implements IClassRepository {
             return {
                 details: classDetails.rows[0],
                 students: studentsDetails.rows,
-                assignments: []
             };
         } finally {
             client.release();

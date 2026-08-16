@@ -7,8 +7,11 @@ import { PostgresAssignmentRepository } from "./PostgersAssigmentRepository.js";
 import { AssignmentController } from "./AssignmentController.js";
 import { AssignmentService } from "../application/AssignmentService.js";
 
-const repository = new PostgresAssignmentRepository();
-const service = new AssignmentService(repository);
+import { PostgresGradeRepository } from "../../grade/infrastructure/PostgresGradeRepository.js";
+
+const assignmentRepository = new PostgresAssignmentRepository();
+const gradeRepository = new PostgresGradeRepository();
+const service = new AssignmentService(assignmentRepository, gradeRepository);
 const controller = new AssignmentController(service);
 
 const router: Router = Router();

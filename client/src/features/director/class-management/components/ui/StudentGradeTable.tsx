@@ -104,7 +104,7 @@ export function StudentGradeTable({ assessments, students, onAddAssignment, onDe
                     })
                     const final = finalGradeForStudent(overview, student.id)
                     return (
-                        <tr key={student.student_id} className="border-t border-gray-100 transition-colors hover:bg-gray-50">
+                        <tr key={student.id} className="border-t border-gray-100 transition-colors hover:bg-gray-50">
                             <td className="sticky left-0 z-10 border-r border-gray-200 bg-white p-3">
                                 <div className="max-w-[220px] truncate text-sm font-medium capitalize text-gray-900">
                                     {displayName}
@@ -116,7 +116,7 @@ export function StudentGradeTable({ assessments, students, onAddAssignment, onDe
                                 ac.assignments.length > 0 ? (
                                     ac.assignments.map((asg) => {
                                         const grade = grades.find(
-                                            (g) => g.student_id === student.student_id && g.assignment_id === asg.id,
+                                            (g) => g.student_id === student.id && g.assignment_id === asg.id,
                                         )
                                         return (
                                             <GradeCell

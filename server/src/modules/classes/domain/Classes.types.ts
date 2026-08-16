@@ -19,7 +19,6 @@ export interface ClassDetails {
         second_last_name: string | null;
         email: string;
     }[];
-    assignments: any[];
 }
 
 export interface CreateClass {
