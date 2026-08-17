@@ -25,7 +25,7 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
 
     if (loading) return null;
 
-    if (!assignmentsOverview || assignmentsOverview.assessment_criteria.length === 0) {
+    if (!assignmentsOverview || assignmentsOverview.length === 0) {
         return (
             <div className="md:col-span-2 lg:col-span-3">
                 <NoResults title="No hay criterios de evaluación configurados todavía"/>
@@ -35,6 +35,7 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
 
     const onAddAssignment = (assessment: AssessmentCriteria) => {
         setAssessmentId(assessment.id);
+        setAssignmentToEdit(null);
         setModalMode("create")
     }
 
@@ -48,18 +49,28 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
         setModalMode("edit");
     }
 
-    const { assessment_criteria, grades } = assignmentsOverview;
-    console.log(assessment_criteria, grades)
+    const handleSaveAssignmentGrades = async (assignmentId: string, records: { studentId: string; value: number | null }[]) => {
+        /*await bulkUpsertGrades(assignmentId, records.map(r => ({
+            studentId: r.studentId,
+            value: r.value ?? 0,  // decide: does clearing a cell mean "0" or should it delete the grade row entirely?
+            comment: null
+        })));
+        await refetch();*/
 
+        console.log(assignmentId, records);
+    };
     return (
         <div className="space-y-6">
-            {classData.students.length > 0 && assessment_criteria.length > 0 && (
+            {classData.students.length > 0 && assignmentsOverview.length > 0 && (
                 <StudentGradeTable
                     students={classData.students}
-                    assessments={assessment_criteria}
+                    assessments={assignmentsOverview}
+                    scaleMin={0}
+                    scaleMax={5}
                     onAddAssignment={onAddAssignment}
                     onEditAssignment={onEditAssignment}
                     onDeleteAssignment={onDeleteAssignment}
+                    onSaveAssignmentGrades={handleSaveAssignmentGrades}
                 />
             )}
 

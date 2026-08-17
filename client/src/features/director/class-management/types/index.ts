@@ -1,16 +1,17 @@
-export interface Assignment {
-    id: string;
-    name: string;
-    due_date: string;
-    create_at: string;
-}
-
-export interface GradeByAssignment {
+export interface Grades {
     id: string;
     student_id: string;
     assignment_id: string;
     value: number;
     comment: string | null;
+}
+
+export interface Assignment {
+    id: string;
+    name: string;
+    due_date: string;
+    created_at: string;
+    grades: Grades[];
 }
 
 export interface Student {
@@ -31,7 +32,7 @@ export interface AssessmentCriteria {
 
 export interface AssignmentsOverview {
     assessment_criteria: AssessmentCriteria[];
-    grades: GradeByAssignment[];
+    grades: Grades[];
 }
 
 interface CLassDetails {
@@ -50,4 +51,45 @@ interface CLassDetails {
 export interface ClassDetailsData {
     details: CLassDetails;
     students:   Student[];
+}
+
+function calcAssignmentAverage(assignments: Assignment[], studentId: string): number | null {
+    let sum = 0;
+    let gradedCount = 0;
+
+    for (const assignment of assignments) {
+        const grade = assignment.grades.find((g) => g.student_id === studentId);
+        if (grade) {
+            sum += grade.value;
+            gradedCount++;
+        }
+    }
+
+    if (gradedCount === 0) return null;
+    return sum / gradedCount;
+}
+
+export function finalGradeForStudent(assessments: AssessmentCriteria[], studentId: string): number | null {
+    let totalGrade = 0;
+    let totalWeightGraded = 0;
+
+    for (const assessment of assessments) {
+        const average = calcAssignmentAverage(assessment.assignments, studentId);
+        if (average === null) continue;
+
+        const weight = assessment.weight / 100;
+        totalGrade += average * weight;
+        totalWeightGraded += weight;
+    }
+
+    if (totalWeightGraded === 0) return null;
+    return totalGrade;
+}
+
+export function tone(value: number){
+    if (value === null) return 'text-gray-400'
+    if (value >= 90) return 'text-emerald-600'
+    if (value >= 70) return 'text-lime-600'
+    if (value >= 60) return 'text-amber-600'
+    return 'text-red-600'
 }
