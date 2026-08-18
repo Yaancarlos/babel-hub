@@ -1,7 +1,13 @@
 import type { ValidScales } from "./Grade.types.js";
 import { ValidationError } from "../../errors/domain/CustomErrors.js";
 
-export function validateGrade(scales: ValidScales, value: number) {
+export function validateGrade(scales: ValidScales, value: number | null) {
+    if (value === null) return;
+
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+        throw new ValidationError('El valor de la nota debe de ser un numero');
+    }
+
     if (value < scales.min_value || value > scales.max_value) {
         throw new ValidationError(`El valor de la nota debe estar dentro del rango asignado ${scales.min_value} - ${scales.max_value}`);
     }

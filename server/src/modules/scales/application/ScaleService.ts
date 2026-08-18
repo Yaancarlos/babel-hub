@@ -8,6 +8,13 @@ export class ScaleService {
     async getScales(userSchoolId: string): Promise<Scales[]> {
         if (!userSchoolId) throw new ValidationError('Credenciales del usuario (master) invalidas');
 
-        return this.scaleRepository.getScales(userSchoolId);
+        return await this.scaleRepository.getScales(userSchoolId);
+    }
+
+    async getClassScale(classId: string, userSchoolId: string): Promise<Scales> {
+        if (!userSchoolId) throw new ValidationError('Credenciales del usuario (master) invalidas');
+        if (!classId) throw new ValidationError('El id de la asignatura no esta siendo enviado');
+
+        return await this.scaleRepository.getClassScale(classId, userSchoolId);
     }
 }

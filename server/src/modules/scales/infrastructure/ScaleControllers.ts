@@ -15,4 +15,16 @@ export class ScaleControllers {
             next(error);
         }
     }
+
+    getClassScale = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const classId = request.params.classId as string;
+            const userSchoolId = request.user!.schoolId as string;
+
+            const records = await this.scaleService.getClassScale(classId, userSchoolId);
+            response.status(200).json({ scale: records });
+        } catch (error : any) {
+            next(error);
+        }
+    }
 }

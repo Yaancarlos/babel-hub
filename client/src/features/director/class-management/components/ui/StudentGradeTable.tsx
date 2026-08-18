@@ -10,31 +10,75 @@ interface StudentGradeTableProps {
     assessments: AssessmentCriteria[];
     scaleMin: number;
     scaleMax: number;
+    passing: number;
     onAddAssignment: (a: AssessmentCriteria) => void;
     onEditAssignment: (ac: AssessmentCriteria, asg: Assignment) => void;
     onDeleteAssignment: (asg: Assignment) => void;
-    onSaveAssignmentGrades: (assignmentId: string, records: { studentId: string; value: number | null }[]) => Promise<void>;
+    onSaveAssignmentGrades: (
+        assignmentId: string,
+        records: {
+            studentId: string;
+            value: number | null;
+            comment: string | null;
+        }[]
+    ) => Promise<void>;
+}
+
+function suggestedComment(value: number, min: number, max: number, passing: number): string {
+    const range = max - min;
+    const position = (value - min) / range;
+
+    if (value < passing) {
+        return position < 0.4 ? "Necesita mejorar significativamente" : "Está cerca de aprobar, sigue practicando";
+    }
+
+    const passingPosition = (passing - min) / range;
+    const aboveThreshold = (position - passingPosition) / (1 - passingPosition);
+
+    if (aboveThreshold < 0.33) return "Buen trabajo";
+    if (aboveThreshold < 0.66) return "Muy buen trabajo";
+    return "¡Excelente!";
 }
 
 export function StudentGradeTable({
-                                      assessments, students, scaleMin, scaleMax,
+                                      assessments, students, scaleMin, scaleMax, passing,
                                       onAddAssignment, onDeleteAssignment, onEditAssignment, onSaveAssignmentGrades
                                   }: StudentGradeTableProps) {
-    const [dirty, setDirty] = useState<Record<string, Record<string, number | null>>>({});
+    const [dirty, setDirty] = useState<Record<string, Record<string, { value: number | null; comment: string | null, isCommentCustom: boolean }>>>({});
     const [saving, setSaving] = useState<string | null>(null);
 
-    const handleCellCommit = (assignmentId: string, studentId: string, value: number | null) => {
-        setDirty((prev) => ({
-            ...prev,
-            [assignmentId]: { ...(prev[assignmentId] ?? {}), [studentId]: value }
-        }));
+    const handleCellCommit = (assignmentId: string, studentId: string, newValue: number | null) => {
+        if (typeof newValue !== "number" || Number.isNaN(newValue)) return;
+
+        setDirty((prev) => {
+            const existing = prev[assignmentId]?.[studentId];
+            const isCommentCustom = existing?.isCommentCustom ?? false;
+
+            return {
+                ...prev,
+                [assignmentId]: {
+                    ...(prev[assignmentId] ?? {}),
+                    [studentId]: {
+                        value: newValue,
+                        comment: isCommentCustom
+                            ? existing!.comment
+                            : suggestedComment(newValue, scaleMin, scaleMax, passing),
+                        isCommentCustom,
+                    },
+                },
+            };
+        });
     };
 
     const handleSave = async (assignmentId: string) => {
         const changes = dirty[assignmentId];
         if (!changes) return;
 
-        const records = Object.entries(changes).map(([studentId, value]) => ({ studentId, value }));
+        const records = Object.entries(changes).map(([studentId, data]) => ({
+            studentId,
+            value: data.value,
+            comment: data.comment,
+        }));
 
         setSaving(assignmentId);
         try {
@@ -50,11 +94,14 @@ export function StudentGradeTable({
     };
 
     const getDisplayValue = (assignment: Assignment, studentId: string): number | null => {
-        const dirtyValue = dirty[assignment.id]?.[studentId];
+        const dirtyValue = dirty[assignment.id]?.[studentId]?.value;
+
         if (dirtyValue !== undefined) return dirtyValue;
+
         const grade = assignment.grades.find((g) => g.student_id === studentId);
         return grade ? grade.value : null;
     };
+
 
     return (
         <div className="overflow-x-auto">
@@ -163,6 +210,7 @@ export function StudentGradeTable({
                                     ac.assignments.map((asg) => (
                                         <GradeCell
                                             key={asg.id}
+                                            name={student.student_id}
                                             value={getDisplayValue(asg, student.student_id)}
                                             studentName={displayName}
                                             assignmentName={asg.name}

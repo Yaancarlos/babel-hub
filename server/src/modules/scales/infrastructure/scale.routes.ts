@@ -15,8 +15,15 @@ const router: Router = Router();
 router.get(
     "/",
     authMiddleware,
-    authorizedRoles(['principal']),
+    authorizedRoles(['principal', 'teacher']),
     controller.getScales
+);
+
+router.get(
+    "/class/:classId",
+    authMiddleware,
+    authorizedRoles(['principal', 'teacher']),
+    controller.getClassScale
 );
 
 export default router;

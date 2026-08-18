@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 
 interface GradeCellProps {
     value: number | null;
+    name: string;
     studentName: string;
     assignmentName: string;
     minValue: number;
@@ -9,7 +10,11 @@ interface GradeCellProps {
     onCommit: (value: number | null) => void;
 }
 
-export function GradeCell({ value, assignmentName, studentName, minValue, maxValue, onCommit }: GradeCellProps) {
+const REGEXP = {
+    number: /^[0-9]+(\.[0-9]{1,2})?$/
+};
+
+export function GradeCell({ value, name, assignmentName, studentName, minValue, maxValue, onCommit }: GradeCellProps) {
     const [editing, setEditing] = useState<boolean>(false);
     const [draft, setDraft] = useState<string>('');
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +39,12 @@ export function GradeCell({ value, assignmentName, studentName, minValue, maxVal
         }
 
         const parsed = Number(draft);
-        if (Number.isNaN(parsed) || parsed < minValue || parsed > maxValue) {
+        if (
+            Number.isNaN(parsed) ||
+            parsed < minValue ||
+            parsed > maxValue ||
+            !REGEXP.number.test(draft)
+        ) {
             setEditing(false);
             return;
         }
@@ -48,6 +58,7 @@ export function GradeCell({ value, assignmentName, studentName, minValue, maxVal
             <td className="p-1 text-center">
                 <input
                     ref={inputRef}
+                    name={name.split('-').join('').slice(0, 10)}
                     type="number"
                     min={minValue}
                     max={maxValue}

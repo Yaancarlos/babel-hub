@@ -1,5 +1,5 @@
 import api from "../../../../api/client.ts";
-import type { AssignmentsOverview, ClassDetailsData } from "../types";
+import type { AssignmentsOverview, ClassDetailsData, Scales } from "../types";
 
 export const getClass = async (id: string): Promise<ClassDetailsData> => {
     const response = await api.get(`/classes/${id}`);
@@ -39,6 +39,11 @@ export const deleteAssignment = async (assignmentId: string): Promise<void> => {
 }
 
 // Grade Endpoint
+
+export const getClassScale = async (classId: string): Promise<Scales> => {
+    const records = await api.get(`/scales/class/${classId}`);
+    return records.data.scale;
+}
 
 export const bulkGrades = async (assignmentId: string, payload: any): Promise<void> => {
     return await api.post(`/grades/assignment/${assignmentId}`, payload);

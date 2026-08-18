@@ -7,6 +7,7 @@ import { StudentGradeTable } from "../ui/StudentGradeTable.tsx";
 import { AssignmentFormModal } from "../ui/AssignmentFormModal.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { useAssignmentDelete } from "../../hooks/useAssignmentDelete.ts";
+import { useClassScale } from "../../hooks/useClassScale.ts";
 
 interface AssignmentsProps {
     classData: ClassDetailsData;
@@ -21,9 +22,10 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
     const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
 
     const { assignmentsOverview, loading, refetch } = useAssignmentOverview(courseId, classId);
+    const { scale, loadingScale } = useClassScale(classId);
     const { loadingDelete, deleteAssignmentById } = useAssignmentDelete(refetch);
 
-    if (loading) return null;
+    if (loading || loadingScale || !scale) return null;
 
     if (!assignmentsOverview || assignmentsOverview.length === 0) {
         return (
@@ -49,7 +51,13 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
         setModalMode("edit");
     }
 
-    const handleSaveAssignmentGrades = async (assignmentId: string, records: { studentId: string; value: number | null }[]) => {
+    const handleSaveAssignmentGrades = async (
+        assignmentId: string,
+        records: {
+            studentId: string;
+            value: number | null;
+            comment: string | null;
+        }[]) => {
         /*await bulkUpsertGrades(assignmentId, records.map(r => ({
             studentId: r.studentId,
             value: r.value ?? 0,  // decide: does clearing a cell mean "0" or should it delete the grade row entirely?
@@ -65,8 +73,9 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
                 <StudentGradeTable
                     students={classData.students}
                     assessments={assignmentsOverview}
-                    scaleMin={0}
-                    scaleMax={5}
+                    scaleMin={scale.min_value}
+                    scaleMax={scale.max_value}
+                    passing={scale.passing_value}
                     onAddAssignment={onAddAssignment}
                     onEditAssignment={onEditAssignment}
                     onDeleteAssignment={onDeleteAssignment}
