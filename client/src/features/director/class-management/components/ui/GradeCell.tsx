@@ -1,22 +1,28 @@
 import { useState, useRef, useEffect } from "react";
+import { TbMessageFilled } from "react-icons/tb";
+import { CommentPopup } from "./CommentPopup";
 
 interface GradeCellProps {
     value: number | null;
     name: string;
+    comment: string | null;
+    studentPosition: { index: number, studentsObj: number };
     studentName: string;
     assignmentName: string;
     minValue: number;
     maxValue: number;
     onCommit: (value: number | null) => void;
+    onCommentCommit: (comment: string) => void;
 }
 
 const REGEXP = {
     number: /^[0-9]+(\.[0-9]{1,2})?$/
 };
 
-export function GradeCell({ value, name, assignmentName, studentName, minValue, maxValue, onCommit }: GradeCellProps) {
+export function GradeCell({ value, name, comment, studentPosition, onCommentCommit, assignmentName, studentName, minValue, maxValue, onCommit }: GradeCellProps) {
     const [editing, setEditing] = useState<boolean>(false);
     const [draft, setDraft] = useState<string>('');
+    const [commentOpen, setCommentOpen] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -79,13 +85,33 @@ export function GradeCell({ value, name, assignmentName, studentName, minValue, 
 
     return (
         <td className="p-1 text-center">
-            <button
-                onClick={startEditing}
-                aria-label={`Editar calificación de ${studentName} en ${assignmentName}${value === null ? ' (sin calificar)' : `: ${value}`}`}
-                className="mx-auto flex h-9 w-14 items-center justify-center rounded-md text-sm font-medium tabular-nums transition-colors hover:ring-2 hover:ring-primary/30"
-            >
-                {value === null ? '—' : value}
-            </button>
+            <div className="flex justify-center items-center">
+                <div className="relative group w-fit">
+                    <button
+                        onClick={startEditing}
+                        aria-posinset={studentPosition.index}
+                        aria-level={studentPosition.studentsObj}
+                        aria-label={`Editar calificación de ${studentName} en ${assignmentName}${value === null ? ' (sin calificar)' : `: ${value}`}`}
+                        className="mx-auto flex h-9 w-14 items-center justify-center rounded-md text-sm font-medium tabular-nums transition-colors group-hover:ring-2 group-hover:ring-primary/20"
+                    >
+                        {value === null ? '—' : value}
+                    </button>
+
+                    <button onClick={() => setCommentOpen(true)} className={`absolute -top-2 bg-primary/20 cursor-pointer text-primary -right-2 rounded-full p-0.5
+                                    ${value === null ? 'hidden' : 'group-hover:inline hidden'}`}>
+                        <TbMessageFilled className="text-sm"/>
+                    </button>
+
+                    {commentOpen && (
+                        <CommentPopup
+                            initialComment={comment}
+                            position={studentPosition.index === studentPosition.studentsObj || studentPosition.index === studentPosition.studentsObj - 1 }
+                            onSave={(newComment) => { onCommentCommit(newComment); setCommentOpen(false); }}
+                            onClose={() => setCommentOpen(false)}
+                        />
+                    )}
+                </div>
+            </div>
         </td>
     );
 }

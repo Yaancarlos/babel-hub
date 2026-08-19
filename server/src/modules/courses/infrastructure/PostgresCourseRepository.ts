@@ -91,6 +91,7 @@ export class PostgresCourseRepository implements ICourseRepository {
                 JOIN teacher t ON cl.teacher_id = t.id
                 JOIN profile p ON t.profile_id = p.id
                 WHERE cl.course_id = $1 AND cl.is_active = $2
+                ORDER BY subject_name ASC;
             `, [courseId, isActive]);
 
             return {

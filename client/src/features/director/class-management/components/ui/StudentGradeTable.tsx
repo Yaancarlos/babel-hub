@@ -20,6 +20,7 @@ interface StudentGradeTableProps {
             studentId: string;
             value: number | null;
             comment: string | null;
+            isCommentCustom: boolean;
         }[]
     ) => Promise<void>;
 }
@@ -78,6 +79,7 @@ export function StudentGradeTable({
             studentId,
             value: data.value,
             comment: data.comment,
+            isCommentCustom: data.isCommentCustom,
         }));
 
         setSaving(assignmentId);
@@ -93,6 +95,24 @@ export function StudentGradeTable({
         }
     };
 
+    function handleCommentCommit(assignmentId: string, studentId: string, newComment: string | null) {
+        setDirty((prev) => {
+            const currentStudentData = prev[assignmentId]?.[studentId] ?? {value: null, comment: null};
+
+            return {
+                ...prev,
+                [assignmentId]: {
+                    ...(prev[assignmentId] ?? {}),
+                    [studentId]: {
+                        ...currentStudentData,
+                        comment: newComment,
+                        isCommentCustom: true
+                    }
+                }
+            }
+        })
+    }
+
     const getDisplayValue = (assignment: Assignment, studentId: string): number | null => {
         const dirtyValue = dirty[assignment.id]?.[studentId]?.value;
 
@@ -102,65 +122,108 @@ export function StudentGradeTable({
         return grade ? grade.value : null;
     };
 
+    const dirtyAssignmentIds = Object.keys(dirty);
+    const hasUnsavedChanges = dirtyAssignmentIds.length > 0;
+
+    const handleSaveAll = async () => {
+        for (const assignmentId of dirtyAssignmentIds) {
+            await handleSave(assignmentId);
+        }
+    };
+
 
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-max">
-                <thead>
-                <tr className="border-b border-gray-200">
-                    <th className="sticky left-0 z-10 bg-white p-3" />
-                    {assessments.map((ac) => {
-                        const has = ac.assignments.length > 0;
-                        if (!has) {
+        <div className="space-y-3 border relative">
+            {hasUnsavedChanges && (
+                <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-2.5">
+                    <div className="flex items-center gap-2 text-sm text-primary">
+                        <span className="size-2 rounded-full bg-primary" />
+                        <span>
+                        Tienes cambios sin guardar en {dirtyAssignmentIds.length} asignación
+                                {dirtyAssignmentIds.length !== 1 ? "es" : ""}
+                        </span>
+                    </div>
+
+                    <button
+                        onClick={handleSaveAll}
+                        disabled={saving !== null}
+                        className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {saving !== null ? "Guardando..." : "Guardar cambios"}
+                    </button>
+                </div>
+            )}
+
+            <div className="overflow-x-auto no-scrollbar">
+                <table className="w-full text-left relative border-collapse min-w-max">
+                    <thead>
+                    <tr className="border-b border-gray-200">
+                        <th className="sticky left-0 z-10 bg-white p-3" />
+                        {assessments.map((ac) => {
+                            const has = ac.assignments.length > 0;
+                            if (!has) {
+                                return (
+                                    <th
+                                        key={ac.id}
+                                        onClick={() => onAddAssignment(ac)}
+                                        className="cursor-pointer border-l border-gray-200 bg-gray-50 p-2 text-center align-middle transition-colors hover:bg-gray-100"
+                                    >
+                                        <span className="block text-sm font-medium capitalize text-gray-500">{ac.name}</span>
+                                        <span className="mt-0.5 block text-[10px] text-gray-400">
+                                                {ac.weight}% · añadir asignación
+                                            </span>
+                                    </th>
+                                );
+                            }
                             return (
-                                <th
-                                    key={ac.id}
-                                    onClick={() => onAddAssignment(ac)}
-                                    className="cursor-pointer border-l border-gray-200 bg-gray-50 p-2 text-center align-middle transition-colors hover:bg-gray-100"
-                                >
-                                    <span className="block text-sm font-medium capitalize text-gray-500">{ac.name}</span>
-                                    <span className="mt-0.5 block text-[10px] text-gray-400">
-                                            {ac.weight}% · añadir asignación
+                                <th key={ac.id} colSpan={ac.assignments.length} className="border-l border-gray-200 bg-primary/10 p-2 text-center">
+                                    <div className="flex items-center justify-center gap-1.5">
+                                        <span className="text-sm font-semibold capitalize text-primary">{ac.name}</span>
+                                        <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-primary">
+                                                {ac.weight}%
                                         </span>
+                                        <button
+                                            onClick={() => onAddAssignment(ac)}
+                                            aria-label={`Añadir asignación a ${ac.name}`}
+                                            className="rounded-full p-1 text-primary transition-colors hover:bg-primary/20"
+                                        >
+                                            <HiPlus className="size-3.5" />
+                                        </button>
+                                    </div>
                                 </th>
                             );
-                        }
-                        return (
-                            <th key={ac.id} colSpan={ac.assignments.length} className="border-l border-gray-200 bg-indigo-50 p-2 text-center">
-                                <div className="flex items-center justify-center gap-1.5">
-                                    <span className="text-sm font-semibold capitalize text-indigo-600">{ac.name}</span>
-                                    <span className="rounded-full bg-indigo-100 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-indigo-600">
-                                            {ac.weight}%
-                                        </span>
-                                    <button
-                                        onClick={() => onAddAssignment(ac)}
-                                        aria-label={`Añadir asignación a ${ac.name}`}
-                                        className="rounded-full p-1 text-indigo-600 transition-colors hover:bg-indigo-100"
-                                    >
-                                        <HiPlus className="size-3.5" />
-                                    </button>
-                                </div>
-                            </th>
-                        );
-                    })}
-                    <th className="border-l border-gray-200 bg-white p-3 text-center align-middle text-xs font-semibold uppercase tracking-wide text-gray-500">
-                        Final
-                    </th>
-                </tr>
+                        })}
+                        <th className="border-l border-gray-200 bg-white p-3 text-center align-middle text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Final
+                        </th>
+                    </tr>
 
-                <tr className="border-b-2 border-indigo-200">
-                    <th className="sticky left-0 z-10 bg-white py-2 px-3 text-sm font-semibold text-gray-900">Estudiantes</th>
-                    {assessments.map((ac) =>
-                        ac.assignments.length > 0 ? (
-                            ac.assignments.map((asg, i) => {
-                                const isDirty = Object.keys(dirty[asg.id] ?? {}).length > 0;
-                                return (
-                                    <th key={asg.id} className="group min-w-[72px] border-l border-gray-100 p-2 align-top">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <div className="flex items-center justify-center gap-0.5">
-                                                    <span className="truncate text-xs font-medium text-gray-900" title={asg.name}>
-                                                        {`${asg.name.split(" ")[0].charAt(0).toUpperCase()}${i + 1}`}
-                                                    </span>
+                    <tr className="border-b-2 border-indigo-200">
+                        <th className="sticky left-0 z-10 bg-white py-2 px-3 text-sm font-semibold text-gray-900">Estudiantes</th>
+                        {assessments.map((ac) =>
+                            ac.assignments.length > 0 ? (
+                                ac.assignments.map((asg, i) => {
+                                    const isDirty = Object.keys(dirty[asg.id] ?? {}).length > 0;
+                                    return (
+                                        <th
+                                            key={asg.id}
+                                            className="group relative min-w-[72px] border-l border-gray-100 p-2 align-top"
+                                        >
+                                            <div className="flex items-center justify-center gap-1">
+                                                <span
+                                                    className="max-w-[42px] truncate text-xs font-semibold text-gray-900"
+                                                    title={asg.name}
+                                                >
+                                                    {`${asg.name.split(" ")[0].charAt(0).toUpperCase()}${i + 1}`}
+                                                </span>
+
+                                                {isDirty && (
+                                                    <span
+                                                        className="size-1.5 rounded-full bg-primary"
+                                                        title="Cambios sin guardar"
+                                                    />
+                                                )}
+
                                                 <AssignmentMenu
                                                     assessmentCriteria={ac}
                                                     assignment={asg}
@@ -168,29 +231,19 @@ export function StudentGradeTable({
                                                     onDeleteAssignment={onDeleteAssignment}
                                                 />
                                             </div>
-                                            {isDirty && (
-                                                <button
-                                                    onClick={() => handleSave(asg.id)}
-                                                    disabled={saving === asg.id}
-                                                    className="rounded bg-primary px-1.5 py-0.5 text-[10px] font-bold text-white hover:bg-primary/90 disabled:opacity-50"
-                                                >
-                                                    {saving === asg.id ? '...' : 'Guardar'}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </th>
-                                );
-                            })
-                        ) : (
-                            <th key={`${ac.id}-empty`} className="min-w-[72px] border-l border-gray-100 p-2 text-center text-xs text-gray-400">—</th>
-                        ),
-                    )}
-                    <th className="border-l border-gray-200 bg-white" />
-                </tr>
+                                        </th>
+                                    );
+                                })
+                            ) : (
+                                <th key={`${ac.id}-empty`} className="min-w-[72px] border-l border-gray-100 p-2 text-center text-xs text-gray-400">—</th>
+                            ),
+                        )}
+                        <th className="border-l border-gray-200 bg-white" />
+                    </tr>
                 </thead>
 
                 <tbody>
-                {students.map((student) => {
+                {students.map((student, index, studentsObj) => {
                     const displayName = reverseName({
                         firstName: student.first_name,
                         firstLastName: student.first_last_name,
@@ -207,18 +260,28 @@ export function StudentGradeTable({
 
                             {assessments.map((ac) =>
                                 ac.assignments.length > 0 ? (
-                                    ac.assignments.map((asg) => (
-                                        <GradeCell
-                                            key={asg.id}
-                                            name={student.student_id}
-                                            value={getDisplayValue(asg, student.student_id)}
-                                            studentName={displayName}
-                                            assignmentName={asg.name}
-                                            minValue={scaleMin}
-                                            maxValue={scaleMax}
-                                            onCommit={(value) => handleCellCommit(asg.id, student.student_id, value)}
-                                        />
-                                    ))
+                                    ac.assignments.map((asg) => {
+                                        const dbGrade = asg.grades.find((g) => g.student_id === student.student_id);
+
+                                        const dirtyComment = dirty[asg.id]?.[student.student_id]?.comment;
+                                        const displayComment = dirtyComment !== undefined ? dirtyComment : (dbGrade?.comment ?? "");
+
+                                        return (
+                                            <GradeCell
+                                                key={asg.id}
+                                                name={student.student_id}
+                                                value={getDisplayValue(asg, student.student_id)}
+                                                comment={displayComment}
+                                                studentName={displayName}
+                                                studentPosition={{ index, studentsObj: studentsObj.length - 1 }}
+                                                assignmentName={asg.name}
+                                                minValue={scaleMin}
+                                                maxValue={scaleMax}
+                                                onCommentCommit={(newComment) => handleCommentCommit(asg.id, student.student_id, newComment)}
+                                                onCommit={(value) => handleCellCommit(asg.id, student.student_id, value)}
+                                            />
+                                        )
+                                    })
                                 ) : (
                                     <td key={`${ac.id}-empty`} className="p-1 text-center text-sm text-gray-300">—</td>
                                 ),
@@ -234,6 +297,7 @@ export function StudentGradeTable({
                 })}
                 </tbody>
             </table>
+        </div>
         </div>
     );
 }

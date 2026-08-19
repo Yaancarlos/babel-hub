@@ -60,7 +60,7 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
         }[]) => {
         /*await bulkUpsertGrades(assignmentId, records.map(r => ({
             studentId: r.studentId,
-            value: r.value ?? 0,  // decide: does clearing a cell mean "0" or should it delete the grade row entirely?
+            value: r.value ?? 0,
             comment: null
         })));
         await refetch();*/
