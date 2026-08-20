@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 import toast from "react-hot-toast";
-import { createAssignment, updateAssignment } from "../api";
+import { createAssignment, updateAssignment } from "../../api";
 
 export const useCreateAssignment = (onSuccess: () => void) => {
     const [loading, setLoading] = useState<boolean>(false);

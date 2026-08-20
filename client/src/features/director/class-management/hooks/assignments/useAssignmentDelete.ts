@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deleteAssignment } from "../api";
+import { deleteAssignment } from "../../api";
 import toast from "react-hot-toast";
 
 export const useAssignmentDelete = (onSuccess: () => void) => {

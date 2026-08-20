@@ -6,15 +6,17 @@ import { strictLimiter } from "../../../middleware/ratelimit.middleware.js";
 import { PostgresGradeRepository } from "./PostgresGradeRepository.js";
 import { GradeService } from "../application/GradeService.js";
 import { GradeController } from "./GradeController.js";
+import { PostgresScaleRepository } from "../../scales/infrastructure/PostgresScaleRepository.js";
 
-const repository = new PostgresGradeRepository();
-const service = new GradeService(repository);
+const gradeRepository = new PostgresGradeRepository();
+const scaleRepository = new PostgresScaleRepository();
+const service = new GradeService(gradeRepository, scaleRepository);
 const controller = new GradeController(service);
 
 const router: Router = Router();
 
 router.post(
-    "/assignment/:assignmentId",
+    "/class/:classId/assignment/:assignmentId",
     strictLimiter,
     authMiddleware,
     authorizedRoles(['principal', 'teacher']),

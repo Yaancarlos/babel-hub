@@ -6,27 +6,6 @@ import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.j
 import { createAuditLog } from "../../../services/audit.service.js";
 
 export class PostgresGradeRepository implements IGradeRepository {
-    async getValidScales(assignmentId: string): Promise<ValidScales> {
-        const client = await pool.connect();
-        try {
-            const scale = await client.query(`
-                SELECT
-                    s.min_value::float AS min_value,
-                    s.max_value::float AS max_value
-                FROM assignment a
-                JOIN assessment_criteria ac ON a.assessment_criteria_id = ac.id
-                JOIN grading_template gt ON ac.grading_template_id = gt.id
-                JOIN scale s ON gt.scale_id = s.id
-                WHERE a.id = $1
-            `, [assignmentId]);
-
-            if (scale.rowCount === 0) throw new NotFoundError("Asignación no encontrada");
-            return scale.rows[0];
-        } finally {
-            client.release();
-        }
-    }
-
     async getGradesByClass(classId: string): Promise<GradeByAssignment[]> {
         const client = await pool.connect();
         try {
@@ -50,6 +29,8 @@ export class PostgresGradeRepository implements IGradeRepository {
 
     async bulkUpsertGrades(assignmentId: string, records: GradeRecord[], authUser: AuthUser): Promise<void> {
         const client = await pool.connect();
+        console.log('Bro im here')
+
         try {
             await client.query('BEGIN');
 

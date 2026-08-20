@@ -5,7 +5,7 @@ import { CommentPopup } from "./CommentPopup";
 interface GradeCellProps {
     value: number | null;
     name: string;
-    comment: string | null;
+    comment: { custom: boolean, comment: string  | null };
     studentPosition: { index: number, studentsObj: number };
     studentName: string;
     assignmentName: string;
@@ -77,7 +77,7 @@ export function GradeCell({ value, name, comment, studentPosition, onCommentComm
                         if (e.key === 'Enter') commit();
                     }}
                     aria-label={`Calificación de ${studentName} en ${assignmentName}`}
-                    className="w-14 rounded-md border border-primary bg-background px-1 py-1.5 text-center text-sm font-medium tabular-nums outline-none ring-2 ring-primary/20"
+                    className="w-12 md:w-14 rounded-md border border-primary bg-background px-1 py-1.5 text-center text-sm font-medium tabular-nums outline-none ring-2 ring-primary/20"
                 />
             </td>
         );
@@ -92,19 +92,20 @@ export function GradeCell({ value, name, comment, studentPosition, onCommentComm
                         aria-posinset={studentPosition.index}
                         aria-level={studentPosition.studentsObj}
                         aria-label={`Editar calificación de ${studentName} en ${assignmentName}${value === null ? ' (sin calificar)' : `: ${value}`}`}
-                        className="mx-auto flex h-9 w-14 items-center justify-center rounded-md text-sm font-medium tabular-nums transition-colors group-hover:ring-2 group-hover:ring-primary/20"
+                        className="mx-auto flex h-7 md:h-9 w-12 md:w-14 items-center justify-center rounded-md text-sm font-medium tabular-nums transition-colors group-hover:ring-2 group-hover:ring-primary/20"
                     >
                         {value === null ? '—' : value}
                     </button>
 
-                    <button onClick={() => setCommentOpen(true)} className={`absolute -top-2 bg-primary/20 cursor-pointer text-primary -right-2 rounded-full p-0.5
-                                    ${value === null ? 'hidden' : 'group-hover:inline hidden'}`}>
+                    <button onClick={() => setCommentOpen(true)} className={`absolute -top-2  cursor-pointer -right-2 rounded-full p-0.5
+                                    ${value === null ? 'hidden' : comment.custom ? 'inline' : 'lg:group-hover:inline inline lg:hidden'}
+                                    ${comment.custom ? 'text-primary bg-primary/20' : 'text-gray-400 bg-gray-200'}`}>
                         <TbMessageFilled className="text-sm"/>
                     </button>
 
                     {commentOpen && (
                         <CommentPopup
-                            initialComment={comment}
+                            initialComment={comment.comment}
                             position={studentPosition.index === studentPosition.studentsObj || studentPosition.index === studentPosition.studentsObj - 1 }
                             onSave={(newComment) => { onCommentCommit(newComment); setCommentOpen(false); }}
                             onClose={() => setCommentOpen(false)}

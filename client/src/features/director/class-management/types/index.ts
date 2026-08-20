@@ -61,6 +61,12 @@ export interface ClassDetailsData {
     students:   Student[];
 }
 
+export interface GradeRecords {
+    studentId: string;
+    value: number;
+    comment: string | null;
+}
+
 function calcAssignmentAverage(assignments: Assignment[], studentId: string): number | null {
     let sum = 0;
     let gradedCount = 0;
@@ -94,10 +100,27 @@ export function finalGradeForStudent(assessments: AssessmentCriteria[], studentI
     return totalGrade;
 }
 
-export function tone(value: number){
-    if (value === null) return 'text-gray-400'
-    if (value >= 90) return 'text-emerald-600'
-    if (value >= 70) return 'text-lime-600'
-    if (value >= 60) return 'text-amber-600'
-    return 'text-red-600'
+interface GradeScale {
+    min: number;
+    max: number;
+    passing: number;
+}
+
+export function tone(value: number | null | undefined, scale: GradeScale): string {
+    if (value === null || value === undefined || Number.isNaN(value) || typeof value !== "number") {
+        return 'bg-gray-50';
+    }
+
+    if (value < scale.passing) return 'bg-red-50 text-red-700';
+
+    const passingRange = scale.max - scale.passing;
+
+    if (passingRange <= 0) return 'bg-emerald-50 text-emerald-700';
+
+    const ratio = (value - scale.passing) / passingRange;
+
+    if (ratio >= 0.75) return 'bg-emerald-50 text-emerald-700';
+    if (ratio >= 0.33) return 'bg-lime-50 text-lime-700';
+
+    return 'bg-amber-50 text-amber-700';
 }

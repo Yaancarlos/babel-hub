@@ -45,6 +45,8 @@ export const getClassScale = async (classId: string): Promise<Scales> => {
     return records.data.scale;
 }
 
-export const bulkGrades = async (assignmentId: string, payload: any): Promise<void> => {
-    return await api.post(`/grades/assignment/${assignmentId}`, payload);
+export const bulkGrades = async (classId: string, assignmentId: string, payload: any): Promise<void> => {
+    return await api.post(`/grades/class/${classId}/assignment/${assignmentId}`, {
+        records: payload
+    });
 }

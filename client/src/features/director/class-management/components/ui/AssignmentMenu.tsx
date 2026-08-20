@@ -34,7 +34,7 @@ export function AssignmentMenu({
                 aria-label="Opciones de la asignación"
                 aria-haspopup="menu"
                 aria-expanded={open}
-                className="rounded text-gray-500 opacity-0 transition-opacity hover:bg-gray-100 hover:text-gray-900 group-hover:opacity-100 data-[open=true]:opacity-100"
+                className="rounded text-custom-black lg:opacity-0 opacity-100 transition-opacity hover:bg-gray-100 lg:hover:text-custom-black lg:group-hover:opacity-100 data-[open=true]:opacity-100"
                 data-open={open}
             >
                 <HiDotsVertical className="size-3.5" />
@@ -50,7 +50,7 @@ export function AssignmentMenu({
                             setOpen(false)
                             onEditAssignment(assessmentCriteria, assignment)
                         }}
-                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-700 transition-colors hover:bg-gray-100"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-gray-700 transition-colors hover:bg-gray-100"
                     >
                         <HiPencil className="size-3.5" /> Renombrar
                     </button>
@@ -60,7 +60,7 @@ export function AssignmentMenu({
                             setOpen(false)
                             onDeleteAssignment(assignment)
                         }}
-                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-red-600 transition-colors hover:bg-red-50"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-red-600 transition-colors hover:bg-red-50"
                     >
                         <HiTrash className="size-3.5" /> Eliminar
                     </button>

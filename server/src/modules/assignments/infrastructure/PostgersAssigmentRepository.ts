@@ -3,6 +3,7 @@ import type {AssignmentsOverview, UpdateAssignmentDTO} from "../domain/Assignmen
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import type {ValidScales} from "../../grade/domain/Grade.types.js";
 
 export class PostgresAssignmentRepository implements IAssignmentRepository {
     async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
@@ -222,7 +223,7 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
         } catch (error: unknown) {
             await client.query('ROLLBACK');
             if (error instanceof Error && 'code' in error && error.code === '23503') {
-                throw new ConflictError("La clase o el criterio seleccionado no existe");
+                throw new ConflictError("La asignación tiene calificaciones existentes");
             }
             throw error;
         } finally {
