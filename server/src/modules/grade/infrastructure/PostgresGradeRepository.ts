@@ -29,8 +29,6 @@ export class PostgresGradeRepository implements IGradeRepository {
 
     async bulkUpsertGrades(assignmentId: string, records: GradeRecord[], authUser: AuthUser): Promise<void> {
         const client = await pool.connect();
-        console.log('Bro im here')
-
         try {
             await client.query('BEGIN');
 

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { LoadingContent } from "../../../components/ui/Loadings.tsx";
 import { formatterDate } from "../../../types";
 import type { TabTypes } from "../../../features/types/types.ts";
+import { NotFound } from "../../../components/ui/blocks/NoFound.tsx";
 
 export default function ClassDetails() {
     const { id: classId } = useParams();
@@ -23,7 +24,7 @@ export default function ClassDetails() {
     const { loading, classData } = useClassData(classId);
 
     if (loading) return <LoadingContent title="Cargando clase..."/>;
-    if (!classData) return <div className="p-6 text-gray-500 text-center flex-1">Clase no encontrada.</div>;
+    if (!classData) return <NotFound title="Clase no encontrada"/>;
 
     return (
         <ClassLayout
@@ -31,10 +32,10 @@ export default function ClassDetails() {
             activeTab={activeTab}
             onTabChange={setActiveTab}
         >
-            {activeTab === "students" && (<Students students={classData.students} />)}
+            {activeTab === "students" && (<Students courseId={classData.course_id} classId={classId} students={classData.students} />)}
             {activeTab === "register attendance" && (<RegisterAttendance classData={classData} date={date} classId={classId}/>)}
             {activeTab === "see attendance" && (<ViewAttendance courseId={classData.course_id} classId={classId} />)}
-            {activeTab === "assignments" && (<Assignments assignments={[]} />)}
+            {activeTab === "assignments" && (<Assignments classData={classData} courseId={classData.course_id} classId={classId} />)}
         </ClassLayout>
     )
 }

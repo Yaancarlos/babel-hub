@@ -13,8 +13,6 @@ export class GradeController {
 
             const { records } = request.body;
 
-            console.log(classId, assignmentId, records);
-
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;

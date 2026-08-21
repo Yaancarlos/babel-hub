@@ -4,8 +4,10 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export interface ListItemProps {
     label: string;
+    icon: React.ReactNode;
     onClick?: () => void;
     content?: React.ReactNode;
+    text: string;
 }
 
 interface ListProps {
@@ -26,23 +28,29 @@ export default function ListData({ data }: ListProps) {
     };
 
     return (
-        <ul className="space-y-1">
-            {data.map((item, index) => (
+        <ul className="bg-white border-2 border-gray-200 rounded-xl">
+            {data.map((item, index, array) => (
                 <li key={item.label}>
                     <button
                         onClick={() => handleToggle(index, item)}
-                        className="bg-primary-shadow hover:text-primary-darker transition-colors text-sm md:text-base cursor-pointer rounded-xl text-primary font-medium w-full p-5 flex justify-between items-center"
+                        className={`w-full flex p-4 sm:px-5 md:px-6 lg:px-7 md:py-5 cursor-pointer hover:bg-gray-50 justify-between items-center ${array.length - 1 === index ? '' : 'border-b-2 border-gray-200'}`}
                     >
-                        <span>{item.label}</span>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-gray-200 rounded-xl p-2 text-lg md:text-xl text-custom-black">{item.icon}</div>
+                            <div className="flex flex-col items-start">
+                                <p className="text-custom-black text-sm md:text-base font-medium">{item.label}</p>
+                                <p className="text-xs text-gray-500">{item.text}</p>
+                            </div>
+                        </div>
                         {item.content && (
-                            <span className="text-xs">
+                            <span className="text-xs text-gray-400">
                                 {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
                             </span>
                         )}
                     </button>
 
                     {item.content && openIndex === index && (
-                        <div className="bg-primary-shadow -mt-2 rounded-b-xl pt-4 p-4 animate-fade-in">
+                        <div className="border-b-2 p-4 sm:px-5 md:px-6 lg:px-7 md:py-5 border-gray-200 animate-fade-in">
                             {item.content}
                         </div>
                     )}

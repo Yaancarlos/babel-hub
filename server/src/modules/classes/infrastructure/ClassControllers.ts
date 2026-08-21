@@ -58,7 +58,7 @@ export class ClassControllers {
             const userSchoolId = request.user!.schoolId as string;
 
             await this.classServices.deleteClass(classId, userId, userRole, userSchoolId);
-            response.status(200).json({ message: "Successfully deleted class" });
+            response.status(200).send();
         } catch (error : any) {
             next(error);
         }

@@ -47,6 +47,8 @@ export const useTakeAttendance = ({classId, date, students}: TakeAttendanceProps
     }, []);
 
     const bulkAttendanceClass = async () => {
+        if (!classId || !date || students.length === 0) return;
+
         setSaving(true);
         try {
             const formattedRecords = Object.entries(dailyAttendance).map(([id, status]) => ({ studentId: id, status }));

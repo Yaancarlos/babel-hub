@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const useClassData = (classId: string) => {
     const [loading, setLoading] = useState(false);
-    const [classData, setClassData] = useState<ClassDetailsData>();
+    const [classData, setClassData] = useState<ClassDetailsData | null>(null);
 
     useEffect(() => {
         if (!classId) return;

@@ -1,4 +1,4 @@
-import type { AssessmentCriteria, Assignment } from "../../types";
+import type { AssessmentCriteria, Assignment } from "../../../../types/index.ts";
 import {useEffect, useRef, useState} from "react";
 import {HiDotsVertical, HiPencil, HiTrash} from "react-icons/hi";
 

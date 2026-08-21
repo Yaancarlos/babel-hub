@@ -3,7 +3,8 @@ import type { ClassDetailsData } from "../../types";
 import { StudentAttendanceRow } from "../ui/StudentAttendaceRow.tsx";
 import { useTakeAttendance } from "../../hooks/useTakeAttendance.ts";
 import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
-import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
+import { LuCircleCheck } from "react-icons/lu";
+import { IoMdCheckmark } from "react-icons/io";
 
 
 interface RegisterAttendanceProps {
@@ -28,44 +29,65 @@ export function RegisterAttendance ({ classData, date }: RegisterAttendanceProps
 
 
     return (
-        <div className="max-w-4xl w-full mx-auto space-y-4">
-            <div className="bg-white p-2 lg:p-4 rounded-xl border border-gray-100 flex items-center justify-between">
-                <div>
-{/*
-                    <span className="font-medium text-gray-700">Fecha de asistencia:</span>
-*/}
-                    <input
-                        type="date"
-                        value={attendanceDate}
-                        onChange={(e) => setAttendanceDate(e.target.value)}
-                        className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
-                    />
-                </div>
-                <PrimaryButton type="button" onClick={saveRecords} title={saving ? "Guardando" : "Registrar Asistencia"} />
+        <div className="max-w-4xl mx-auto space-y-4">
+            <div className="md:p-4 p-2 w-full rounded-xl border-2 border-gray-100">
+                <input
+                    type="date"
+                    value={attendanceDate}
+                    onChange={(e) => setAttendanceDate(e.target.value)}
+                    className="bg-gray-50 md:text-base text-sm border border-gray-200 text-gray-700 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
+                />
             </div>
 
             {loading ? (
                 <LoadingContent title="Cargando..." />
             ) : (
-                <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                    {
-                        classData?.students.length > 0 ? (
-                            <ul className="divide-y divide-gray-50">
-                                {classData?.students.map((student) => {
-                                    const status = records[student.student_id] || 'present';
+                <div className="bg-white relative">
+                    <div className="flex items-center border-2 rounded-t-xl border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
+                        <div className="sm:block hidden">
+                            <p className="text-custom-black text-sm md:text-base font-semibold">Lista de estudiantes</p>
+                            <p className="text-xs text-custom-black">{classData.students.length} estudiantes</p>
+                        </div>
+                        <div className="flex items-center gap-2 md:gap-4">
+                            <div className="flex items-center gap-1"><span className="w-2 h-2 block rounded-full bg-green-500" /><p className="text-custom-black text-xs">Presente</p></div>
+                            <div className="flex items-center gap-1"><span className="w-2 h-2 block rounded-full bg-red-500" /><p className="text-custom-black text-xs">Ausente</p></div>
+                            <div className="flex items-center gap-1"><span className="w-2 h-2 block rounded-full bg-yellow-500" /><p className="text-custom-black text-xs">Tarde</p></div>
+                            <div className="flex items-center gap-1"><span className="w-2 h-2 block rounded-full bg-blue-500" /><p className="text-custom-black text-xs">Justificado</p></div>
+                        </div>
+                    </div>
 
-                                    return (
-                                        <StudentAttendanceRow
-                                            key={student.student_id}
-                                            student={student}
-                                            status={status}
-                                            onUpdate={updateRecords}
-                                        />
-                                    );
-                                })}
-                            </ul>
-                        ) : (<NoResults title="No hay estudiantes en este curso" />)
-                    }
+                    {classData.students.length === 0 ? (
+                        <NoResults title="No hay estudiantes en este curso" />
+                    ) : (
+                        <ul className="divide-y divide-gray-50 border-x-2 border-b-2 rounded-b-xl border-gray-100 overflow-y-auto">
+                            {classData.students.map((student) => {
+                                const status = records[student.student_id] || 'present';
+                                return (
+                                    <StudentAttendanceRow
+                                        key={student.student_id}
+                                        student={student}
+                                        status={status}
+                                        onUpdateStatus={updateRecords}
+                                    />
+                                )
+                            })}
+                        </ul>
+                    )}
+
+                    <div className="bg-primary-shadow sticky bottom-0 p-2 mt-5 sm:p-3 md:p-4 rounded-xl border border-gray-100 flex items-center justify-between z-10">
+                        <div className="flex items-center sm:gap-3">
+                            <div className="bg-primary rounded-full p-2 text-white text-xl font-bold"><LuCircleCheck /></div>
+                            <div className="sm:flex hidden flex-col">
+                                <p className="text-custom-black mb-0 text-xs md:text-sm font-semibold">Lista lista para guardar</p>
+                                <span className="text-primary text-xs">{classData.students.length} de {classData.students.length} para guardar</span>
+                            </div>
+                        </div>
+
+                        <button type="button" className="bg-primary rounded-xl cursor-pointer flex items-center gap-1 px-3 md:px-5 py-2.5 text-white text-xs md:text-sm" onClick={saveRecords}>
+                            <IoMdCheckmark />
+                            <span className="font-semibold">{saving ? 'Guardando' : 'Registrar asistencia'}</span>
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

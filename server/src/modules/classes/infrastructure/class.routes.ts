@@ -16,7 +16,7 @@ const router: Router = Router();
 router.get(
     "/teacher/classes",
     authMiddleware,
-    authorizedRoles(["principal", "admin", "teacher"]),
+    authorizedRoles(["teacher"]),
     controller.getTeacherClasses
 );
 
@@ -27,11 +27,10 @@ router.get(
     controller.getClassDetails
 );
 
-
 router.get(
     "/teacher/class/:classId",
     authMiddleware,
-    authorizedRoles(["principal", "admin", "teacher"]),
+    authorizedRoles(["teacher"]),
     controller.getTeacherClassDetails
 );
 
@@ -55,7 +54,7 @@ router.delete(
     "/:classId",
     strictLimiter,
     authMiddleware,
-    authorizedRoles(["principal", "admin", "teacher"]),
+    authorizedRoles(["principal", "admin"]),
     controller.deleteClass
 );
 

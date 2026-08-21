@@ -15,9 +15,9 @@ export function CourseDetailsStudentsTable({ students, attendance }: StudentsTab
                     <table className="w-full min-w-md text-center border-collapse">
                         <thead>
                         <tr className="bg-primary-shadow text-primary border-b border-primary-shadow">
-                            <th className="py-3 md:py-4 px-4 md:text-base md:px-5 lg:px-6 text-sm text-left font-semibold ">Estudiante</th>
-                            <th className="py-3 md:py-4 px-4 md:text-base md:px-5 lg:px-6 text-sm font-semibold ">Promedio</th>
-                            <th className="py-3 md:py-4 px-4 md:text-base md:px-5 lg:px-6 text-sm font-semibold ">Asistencia</th>
+                            <th className="py-3 md:py-4 px-4 md:px-5 lg:px-6 text-sm text-left font-semibold ">Estudiante</th>
+                            <th className="py-3 md:py-4 px-4 md:px-5 lg:px-6 text-sm font-semibold ">Promedio</th>
+                            <th className="py-3 md:py-4 px-4 md:px-5 lg:px-6 text-sm font-semibold ">Asistencia</th>
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -31,7 +31,7 @@ export function CourseDetailsStudentsTable({ students, attendance }: StudentsTab
                                             <div className="w-9 h-9 rounded-full bg-primary-shadow uppercase text-primary-darker flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
                                                 {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
                                             </div>
-                                            <div className="max-w-48 py-0.5">
+                                            <div className="max-w-xs py-0.5">
                                                     <span className="block font-medium capitalize truncate text-custom-black text-sm md:text-base leading-normal">
                                                         {reverseName({
                                                             middleName: student.middle_name,

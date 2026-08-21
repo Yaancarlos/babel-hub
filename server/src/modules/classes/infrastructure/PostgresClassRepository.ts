@@ -228,14 +228,23 @@ export class PostgresClassRepository implements IClassRepository {
         try {
             const classDetails = await client.query(`
                 SELECT
-                    cs.id as course_id,
+                    cs.id AS course_id,
                     cs.name AS course_name,
                     sb.name AS subject_name,
-                    s.id AS student_id,
-                    p.first_name as student_first_name,
-                    p.middle_name as student_middle_name,
-                    p.first_last_name as student_first_last_name,
-                    p.second_last_name as student_second_last_name
+                    COUNT(s.id)::int AS total_students,
+                    COALESCE(
+                            json_agg(
+                                    json_build_object(
+                                            'student_id', s.id,
+                                            'first_name', p.first_name,
+                                            'middle_name', p.middle_name,
+                                            'first_last_name', p.first_last_name,
+                                            'second_last_name', p.second_last_name,
+                                            'email', p.email
+                                    ) ORDER BY p.first_last_name ASC
+                            ) FILTER (WHERE s.id IS NOT NULL),
+                            '[]'::json
+                    ) AS students
                 FROM class cl
                 JOIN course cs ON cl.course_id = cs.id
                 JOIN subject sb ON cl.subject_id = sb.id
@@ -243,30 +252,16 @@ export class PostgresClassRepository implements IClassRepository {
                 LEFT JOIN student s ON s.course_id = cs.id
                 LEFT JOIN profile p ON s.profile_id = p.id
                 WHERE cl.id = $1
-                AND cs.school_id = $2
-                AND t.profile_id = $3
-                ORDER BY p.first_last_name ASC;
+                  AND cs.school_id = $2
+                  AND t.profile_id = $3
+                GROUP BY cs.id, cs.name, sb.name;
             `, [classId, teacherSchoolId, teacherId]);
 
             const rows = classDetails.rows;
 
             if (rows.length === 0) return null;
 
-            return {
-                course_id: rows[0].course_id,
-                subject_name: rows[0].subject_name,
-                course_name: rows[0].course_name,
-                total_students: rows.filter((s: any) => s.student_id !== null).length,
-                students: rows
-                    .filter((s: any) => s.student_id !== null)
-                    .map((row: any) => ({
-                        student_id: row.student_id,
-                        student_first_name: row.student_first_name,
-                        student_middle_name: row.student_middle_name,
-                        student_first_last_name: row.student_first_last_name,
-                        student_second_last_name: row.student_second_last_name,
-                    }))
-            }
+            return classDetails.rows[0];
         } finally {
             client.release();
         }

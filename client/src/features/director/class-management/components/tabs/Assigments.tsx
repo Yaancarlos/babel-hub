@@ -3,12 +3,12 @@ import { useAssignmentOverview } from "../../hooks/assignments/useAssignmentOver
 import {type ModalModeTypes} from "../../../../../types";
 import type { AssessmentCriteria, Assignment, ClassDetailsData, GradeRecords } from "../../types";
 import { useState } from "react";
-import { StudentGradeTable } from "../ui/StudentGradeTable.tsx";
 import { AssignmentFormModal } from "../ui/AssignmentFormModal.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { useAssignmentDelete } from "../../hooks/assignments/useAssignmentDelete.ts";
 import { useClassScale } from "../../hooks/assignments/useClassScale.ts";
-import {useBulkAssignments} from "../../hooks/assignments/useBulkAssignment.ts";
+import { useBulkAssignments } from "../../hooks/assignments/useBulkAssignment.ts";
+import { StudentGradeTable } from "../../../../../components/ui/table/StudentGradeTable.tsx";
 
 interface AssignmentsProps {
     classData: ClassDetailsData;
@@ -63,7 +63,7 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
 
     return (
         <div className="space-y-6">
-            {classData.students.length > 0 && assignmentsOverview.length > 0 && (
+            {classData.students.length > 0 && assignmentsOverview.length > 0 ? (
                 <StudentGradeTable
                     students={classData.students}
                     assessments={assignmentsOverview}
@@ -73,6 +73,10 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
                     onDeleteAssignment={onDeleteAssignment}
                     onSaveAssignmentGrades={handleSaveAssignmentGrades}
                 />
+            ) : (
+                <div className="md:col-span-2 border rounded-xl border-gray-100 lg:col-span-3">
+                    <NoResults title="No hay estudiantes para evaluar"/>
+                </div>
             )}
 
             <ConfirmModal
