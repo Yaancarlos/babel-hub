@@ -16,14 +16,12 @@ export function GradingTemplateLayout() {
     const [gradingTemplateToDelete, setGradingTemplateToDelete] = useState<GradingTemplate | null>(null);
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
 
-    // Dropdown isolation state
     const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     const ref = useRef<HTMLDivElement>(null);
 
     const { gradingTemplates, refetch } = useGradingTemplateData();
     const { loadingDelete, deleteGradingTemplateById } = useDeleteGradingTemplate(refetch);
 
-    // Global background click listener
     useEffect(() => {
         if (!activeMenuId) return;
         const onClick = (e: MouseEvent) => {
@@ -83,7 +81,7 @@ export function GradingTemplateLayout() {
                         return (
                             <li
                                 key={gradingTemplate.id}
-                                className="w-full text-left px-5 py-3 md:p-5 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
+                                className="w-full text-left p-3 sm:px-5 sm:py-3 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
                             >
                                 <div className="flex items-center justify-between">
                                     <button

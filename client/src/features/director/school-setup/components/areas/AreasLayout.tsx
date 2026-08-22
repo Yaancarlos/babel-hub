@@ -78,7 +78,7 @@ export function AreasLayout() {
                     return (
                         <li
                             key={area.id}
-                            className="w-full text-left px-5 py-3 md:p-5 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
+                            className="w-full text-left p-3 sm:px-5 sm:py-3 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
                         >
                             <div className="flex items-center justify-between">
                                 <button

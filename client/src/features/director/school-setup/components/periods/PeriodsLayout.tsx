@@ -15,14 +15,12 @@ export function PeriodsLayout() {
     const [periodToDelete, setPeriodToDelete] = useState<PeriodProps | null>(null);
     const [periodToEdit, setPeriodToEdit] = useState<PeriodProps | undefined>(undefined);
 
-    // Dropdown structural state
     const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
     const ref = useRef<HTMLDivElement>(null);
 
     const { periods, reloadPeriods } = usePeriods();
     const { loadingDelete, deletePeriodById } = useDeletePeriod(reloadPeriods);
 
-    // Dynamic outside click event setup
     useEffect(() => {
         if (!activeMenuId) return;
         const onClick = (e: MouseEvent) => {
@@ -79,12 +77,12 @@ export function PeriodsLayout() {
                     return (
                         <li
                             key={period.id}
-                            className="w-full text-left px-5 py-3 md:p-5 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
+                            className="w-full text-left p-3 sm:px-5 sm:py-3 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
                         >
                             <div className="flex items-center justify-between">
                                 <button
                                     onClick={() => handleNavigate(period.id)}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer text-left"
                                 >
                                     <p className="capitalize text-sm sm:text-base font-medium">{period.name}</p>
                                     <p className="text-xs text-gray-400">{formatDatePeriod(period.start_date, period.end_date)}</p>
@@ -98,7 +96,6 @@ export function PeriodsLayout() {
                                 </button>
                             </div>
 
-                            {/* Dropdown Menu Container */}
                             {isMenuOpen && (
                                 <div
                                     ref={ref}
