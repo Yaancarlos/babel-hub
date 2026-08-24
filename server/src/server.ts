@@ -21,6 +21,7 @@ import assessmentRouter from "./modules/assessmentCriteria/infrastructure/assess
 import scaleRoutes from "./modules/scales/infrastructure/scale.routes.js";
 import assignmentRoutes from "./modules/assignments/infrastructure/assignment.routes.js";
 import gradeRoutes from "./modules/grade/infrastructure/grade.routes.js";
+import parentRoutes from "./modules/parent/infrastructure/parent.routes.js";
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/user", userRoutes);
 app.use("/principal", principalRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/student", studentRoutes);
+app.use("/parents", parentRoutes);
 
 //CRUD courses and schools
 app.use("/school", SchoolRoutes);

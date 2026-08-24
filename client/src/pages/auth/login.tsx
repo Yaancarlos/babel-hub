@@ -54,6 +54,7 @@ export default function Login() {
             else if (role === "student") navigate("/student/dashboard");
             else if (role === "admin") navigate("/admin/dashboard");
             else if (role === "parent") navigate("/parent/dashboard");
+            else throw error;
         } catch (err: any) {
             console.error("Login Error:", err);
             localStorage.removeItem("token");

@@ -27,6 +27,8 @@ import TeacherClasses from "../pages/teacher/courses/Classes.tsx";
 import ClassesDetails from "../pages/principal/courses/classes/ClassesDetails.tsx";
 import ClassDetails from "../pages/teacher/courses/ClassDetails.tsx";
 import GradingTemplateDetails from "../features/director/school-setup/components/grading-templates/GradingTemplateDetails.tsx";
+import ParentLayout from "../pages/parent/ParentLayout.tsx";
+import ParentDashboard from "../pages/parent/dashboard/ParentDashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +118,17 @@ function App() {
                         }
                     >
                         <Route path="dashboard" index element={<StudentDashboard />}/>
+                    </Route>
+
+                    <Route
+                        path="/parent"
+                        element={
+                            <ProtectedRoute>
+                                <ParentLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route path="dashboard" index element={<ParentDashboard />}/>
                     </Route>
 
 

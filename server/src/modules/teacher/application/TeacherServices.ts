@@ -32,7 +32,7 @@ export class TeacherServices {
         if (!teacherFirstName ||
             !teacherFirstLastName ||
             !teacherPassword ||
-            !teacherEmail) throw new ValidationError("Faltan campos obligatorios");
+            !teacherEmail) throw new ValidationError("Faltan campos obligatorios del formulario");
 
         return await this.teacherRepository.createTeacher(
             teacherFirstName,
