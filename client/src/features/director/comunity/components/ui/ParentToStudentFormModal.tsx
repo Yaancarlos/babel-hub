@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
-import type { modeTypes } from "../../../../types/types.ts";
 import type { Parent } from "../../types";
 import { reverseName } from "../../../../../types";
 import { useStudentSearch } from "../../hooks/parents/useSearchStudent.ts";
 import { useAssignStudentSubmit } from "../../hooks/parents/useAssignStudentSubmit.ts";
 
 interface ParentToStudentFormModalProps {
-    mode: modeTypes;
     parent: Parent;
     onClose: () => void;
     onSuccess: () => void;
 }
 
-export function ParentToStudentFormModal({ mode, parent, onClose, onSuccess }: ParentToStudentFormModalProps) {
+export function ParentToStudentFormModal({ parent, onClose, onSuccess }: ParentToStudentFormModalProps) {
     const [formData, setFormData] = useState({
         searchQuery: "",
         studentId: "",

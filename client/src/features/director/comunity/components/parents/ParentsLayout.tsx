@@ -120,7 +120,6 @@ export function ParentsLayout() {
 
             {modalModeParentToStudent !== 'none' && parentToStudent && (
                 <ParentToStudentFormModal
-                    mode={modalModeParentToStudent}
                     parent={parentToStudent}
                     onClose={() => setModalModeParentToStudent('none')}
                     onSuccess={async () => {
