@@ -21,6 +21,13 @@ router.get(
 );
 
 router.get(
+    "/search",
+    authMiddleware,
+    authorizedRoles(['principal', 'admin']),
+    controllers.getStudentsByName
+);
+
+router.get(
     '/:id',
     authMiddleware,
     authorizedRoles(['principal', 'teacher', 'admin']),

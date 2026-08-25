@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import ListData, {type ListItemProps} from "../../../components/ui/lists/List.tsx";
 import { PiChalkboardTeacherLight, PiStudentLight } from "react-icons/pi";
+import { RiParentFill } from "react-icons/ri";
 
 function Community () {
     const navigate = useNavigate();
@@ -17,6 +18,12 @@ function Community () {
             onClick: () => navigate("/principal/comunidad/profesores"),
             icon: <PiChalkboardTeacherLight />,
             text: "Administra a todos tus profesores en este apartado"
+        },
+        {
+            label: "Padres",
+            onClick: () => navigate("/principal/comunidad/padres"),
+            icon: <RiParentFill />,
+            text: "Administra a todos los padres/acudentes de tu escuela en este apartado"
         }
     ]
 

@@ -13,6 +13,13 @@ const controllers = new ParentControllers(service);
 
 const router: Router = Router();
 
+router.get(
+    "/",
+    authMiddleware,
+    authorizedRoles(['principal', 'admin']),
+    controllers.getParents
+)
+
 router.post(
     "/",
     strictLimiter,
@@ -20,5 +27,21 @@ router.post(
     authorizedRoles(['principal', 'admin']),
     controllers.createParent
 );
+
+router.post(
+    "/link",
+    strictLimiter,
+    authMiddleware,
+    authorizedRoles(['principal', 'admin']),
+    controllers.linkParentToStudent
+)
+
+router.delete(
+    "/:parentId",
+    strictLimiter,
+    authMiddleware,
+    authorizedRoles(['principal', 'admin']),
+    controllers.deleteParent
+)
 
 export default router;

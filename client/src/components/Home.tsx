@@ -23,6 +23,7 @@ interface LayoutProps {
 const roleTranslations: Record<string, string> = {
     principal: "Coordinador",
     teacher: "Profesor",
+    parent: "Acudiente",
     student: "Estudiante",
     admin: "Administrador"
 };

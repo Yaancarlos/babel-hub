@@ -1,5 +1,5 @@
 import api from "../../../../api/client.ts";
-import type { CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent, Courses, StudentProps } from "../types";
+import type {CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent, Courses, StudentProps, Parent} from "../types";
 
 //Students Endpoints
 
@@ -47,4 +47,33 @@ export const updateTeacher = async (id: string, payload: UpdateTeacher) => {
 
 export const deleteTeacher = async (id: string) => {
     await api.delete(`/teacher/${id}`);
+}
+
+// Parents Endpoints
+
+export const getParents = async (): Promise<Parent[]> => {
+    const response = await api.get("/parents");
+    return response.data.parents;
+}
+
+export const getStudentsByName = async (query: string) =>{
+    const response = await api.get('student/search', {
+        params: {
+            q: query,
+            limit: 10
+        }
+    });
+    return response.data.students;
+}
+
+export const createParent = async (payload: any): Promise<void> => {
+    await api.post("/parents", payload);
+}
+
+export const linkStudentToParent = async (payload: any) => {
+    await api.post("/parents/link", payload);
+}
+
+export const deleteParent = async (id: string): Promise<void> => {
+    await api.delete(`/parents/${id}`);
 }

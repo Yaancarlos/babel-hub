@@ -66,7 +66,7 @@ export function ClassLayout({ children, data, activeTab, onTabChange }: ClassLay
                         onClick={() => onTabChange('assignments')}
                         className={`flex-1 text-sm md:text-base cursor-pointer min-w-[150px] flex items-center justify-center gap-2 py-3 px-4 font-medium border-b-2 border-transparent transition-all ${activeTab === 'assignments' ? 'text-primary border-b-primary border-b-2' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        <HiOutlineDocumentText className="text-lg" /> Asignaciones
+                        <HiOutlineDocumentText className="text-lg" /> Calificaciones
                     </button>
                 </div>
             </div>

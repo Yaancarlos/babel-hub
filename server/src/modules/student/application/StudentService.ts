@@ -1,6 +1,7 @@
 import type { IStudentRepository } from "../domain/IStudentRepository.js";
-import type { CreateStudent, StudentDetails, Students } from "../domain/Student.types.js";
+import type { CreateStudent, StudentByName, StudentDetails, Students } from "../domain/Student.types.js";
 import { NotFoundError, UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import type { AuthUser, StudentCreateCredentials, StudentUpdateCredentials } from "../../shared/domain/Shared.types.js";
 
 export class StudentService {
     constructor( private readonly studentService: IStudentRepository ) {}
@@ -21,66 +22,32 @@ export class StudentService {
         return student;
     }
 
-    async createStudent(courseId: string,
-                        studentFirstName: string,
-                        studentMiddleName: string | null | undefined,
-                        studentFirstLastName: string,
-                        studentSecondLastName: string | null | undefined,
-                        studentEmail: string,
-                        studentPassword: string,
-                        studentEnrollmentCode: string | null | undefined,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<CreateStudent> {
-        if (!courseId ||
-            !studentEmail ||
-            !studentPassword ||
-            !studentFirstName ||
-            !studentFirstLastName
-        ) throw new ValidationError("Faltan campos obligatorios");
-        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
+    async getStudentsByName(query: string, authUser: AuthUser, limit: number): Promise<StudentByName[]> {
+        if (!authUser.userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario");
 
-        return await this.studentService.createStudent(
-            courseId,
-            studentFirstName,
-            studentMiddleName ?? null,
-            studentFirstLastName,
-            studentSecondLastName ?? null,
-            studentEmail,
-            studentPassword,
-            studentEnrollmentCode ?? null,
-            userId,
-            userRole,
-            userSchoolId);
+        return this.studentService.getStudentsByName(query, authUser, limit);
     }
 
-    async updateStudent(studentId: string,
-                        courseId: string,
-                        studentFirstName: string,
-                        studentMiddleName: string | null | undefined,
-                        studentFirstLastName: string,
-                        studentSecondLastName: string | null | undefined,
-                        studentEnrollmentCode: string | null | undefined,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<void> {
-        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
-        if (!courseId ||
-            !studentFirstName ||
-            !studentFirstLastName
+    async createStudent(studentCredentials: StudentCreateCredentials, authUser: AuthUser): Promise<CreateStudent> {
+        if (!studentCredentials.courseId ||
+            !studentCredentials.email ||
+            !studentCredentials.password ||
+            !studentCredentials.firstName ||
+            !studentCredentials.firstLastName
+        ) throw new ValidationError("Faltan campos obligatorios");
+        if (!authUser.userId || !authUser.userRole || !authUser.userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
+
+        return await this.studentService.createStudent(studentCredentials, authUser);
+    }
+
+    async updateStudent(studentCredentials: StudentUpdateCredentials, authUser: AuthUser): Promise<void> {
+        if (!authUser.userId || !authUser.userRole || !authUser.userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
+        if (!studentCredentials.courseId ||
+            !studentCredentials.firstName ||
+            !studentCredentials.firstLastName
         ) throw new ValidationError("Faltan campos obligatorios");
 
-        return await this.studentService.updateStudent(
-            studentId,
-            courseId,
-            studentFirstName,
-            studentMiddleName ?? null,
-            studentFirstLastName,
-            studentSecondLastName ?? null,
-            studentEnrollmentCode ?? null,
-            userId,
-            userRole,
-            userSchoolId);
+        return await this.studentService.updateStudent(studentCredentials, authUser);
     }
 
     async deleteStudent(studentId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {

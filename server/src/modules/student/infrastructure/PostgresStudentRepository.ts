@@ -1,9 +1,10 @@
 import type { IStudentRepository } from "../domain/IStudentRepository.js";
-import type { CreateStudent, StudentDetails, Students } from "../domain/Student.types.js";
+import type {CreateStudent, StudentByName, StudentDetails, Students} from "../domain/Student.types.js";
 import { pool } from "../../../db/index.js";
 import { supabase } from "../../../services/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
-import {ConflictError, NotFoundError, ValidationError} from "../../errors/domain/CustomErrors.js";
+import { ConflictError, NotFoundError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import type { AuthUser, StudentCreateCredentials, StudentUpdateCredentials } from "../../shared/domain/Shared.types.js";
 
 export class PostgresStudentRepository implements IStudentRepository {
     async getStudents(userSchoolId: string, isActive: boolean): Promise<Students[]> {
@@ -76,17 +77,37 @@ export class PostgresStudentRepository implements IStudentRepository {
         }
     }
 
-    async createStudent(courseId: string,
-                        studentFirstName: string,
-                        studentMiddleName: string | null,
-                        studentFirstLastName: string,
-                        studentSecondLastName: string | null,
-                        studentEmail: string,
-                        studentPassword: string,
-                        studentEnrollmentCode: string | null,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<CreateStudent> {
+    async getStudentsByName(query: string, authUser: AuthUser, limit: number): Promise<StudentByName[]> {
+        const client = await pool.connect();
+        try {
+            const students = await client.query(`
+                SELECT
+                    s.id AS student_id,
+                    p.first_name as student_first_name,
+                    p.middle_name as student_middle_name,
+                    p.first_last_name as student_first_last_name,
+                    p.second_last_name as student_second_last_name,
+                    p.email
+                FROM student s
+                JOIN profile p ON s.profile_id = p.id
+                WHERE p.school_id = $1
+                AND p.is_active = true
+                AND (
+                    p.first_name ILIKE $2 OR
+                    p.first_last_name ILIKE $2 OR
+                    p.second_last_name ILIKE $2
+                )
+                ORDER BY p.first_last_name ASC
+                LIMIT $3
+            `, [authUser.userSchoolId, `%${query}%`, limit]);
+
+            return students.rows;
+        } finally {
+            client.release();
+        }
+    }
+
+    async createStudent(studentCredentials:StudentCreateCredentials, authUser:AuthUser): Promise<CreateStudent> {
         const client = await pool.connect();
         let authUserId: string | null = null;
 
@@ -94,8 +115,8 @@ export class PostgresStudentRepository implements IStudentRepository {
             await client.query('BEGIN');
 
             const { data, error } = await supabase.auth.admin.createUser({
-                email: studentEmail,
-                password: studentPassword,
+                email: studentCredentials.email,
+                password: studentCredentials.password,
                 email_confirm: true,
             })
 
@@ -113,25 +134,25 @@ export class PostgresStudentRepository implements IStudentRepository {
                 INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id)
                 VALUES ($1, $2, $3, $4, $5, 'student', $6, $7)
                 RETURNING id;
-            `, [authUserId, studentFirstName, studentMiddleName, studentFirstLastName, studentSecondLastName, studentEmail, userSchoolId]);
+            `, [authUserId, studentCredentials.firstName, studentCredentials.middleName, studentCredentials.firstLastName, studentCredentials.secondLastName, studentCredentials.email, authUser.userSchoolId]);
 
             const profileId = profile.rows[0].id;
 
             await client.query(`
                 INSERT INTO student (profile_id, enrollment_code, course_id)
                 VALUES ($1, $2, $3)
-            `, [profileId, studentEnrollmentCode, courseId]);
+            `, [profileId, studentCredentials.enrollmentCode, studentCredentials.courseId]);
 
             await createAuditLog(client, {
-                actorUserId: userId,
-                actorRole: userRole,
+                actorUserId: authUser.userId,
+                actorRole: authUser.userRole,
                 action: 'CREATE_STUDENT',
                 targetUserId: profileId,
-                schoolId: userSchoolId,
+                schoolId: authUser.userSchoolId,
                 metadata: {
-                    name: [studentFirstName, studentMiddleName ?? "", studentFirstLastName, studentSecondLastName ?? ""].join(" "),
-                    email: studentEmail,
-                    courseId,
+                    name: [studentCredentials.firstName, studentCredentials.middleName ?? "", studentCredentials.firstLastName, studentCredentials.secondLastName ?? ""].join(" "),
+                    email: studentCredentials.email,
+                    courseId: studentCredentials.courseId,
                 }
             });
 
@@ -160,16 +181,7 @@ export class PostgresStudentRepository implements IStudentRepository {
         }
     }
 
-    async updateStudent(studentId: string,
-                        courseId: string,
-                        studentFirstName: string,
-                        studentMiddleName: string | null,
-                        studentFirstLastName: string,
-                        studentSecondLastName: string | null,
-                        studentEnrollmentCode: string | null,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<void> {
+    async updateStudent(studentCredentials:StudentUpdateCredentials, authUser:AuthUser): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -180,7 +192,7 @@ export class PostgresStudentRepository implements IStudentRepository {
                 FROM student s
                 JOIN profile p ON s.profile_id = p.id
                 WHERE s.id = $1 AND p.school_id = $2
-            `, [studentId, userSchoolId]);
+            `, [studentCredentials.studentId, authUser.userSchoolId]);
 
             if (studentCheck.rowCount === 0) throw new NotFoundError("El estudiante no se encontro para actualizar");
 
@@ -190,24 +202,24 @@ export class PostgresStudentRepository implements IStudentRepository {
                 UPDATE profile
                 SET first_name = $1, middle_name = $2, first_last_name = $3, second_last_name = $4
                 WHERE id = $5
-            `, [studentFirstName, studentMiddleName, studentFirstLastName, studentSecondLastName, studentProfileId]);
+            `, [studentCredentials.firstName, studentCredentials.middleName, studentCredentials.firstLastName, studentCredentials.secondLastName, studentProfileId]);
 
             await client.query(`
                 UPDATE student
                 SET enrollment_code = $1, course_id = $2
                 WHERE id = $3
-            `, [studentEnrollmentCode, courseId, studentId]);
+            `, [studentCredentials.enrollmentCode, studentCredentials.courseId, studentCredentials.studentId]);
 
             await createAuditLog(client, {
-                actorUserId: userId,
-                actorRole: userRole,
+                actorUserId: authUser.userId,
+                actorRole: authUser.userRole,
                 action: 'UPDATE_STUDENT',
                 targetUserId: studentProfileId,
-                schoolId: userSchoolId,
+                schoolId: authUser.userSchoolId,
                 metadata: {
-                    studentId: studentId,
-                    name: [studentFirstName, studentMiddleName ?? "", studentFirstLastName, studentSecondLastName ?? ""].join(" "),
-                    course: courseId
+                    studentId: studentCredentials.studentId,
+                    name: [studentCredentials.firstName, studentCredentials.middleName ?? "", studentCredentials.firstLastName, studentCredentials.secondLastName ?? ""].join(" "),
+                    course: studentCredentials.courseId
                 }
             });
 
