@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { getCLasses, getCourse } from "../api";
-import type { TeacherClass, TeacherCourse } from "../types";
+import type { TeacherClasses, TeacherCourse } from "../types";
 
 export const useTeacherClasses = () => {
     const [loading, setLoading] = useState(false);
-    const [classes, setClasses] = useState<TeacherClass[]>([]);
+    const [classes, setClasses] = useState<TeacherClasses[]>([]);
     const [course, setCourse] = useState<TeacherCourse>();
     const [error, setError] = useState('');
 

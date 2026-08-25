@@ -1,12 +1,10 @@
-export interface Subjects {
-    id: string;
-    name: string;
-}
-
 export interface SubjectDetails {
+    area_id: string;
+    area_name: string;
     id: string;
     name: string;
-    area_id: string;
+    grading_template_id: string;
+    grading_template_name: string;
 }
 
 export interface CreateSubject {

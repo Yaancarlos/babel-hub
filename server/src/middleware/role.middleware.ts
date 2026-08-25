@@ -7,19 +7,14 @@ export function authorizedRoles (
     allow: Array<UserRole>
 ) {
     return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-        if (!req.user?.supabaseUserId) {
+        if (!req.user?.authUserId) {
             return res.status(403).send("Unauthenticated");
         }
 
         try {
-            const result = await pool.query(
-                `SELECT id, email, role, school_id FROM users WHERE supabase_user_id = $1`
-                , [req.user.supabaseUserId]);
+            const result = await pool.query(`SELECT id, email, role, school_id FROM profile WHERE auth_profile_id = $1`, [req.user.authUserId]);
 
-
-            if (result.rows.length === 0) {
-                return res.status(403).json({ message: "Usuario no registrado" });
-            }
+            if (result.rows.length === 0) return res.status(403).json({ message: "Usuario no registrado" });
 
             const user = result.rows[0];
 

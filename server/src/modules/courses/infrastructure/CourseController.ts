@@ -8,8 +8,9 @@ export class CourseController {
     getCourses = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const schoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.courseService.getCourses(schoolId);
+            const records = await this.courseService.getCourses(schoolId, isActive);
             response.status(200).json({ courses: records })
         } catch (error : any) {
             next(error);
@@ -20,8 +21,9 @@ export class CourseController {
         try {
             const id = request.params.id as string;
             const schoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const { course, students, classes } = await this.courseService.getCourseDetails(id, schoolId);
+            const { course, students, classes } = await this.courseService.getCourseDetails(id, schoolId, isActive);
             response.status(200).json({ course, students, classes })
         } catch (error : any) {
             next(error);

@@ -1,6 +1,7 @@
 import {memo} from "react";
 import {HiDotsVertical} from "react-icons/hi";
 import type { ClassItem } from "../../types";
+import {reverseName} from "../../../../../types";
 
 interface ClassRowProps {
     cls: ClassItem;
@@ -32,8 +33,17 @@ export const CourseDetailsClassRows = memo(function ClassRowItem({
                 className="cursor-pointer flex justify-between items-center transition-colors w-full"
             >
                 <div className="text-left">
-                    <p className="font-medium text-custom-black">{cls.subject_name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Prof: {cls.teacher_name}</p>
+                    <p className="font-medium capitalize text-custom-black">{cls.subject_name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                        Prof: {
+                            reverseName({
+                                middleName: cls.middle_name,
+                                secondLastName: cls.second_last_name,
+                                firstName: cls.first_name,
+                                firstLastName: cls.first_last_name
+                            })
+                        }
+                    </p>
                 </div>
             </button>
             <button
@@ -46,7 +56,7 @@ export const CourseDetailsClassRows = memo(function ClassRowItem({
                 <HiDotsVertical/>
             </button>
             {isOpen && (
-                <ul className={`absolute ${isLast ? "bottom-5" : "top-5"} right-10 z-50 w-32 h-fit p-2 text-sm md:text-base font-semibold bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl`}>
+                <ul className={`absolute ${isLast ? "bottom-5" : "top-5"} right-10 z-50 w-32 h-fit p-1 text-sm md:text-base font-semibold bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl`}>
                     <li>
                         <button onClick={() => onEdit(cls)} className="p-2 w-full text-left cursor-pointer hover:bg-gray-100 rounded-xl">
                             Editar

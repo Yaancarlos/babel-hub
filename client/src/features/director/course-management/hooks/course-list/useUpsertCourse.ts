@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { createCourse, updateCourse } from "../../api";
 import toast from "react-hot-toast";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
+import type { Payload } from "../../types";
 
 export const useUpsertCourse = (onSuccess: () => void) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const upsertCourse = async (mode: modeTypes, courseId: string, payload: any) => {
+    const upsertCourse = async (mode: modeTypes, courseId: string | null, payload: Payload) => {
         setLoading(true);
         setError("");
 

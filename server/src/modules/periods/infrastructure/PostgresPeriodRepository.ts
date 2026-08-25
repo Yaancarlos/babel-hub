@@ -2,7 +2,7 @@ import type { IPeriodsRepository } from "../domain/IPeriodRepository.js";
 import type { CreatePeriod, Period, UpdatePeriod } from "../domain/Period.types.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
-import {ConflictError, NotFoundError} from "../../errors/domain/CustomErrors.js";
+import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
 
 export class PostgresPeriodRepository implements IPeriodsRepository {
     async getPeriods(userSchoolId: string): Promise<Period[]> {
@@ -14,7 +14,7 @@ export class PostgresPeriodRepository implements IPeriodsRepository {
                     name,
                     start_date,
                     end_date
-                FROM academic_periods
+                FROM academic_period
                 WHERE school_id = $1
                 ORDER BY start_date ASC;
             `, [userSchoolId]);
@@ -31,7 +31,7 @@ export class PostgresPeriodRepository implements IPeriodsRepository {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                INSERT INTO academic_periods (name, start_date, end_date, school_id)
+                INSERT INTO academic_period (name, start_date, end_date, school_id)
                 VALUES ($1, $2, $3, $4)
                 RETURNING id
             `, [periodName, startDate, endDate, userSchoolId]);
@@ -69,7 +69,7 @@ export class PostgresPeriodRepository implements IPeriodsRepository {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                UPDATE academic_periods 
+                UPDATE academic_period
                 SET name = $1, start_date = $2, end_date = $3
                 WHERE id = $4 AND school_id = $5
                 RETURNING id
@@ -107,7 +107,7 @@ export class PostgresPeriodRepository implements IPeriodsRepository {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                DELETE FROM academic_periods
+                DELETE FROM academic_period
                 WHERE id = $1 AND school_id = $2
                 RETURNING id, name
             `, [periodId, userSchoolId]);

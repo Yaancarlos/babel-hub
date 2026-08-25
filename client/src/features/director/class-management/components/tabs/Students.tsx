@@ -1,6 +1,6 @@
-import { getInitials, reverseName } from "../../../../../types";
+import { reverseName } from "../../../../../types";
 import type { Student } from "../../types";
-import {NoResults} from "../../../../../components/ui/blocks/NoResults.tsx";
+import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
 
 interface StudentsProps {
     students: Student[];
@@ -15,11 +15,20 @@ export function Students({ students }: StudentsProps) {
                         {
                             students.map((student) => (
                                 <li key={student.student_id} className="py-3 px-5 flex items-center gap-4 hover:bg-gray-50">
-                                    <div className="w-10 h-10 rounded-full bg-primary-shadow text-primary-darker flex items-center justify-center text-sm font-bold shrink-0">
-                                        {getInitials(student.full_name)}
+                                    <div className="w-10 h-10 rounded-full uppercase bg-primary-shadow text-primary-darker flex items-center justify-center text-sm font-bold shrink-0">
+                                        {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
                                     </div>
                                     <div>
-                                        <span className="block text-sm md:text-base capitalize font-medium text-custom-black">{reverseName(student.full_name)}</span>
+                                        <span className="block text-sm md:text-base capitalize font-medium text-custom-black">
+                                            {
+                                                reverseName({
+                                                    firstName: student.first_name,
+                                                    middleName: student.middle_name,
+                                                    firstLastName: student.first_last_name,
+                                                    secondLastName: student.second_last_name
+                                                })
+                                            }
+                                        </span>
                                         <span className="block text-sm text-gray-500">{student.email}</span>
                                     </div>
                                 </li>

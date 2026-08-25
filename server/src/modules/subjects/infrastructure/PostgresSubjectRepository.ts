@@ -5,15 +5,22 @@ import { createAuditLog } from "../../../services/audit.service.js";
 import {ConflictError, NotFoundError} from "../../errors/domain/CustomErrors.js";
 
 export class PostgresSubjectRepository implements ISubjectsRepository {
-
     async getSubjectsByArea(subjectAreaId:string, userSchoolId:string): Promise<SubjectDetails[]> {
         const client = await pool.connect();
         try {
             const result = await client.query(`
-                SELECT id, name, area_id 
-                FROM subjects 
-                WHERE area_id = $1 AND school_id = $2
-                ORDER BY name ASC
+                SELECT
+                    a.id AS area_id,
+                    a.name AS area_name,
+                    s.id,
+                    s.name,
+                    g.id AS grading_template_id,
+                    g.name AS grading_template_name
+                FROM subject s
+                JOIN area a ON s.area_id = a.id
+                JOIN grading_template g ON s.grading_template_id = g.id
+                WHERE s.area_id = $1 AND a.school_id = $2
+                ORDER BY s.name ASC
             `, [subjectAreaId, userSchoolId]);
 
             return result.rows;
@@ -27,17 +34,18 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
         try {
             const subjects = await client.query<AvailableSubjects>(`
                 SELECT 
-                    id, 
-                    name 
-                FROM subjects 
-                WHERE school_id = $1
-                AND id NOT IN (
+                    s.id, 
+                    s.name
+                FROM subject s
+                JOIN area a ON s.area_id = a.id
+                WHERE a.school_id = $1
+                AND s.id NOT IN (
                     SELECT 
                         subject_id 
-                    FROM classes 
+                    FROM class
                     WHERE course_id = $2
                 )
-                ORDER BY name ASC;
+                ORDER BY s.name ASC;
             `, [userSchoolId, courseId]);
 
             return subjects.rows;
@@ -46,16 +54,16 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
         }
     }
 
-    async createSubject(subjectName: string, subjectAreaId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateSubject> {
+    async createSubject(subjectName: string, subjectAreaId: string, gradingTemplateId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateSubject> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                INSERT INTO subjects (school_id, name, area_id)
+                INSERT INTO subject (name, area_id, grading_template_id)
                 VALUES ($1, $2, $3)
                 RETURNING id
-            `, [userSchoolId, subjectName, subjectAreaId]);
+            `, [subjectName, subjectAreaId, gradingTemplateId]);
 
             const subjectId = result.rows[0].id;
 
@@ -82,16 +90,19 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
         }
     }
 
-    async updateSubject(subjectId: string, subjectName: string, subjectAreaId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+    async updateSubject(subjectId: string, subjectName: string, subjectAreaId: string, gradingTemplateId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
             const result = await client.query(`
-                UPDATE subjects 
-                SET name = $1, area_id = $2 
-                WHERE id = $3 AND school_id = $4
-            `, [subjectName, subjectAreaId, subjectId, userSchoolId]);
+                UPDATE subject s
+                SET name = $1, area_id = $2, grading_template_id = $3
+                FROM area a
+                WHERE s.id = $4
+                AND s.area_id = a.id
+                AND a.school_id = $5
+            `, [subjectName, subjectAreaId, gradingTemplateId, subjectId, userSchoolId]);
 
             if (result.rowCount === 0) throw new NotFoundError("No se encontro la asignatura para su actualización");
 
@@ -121,17 +132,18 @@ export class PostgresSubjectRepository implements ISubjectsRepository {
 
             const subjectCheck = await client.query(`
                 SELECT 1
-                FROM subjects
-                WHERE id = $1 AND school_id = $2
+                FROM subject s
+                JOIN area a ON s.area_id = a.id
+                WHERE s.id = $1 AND a.school_id = $2
             `, [subjectId, userSchoolId]);
 
             if (subjectCheck.rowCount === 0) throw new NotFoundError("No se encontro la asignatura para su eliminación");
 
             const result = await client.query(`
-                DELETE FROM subjects 
-                WHERE id = $1 AND school_id = $2
-                RETURNING id, name
-            `, [subjectId, userSchoolId]);
+                DELETE FROM subject
+                WHERE id = $1
+                    RETURNING id, name
+            `, [subjectId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,

@@ -104,8 +104,8 @@ export function CourseDetailsLayout() {
             <ConfirmModal
                 isOpen={classToDelete !== null}
                 onClose={() => setClassToDelete(null)}
-                title="¿Estás seguro?"
-                message={`¿Quieres eliminar la clase de ${classToDelete?.subject_name}?`}
+                title="Eliminar clase"
+                message={`Se eliminara la clase "${classToDelete?.subject_name}". Esta acción no se puede deshacer.`}
                 onConfirm={async () => {
                     if (classToDelete) {
                         await deleteClassById(classToDelete.class_id);

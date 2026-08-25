@@ -15,11 +15,10 @@ interface InteractiveHomeListProps {
     avatarText: string;
     title: React.ReactNode;
     subtitle: React.ReactNode;
-    key?: string;
     menuOptions?: MenuOption[];
 }
 
-export function InteractiveHomeList({ isActive, key, onClick, avatarText, title, disabled, subtitle, menuOptions }: InteractiveHomeListProps) {
+export function InteractiveHomeList({ isActive, onClick, avatarText, title, disabled, subtitle, menuOptions }: InteractiveHomeListProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState<'top' | 'bottom'>('bottom');
     const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +45,6 @@ export function InteractiveHomeList({ isActive, key, onClick, avatarText, title,
 
     return (
         <div
-            key={key}
             className={`w-full group px-2 xl:px-3 py-4 2xl:p-4 relative rounded-xl transition-colors flex items-center justify-between gap-2 2xl:gap-3 border ${
                 isActive ? 'bg-primary-shadow border-primary-shadow' : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-100'
             }`}
@@ -61,7 +59,7 @@ export function InteractiveHomeList({ isActive, key, onClick, avatarText, title,
                     <h3 className={`font-bold text-base truncate ${isActive ? 'text-primary-900' : 'text-custom-black'}`}>
                         {title}
                     </h3>
-                    <p className="text-gray-500 text-xs truncate">
+                    <p className="text-gray-500 capitalize text-xs truncate">
                         {subtitle}
                     </p>
                 </div>
@@ -77,7 +75,7 @@ export function InteractiveHomeList({ isActive, key, onClick, avatarText, title,
                     </button>
 
                     {isOpen && (
-                        <ul className={`absolute z-50 w-48 h-fit p-2 text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
+                        <ul className={`absolute z-50 w-48 h-fit p-1 text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
                             menuPosition === 'top' ? 'bottom-12' : 'top-12'
                         }`}>
                             {menuOptions.map((opt, idx) => (

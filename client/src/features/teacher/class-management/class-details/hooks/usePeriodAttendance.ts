@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getPeriodAttendance } from "../api";
 import toast from "react-hot-toast";
+import type { CourseAttendance, StudentPeriodAttendance } from "../types";
 
 interface PeriodAttendanceProps {
     courseId: string,
@@ -11,7 +12,7 @@ interface PeriodAttendanceProps {
 
 export const usePeriodAttendance = ({ courseId, classId, startDate, endDate }: PeriodAttendanceProps) => {
     const [loading, setLoading] = useState(false);
-    const [periodAttendance, setPeriodAttendance] = useState<any[]>([]);
+    const [periodAttendance, setPeriodAttendance] = useState<StudentPeriodAttendance[]>([]);
     const [calendarDates, setCalendarDates] = useState<string[]>([]);
 
     useEffect(() => {
@@ -33,27 +34,34 @@ export const usePeriodAttendance = ({ courseId, classId, startDate, endDate }: P
 
             setLoading(true);
             try {
-                const attendance = await getPeriodAttendance(courseId, classId, startDate, effectiveEndDate);
+                const attendance: CourseAttendance[] = await getPeriodAttendance(courseId, classId, startDate, effectiveEndDate);
 
                 const dates = new Set<string>();
-                const student = new Map();
+                const studentMap = new Map<string, StudentPeriodAttendance>();
 
-                attendance.forEach((row: any) => {
-                    dates.add(row.date);
+                attendance.forEach((row: CourseAttendance) => {
+                    const dateKey = row.date.split('T')[0];
+                    dates.add(dateKey);
 
-                    if (!student.has(row.student_id)) {
-                        student.set(row.student_id, {
+                    if (!studentMap.has(row.student_id)) {
+                        studentMap.set(row.student_id, {
                             student_id: row.student_id,
-                            name: row.name,
+                            firstName: row.student_first_name,
+                            middleName: row.student_middle_name,
+                            firstLastName: row.student_first_last_name,
+                            secondLastName: row.student_second_last_name,
                             records: []
-                        })
+                        });
                     }
 
-                    student.get(row.student_id).records.push({ date: row.date, status: row.status });
-                })
+                    studentMap.get(row.student_id)!.records.push({
+                        date: dateKey,
+                        status: row.status
+                    });
+                });
 
-                setCalendarDates(Array.from(dates).sort());
-                setPeriodAttendance(Array.from(student.values()));
+                setCalendarDates(Array.from(dates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()));
+                setPeriodAttendance(Array.from(studentMap.values()));
             } catch (error : any) {
                 console.error("Error GETTING the caledar ", error);
                 toast.error("Error al cargar el calendario");

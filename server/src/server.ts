@@ -16,6 +16,12 @@ import principalRoutes from "./modules/principal/infrastructure/principal.routes
 import attendanceRoutes from "./modules/attendance/infrastructure/attendance.routes.js";
 import SchoolRoutes from "./modules/school/infrastructure/school.routes.js";
 import userRoutes from "./modules/user/infrastucture/user.routes.js";
+import gradingTemplateRoutes from "./modules/gradingTemplate/infrastructure/gradingTemplate.routes.js";
+import assessmentRouter from "./modules/assessmentCriteria/infrastructure/assessment.router.js";
+import scaleRoutes from "./modules/scales/infrastructure/scale.routes.js";
+import assignmentRoutes from "./modules/assignments/infrastructure/assignment.routes.js";
+import gradeRoutes from "./modules/grade/infrastructure/grade.routes.js";
+import parentRoutes from "./modules/parent/infrastructure/parent.routes.js";
 
 dotenv.config();
 
@@ -42,8 +48,7 @@ app.use("/user", userRoutes);
 app.use("/principal", principalRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/student", studentRoutes);
-
-// Testing
+app.use("/parents", parentRoutes);
 
 //CRUD courses and schools
 app.use("/school", SchoolRoutes);
@@ -52,6 +57,11 @@ app.use("/classes", classesRoutes);
 app.use("/subjects", subjectRoutes);
 app.use("/areas", areaRoutes);
 app.use("/periods", periodRoutes);
+app.use("/grading_templates", gradingTemplateRoutes);
+app.use("/assessments", assessmentRouter);
+app.use("/scales", scaleRoutes);
+app.use("/assignments", assignmentRoutes);
+app.use("/grades", gradeRoutes);
 
 app.use(globalErrorHandler);
 

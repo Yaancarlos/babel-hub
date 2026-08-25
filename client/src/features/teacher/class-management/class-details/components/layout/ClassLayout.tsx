@@ -1,9 +1,9 @@
 import React from "react";
 import ButtonChevronBack from "../../../../../../components/ui/buttons/ButtonChevrowBack.tsx";
-import {HiOutlineCalendar, HiOutlineClipboardList, HiOutlineDocumentText, HiOutlineUsers} from "react-icons/hi";
-import {useNavigate} from "react-router-dom";
-import type {ClassDetailsData} from "../../types";
-import type {TabTypes} from "../../../../types/types.ts";
+import { HiOutlineCalendar, HiOutlineClipboardList, HiOutlineDocumentText, HiOutlineUsers } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import type { ClassDetailsData } from "../../types";
+import type { TabTypes } from "../../../../../types/types.ts";
 
 interface ClassLayoutProps {
     children: React.ReactNode;
@@ -22,7 +22,7 @@ export function ClassLayout ({ children, onTabChange, classDetails, activeTab }:
                     <div className="flex gap-4 items-center">
                         <ButtonChevronBack onClick={() => navigate(-1)} />
                         <div>
-                            <h1 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">
+                            <h1 className="text-xl md:text-1xl xl:text-2xl capitalize font-bold text-custom-black">
                                 {classDetails.subject_name}
                                 <span className="text-gray-400 font-normal ml-2">| {classDetails.course_name}</span>
                             </h1>

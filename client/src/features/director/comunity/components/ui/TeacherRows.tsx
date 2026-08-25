@@ -1,22 +1,29 @@
 import { memo } from "react";
-import { formateDate, getInitials, reverseName } from "../../../../../types";
+import { formateDate, reverseName } from "../../../../../types";
 import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { TeacherRowProps } from "../../types";
 
 export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate }: TeacherRowProps) {
+    const formattedName = reverseName({
+        middleName: teacher.teacher_middle_name,
+        secondLastName: teacher.teacher_second_last_name,
+        firstName: teacher.teacher_first_name,
+        firstLastName: teacher.teacher_first_last_name
+    })
+
     return (
         <tr key={teacher.id} className="hover:bg-gray-50 transition-colors">
             <td className="p-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary-darker font-bold text-sm">
-                        {getInitials(teacher.full_name)}
-                    </div>
+                    <p className="w-10 uppercase h-10 shrink-0 rounded-full bg-primary-shadow flex items-center justify-center text-primary-darker font-bold text-sm">
+                        {`${teacher.teacher_first_name.charAt(0)}${teacher.teacher_first_last_name.charAt(0)}`}
+                    </p>
                     <button
                         onClick={() => onNavigate(`${teacher.id}`)}
                         className="overflow-hidden text-sm xl:text-base text-left cursor-pointer"
                     >
-                        <p className="font-bold capitalize text-custom-black truncate" title={teacher.full_name}>
-                            {reverseName(teacher.full_name)}
+                        <p className="font-bold capitalize text-custom-black truncate" title={formattedName}>
+                            {formattedName}
                         </p>
                         <p className="text-gray-500 text-xs truncate" title={teacher.email}>
                             {teacher.email}
@@ -37,7 +44,7 @@ export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate
 
             <td className="md:p-4 pr-3 text-right space-x-1 xl:space-x-3">
                 <EditButton onClick={() => onEdit(teacher)} />
-                <DeleteButton onClick={() => onDelete(teacher.id)} />
+                <DeleteButton onClick={() => onDelete(teacher)} />
             </td>
         </tr>
     );

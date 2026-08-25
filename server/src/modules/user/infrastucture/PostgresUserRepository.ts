@@ -1,49 +1,81 @@
-import type {IUserRepository} from "../domain/IUserRepository.js";
-import type {UserProfileResponse} from "../domain/User.types.js";
-import {pool} from "../../../db/index.js";
+import type { IUserRepository } from "../domain/IUserRepository.js";
+import type { UserProfileResponse } from "../domain/User.types.js";
+import { pool } from "../../../db/index.js";
 
 export class PostgresUserRepository implements IUserRepository {
-    async getUser(userId: string): Promise<UserProfileResponse | null> {
+    async getUser(clientId: string): Promise<UserProfileResponse | null> {
         const client = await pool.connect();
         try {
-            const user = await client.query(
-                    `SELECT id, school_id, email, full_name, role FROM users WHERE supabase_user_id = $1`,
-                    [userId]);
+            const profile = await client.query(`
+                SELECT 
+                    id,
+                    first_name,
+                    middle_name,
+                    first_last_name,
+                    second_last_name,
+                    role,
+                    email,
+                    is_active,
+                    school_id
+                FROM profile
+                WHERE auth_profile_id = $1`, [clientId]);
 
-            if (user.rowCount === 0) return null;
+            if (profile.rowCount === 0) return null;
 
-            const internalUserId = user.rows[0].id;
-            const dbSchoolId = user.rows[0].school_id;
-            const email = user.rows[0].email;
-            const name = user.rows[0].full_name;
-            const realRole = user.rows[0].role;
+            const internalUserId = profile.rows[0].id;
+            const firstName = profile.rows[0].first_name;
+            const middleName = profile.rows[0].middle_name;
+            const firstLastName = profile.rows[0].first_last_name;
+            const secondLastName = profile.rows[0].second_last_name;
+            const realRole = profile.rows[0].role;
+            const email = profile.rows[0].email;
+            const isActive = profile.rows[0].is_active;
+            const dbSchoolId = profile.rows[0].school_id;
 
             let profileId: string | null = null;
 
-            if (realRole === "student") {
-                const result = await client.query(
-                    `SELECT id FROM students WHERE user_id = $1`,
-                    [internalUserId]
-                );
-                if (result.rows.length > 0) profileId = result.rows[0].id;
-
-            } else if (realRole === "teacher") {
-                const result = await client.query(
-                    `SELECT id FROM teachers WHERE user_id = $1`,
-                    [internalUserId]
-                );
-                if (result.rows.length > 0) profileId = result.rows[0].id;
-
-            } else if (realRole === "principal") {
-                profileId = internalUserId;
+            switch (realRole) {
+                case "admin": {
+                    const admin = await client.query(`SELECT id FROM admin WHERE profile_id = $1`, [internalUserId]);
+                    if (admin.rows.length > 0) profileId = admin.rows[0].id;
+                    break;
+                }
+                case "principal": {
+                    const principal = await client.query(`SELECT id FROM principal WHERE profile_id = $1`, [internalUserId]);
+                    if (principal.rows.length > 0) profileId = principal.rows[0].id;
+                    break;
+                }
+                case "teacher": {
+                    const teacher = await client.query(`SELECT id FROM teacher WHERE profile_id = $1`, [internalUserId]);
+                    if (teacher.rows.length > 0) profileId = teacher.rows[0].id;
+                    break;
+                }
+                case "student": {
+                    const student = await client.query(`SELECT id FROM student WHERE profile_id = $1`, [internalUserId]);
+                    if (student.rows.length > 0) profileId = student.rows[0].id;
+                    break;
+                }
+                case "parent": {
+                    const parent = await client.query(`SELECT id FROM parent WHERE profile_id = $1`, [internalUserId]);
+                    if (parent.rows.length > 0) profileId = parent.rows[0].id;
+                    break;
+                }
+                default:
+                    return null;
             }
 
             return {
+                // This id is from the main table, that gathers all the users
                 id: internalUserId,
+                first_name: firstName,
+                middle_name: middleName,
+                first_last_name: firstLastName,
+                second_last_name: secondLastName,
                 role: realRole!,
-                name: name!,
                 email: email,
+                is_active: isActive,
                 school_id: dbSchoolId,
+                // And this id is from the specific role table of the user admin, teacher, student etc.
                 profile_id: profileId,
                 is_profile_complete: !!profileId
             };

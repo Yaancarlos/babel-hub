@@ -10,7 +10,7 @@ export const useCourseData = () => {
     } = useQuery<CoursesListData[]>({
         queryKey: ['courses'],
         queryFn: async () => await getCourses(),
-        staleTime: 1000 * 60 * 10,
+        staleTime: 1000 * 60 * 30,
     });
 
     return { loading, courses, fetchCourses };

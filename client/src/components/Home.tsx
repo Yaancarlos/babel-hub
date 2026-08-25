@@ -23,6 +23,7 @@ interface LayoutProps {
 const roleTranslations: Record<string, string> = {
     principal: "Coordinador",
     teacher: "Profesor",
+    parent: "Acudiente",
     student: "Estudiante",
     admin: "Administrador"
 };
@@ -108,10 +109,10 @@ const DashboardLayout = ({ user, grid }: LayoutProps) => {
 
                     <div className="flex flex-col items-center mb-5">
                         <div className="w-24 h-24 lg:w-32 lg:h-32 mb-3 bg-primary-shadow rounded-full flex items-center justify-center text-primary font-bold text-2xl">
-                            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                            {user?.first_name ? `${user.first_name.charAt(0).toUpperCase()}${user.first_last_name.charAt(0).toUpperCase()}` : "UN"}
                         </div>
-                        <p className="text-custom-black text-lg font-semibold text-center leading-tight">
-                            {user?.name ? user.name.split(" ").slice(0, 2).join(" ") : "Usuario"}
+                        <p className="text-custom-black text-lg font-semibold capitalize text-center leading-tight">
+                            {user?.first_name ? `${user?.first_name} ${user?.first_last_name}` : "Usuario"}
                         </p>
                         <p className="text-gray-500 text-sm font-medium text-center truncate w-full px-2 mt-1">
                             {user?.email}

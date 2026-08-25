@@ -1,6 +1,6 @@
 import type { IUserRepository } from "../domain/IUserRepository.js";
 import type { UserProfileResponse } from "../domain/User.types.js";
-import {NotFoundError, UnauthorizedError} from "../../errors/domain/CustomErrors.js";
+import { NotFoundError, UnauthorizedError } from "../../errors/domain/CustomErrors.js";
 
 export class UserService {
     constructor(private readonly userRepository: IUserRepository) {}

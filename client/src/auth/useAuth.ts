@@ -3,10 +3,16 @@ import type { UserRole } from "../types";
 
 export interface UserProfile {
     id: string;
-    name?: string;
+    first_name: string;
+    middle_name: string | null;
+    first_last_name: string;
+    second_last_name: string | null;
     role: UserRole;
     email: string;
-    school_id?: string | null;
+    is_active: boolean;
+    school_id: string | null;
+    profile_id: string | null;
+    is_profile_complete: boolean;
 }
 
 interface AuthState {

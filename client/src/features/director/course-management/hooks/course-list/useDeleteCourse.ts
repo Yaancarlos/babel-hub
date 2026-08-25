@@ -3,7 +3,7 @@ import { deleteCourse } from "../../api";
 import toast from "react-hot-toast";
 
 export const useDeleteCourse = (onSuccess: () => void) => {
-    const [loadingDelete, setLoadingDelete] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
     const deleteCourseById = async (id: string) => {
         setLoadingDelete(true);

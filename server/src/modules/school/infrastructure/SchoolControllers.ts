@@ -7,13 +7,15 @@ export class SchoolControllers {
 
     createSchool = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { schoolName, principalName, principalEmail, principalPassword } = request.body;
+            const { schoolName, firstName, middleName, FirstLastName, secondLastName, principalEmail, principalPassword } = request.body;
 
             const userId = request.user!.userId as string;
-            const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
 
-            const record = await this.schoolService.createSchool(schoolName, principalName, principalEmail, principalPassword, userId, userRole, userSchoolId);
+            // check this one for admin user, they don't hold a school id
+            const userSchoolId = request.user!.schoolId as string;
+
+            const record = await this.schoolService.createSchool(schoolName, firstName, middleName, FirstLastName, secondLastName, principalEmail, principalPassword, userId, userRole, userSchoolId);
             response.status(201).json({ school: record })
         } catch (error : any) {
             next(error);

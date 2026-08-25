@@ -1,14 +1,14 @@
 import api from "../../../../api/client.ts";
-import type {CreateClass, UpdateClass, UpsertCourse} from "../types";
+import type {AvailableSubjects, CoursesListData, CreateClass, Teacher, UpdateClass, UpsertCourse} from "../types";
 
 // Course List Endpoint
 
-export const getCourses = async () => {
+export const getCourses = async (): Promise<CoursesListData[]> => {
     const response = await api.get("/courses");
     return response.data.courses;
 }
 
-export const getTeachers = async (url: string, controller: any) => {
+export const getTeachers = async (url: string, controller: any): Promise<Teacher[]> => {
     const response = await api.get(url, { signal: controller.signal });
     return response.data.teachers;
 }
@@ -37,12 +37,7 @@ export const getAttendance  = async (id: string, date: string, controller: any) 
     return response.data.records;
 }
 
-export const getAllTeachers = async () => {
-    const response = await api.get(`/teacher`);
-    return response.data.teachers
-}
-
-export const getAvailableSubjects = async (id: string) => {
+export const getAvailableSubjects = async (id: string): Promise<AvailableSubjects[]> => {
     const response = await api.get(`/subjects/available?courseId=${id}`);
     return response.data.availableSubjects;
 }

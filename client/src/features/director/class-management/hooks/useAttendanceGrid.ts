@@ -1,21 +1,33 @@
 import { useState, useEffect } from "react";
 import {getAttendanceClass} from "../api";
 import toast from "react-hot-toast";
+import type { AttendanceStatus } from "../../../types/types";
 
 interface AttendanceGridProps {
     courseId: string,
     classId: string,
+    students: number,
     startDate: string,
     endDate: string
 }
 
-export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: AttendanceGridProps) => {
+export interface CourseAttendance {
+    student_id: string;
+    student_first_name: string;
+    student_middle_name: string | null;
+    student_first_last_name: string;
+    student_second_last_name: string | null;
+    date: string;
+    status: AttendanceStatus;
+}
+
+export const useAttendanceGrid = ({ courseId, classId, students, startDate, endDate }: AttendanceGridProps) => {
     const [loading, setLoading] = useState(false);
     const [attendance, setAttendance] = useState<any[]>([]);
     const [calendar, setCalendar] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!startDate || !endDate) return;
+        if (!startDate || !endDate || students === 0) return;
 
         const showAttendance = async () => {
             const today = new Date();
@@ -38,13 +50,16 @@ export const useAttendanceGrid = ({ courseId, classId, startDate, endDate }: Att
                 const datesSet = new Set<string>();
                 const studentMap = new Map();
 
-                data.forEach((row: any) => {
+                data.forEach((row: CourseAttendance) => {
                     datesSet.add(row.date);
 
                     if (!studentMap.has(row.student_id)) {
                         studentMap.set(row.student_id, {
                             student_id: row.student_id,
-                            name: row.name,
+                            firstName: row.student_first_name,
+                            middleName: row.student_middle_name,
+                            firstLastName: row.student_first_last_name,
+                            secondLastName: row.student_second_last_name,
                             records: []
                         });
                     }

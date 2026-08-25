@@ -1,39 +1,114 @@
-import type { Assignment } from "../../types";
 import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
+import { useAssignmentOverview } from "../../hooks/assignments/useAssignmentOverview.ts";
+import {type ModalModeTypes} from "../../../../../types";
+import type { AssessmentCriteria, Assignment, ClassDetailsData, GradeRecords } from "../../types";
+import { useState } from "react";
+import { AssignmentFormModal } from "../ui/AssignmentFormModal.tsx";
+import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
+import { useAssignmentDelete } from "../../hooks/assignments/useAssignmentDelete.ts";
+import { useClassScale } from "../../hooks/assignments/useClassScale.ts";
+import { useBulkAssignments } from "../../hooks/assignments/useBulkAssignment.ts";
+import { StudentGradeTable } from "../../../../../components/ui/table/StudentGradeTable.tsx";
 
 interface AssignmentsProps {
-    assignments: Assignment[];
+    classData: ClassDetailsData;
+    courseId: string;
+    classId: string;
 }
 
-export function Assignments({ assignments }: AssignmentsProps) {
-    if (assignments.length === 0) {
+export function Assignments({ classData, classId, courseId }: AssignmentsProps) {
+    const [modalMode, setModalMode] = useState<ModalModeTypes>("none");
+    const [assessmentId, setAssessmentId] = useState<string>("");
+    const [assignmentToEdit, setAssignmentToEdit] = useState<Assignment | null>(null);
+    const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
+
+    const { assignmentsOverview, loading, refetch } = useAssignmentOverview(courseId, classId);
+    const { scale, loadingScale } = useClassScale(classId);
+    const { loadingDelete, deleteAssignmentById } = useAssignmentDelete(refetch);
+    const { bulkUpsertGrades } = useBulkAssignments(refetch);
+
+    if (loading || loadingScale || !scale) return null;
+
+    if (!assignmentsOverview || assignmentsOverview.length === 0) {
         return (
             <div className="md:col-span-2 lg:col-span-3">
-                <NoResults title="No hay asignaciones creadas todavía" />
+                <NoResults title="No hay criterios de evaluación configurados todavía"/>
             </div>
         );
     }
 
+    const onAddAssignment = (assessment: AssessmentCriteria) => {
+        setAssessmentId(assessment.id);
+        setAssignmentToEdit(null);
+        setModalMode("create")
+    }
+
+    const onDeleteAssignment = (assignment: Assignment) => {
+        setAssignmentToDelete(assignment);
+    }
+
+    const onEditAssignment = (assessment: AssessmentCriteria, assignment: Assignment) => {
+        setAssessmentId(assessment.id);
+        setAssignmentToEdit(assignment);
+        setModalMode("edit");
+    }
+
+    const handleSaveAssignmentGrades = async (assignmentId: string, records: GradeRecords[]) => {
+        await bulkUpsertGrades(classId, assignmentId, records.map(r => ({
+            studentId: r.studentId,
+            value: r.value ?? scale.min_value,
+            comment: r.comment ?? null
+        })));
+    };
+
     return (
-        <div className="grid bg-white grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {assignments.map((assignment) => (
-                <div key={assignment.id} className="border border-gray-100 rounded-xl p-5 hover:shadow-md transition-all bg-white flex flex-col h-full">
-                    <div className="flex justify-between items-start mb-3 gap-2">
-                        <h3 className="font-bold text-custom-black leading-tight">{assignment.title}</h3>
-                        <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider shrink-0">
-                            {assignment.type}
-                        </span>
-                    </div>
-                    <div className="mt-auto pt-3 border-t border-gray-50">
-                        <p className="text-xs text-gray-500 font-medium mb-3">
-                            Entrega: <span className="text-gray-700">{new Date(assignment.due_date).toLocaleDateString()}</span>
-                        </p>
-                        <button className="text-sm text-primary-600 font-bold hover:text-primary-800 w-full text-left transition-colors">
-                            Ver Calificaciones;
-                        </button>
-                    </div>
+        <div className="space-y-6">
+            {classData.students.length > 0 && assignmentsOverview.length > 0 ? (
+                <StudentGradeTable
+                    students={classData.students}
+                    assessments={assignmentsOverview}
+                    scale={{ min: scale.min_value, max: scale.max_value, passing: scale.passing_value }}
+                    onAddAssignment={onAddAssignment}
+                    onEditAssignment={onEditAssignment}
+                    onDeleteAssignment={onDeleteAssignment}
+                    onSaveAssignmentGrades={handleSaveAssignmentGrades}
+                />
+            ) : (
+                <div className="md:col-span-2 border rounded-xl border-gray-100 lg:col-span-3">
+                    <NoResults title="No hay estudiantes para evaluar"/>
                 </div>
-            ))}
+            )}
+
+            <ConfirmModal
+                isOpen={assignmentToDelete !== null}
+                onClose={() => setAssignmentToDelete(null)}
+                onConfirm={async () => {
+                    if (assignmentToDelete) {
+                        await deleteAssignmentById(assignmentToDelete.id);
+                        setAssignmentToDelete(null);
+                    }
+                }}
+                title="Eliminar asignación"
+                message={`Se eliminará "${assignmentToDelete?.name}" y todas sus calificaciones. Esta acción no se puede deshacer.`}
+                loadingDelete={loadingDelete}
+            />
+
+            {modalMode !== "none" && (
+                <AssignmentFormModal
+                    mode={modalMode}
+                    onClose={() => {
+                        setAssignmentToEdit(null);
+                        setModalMode("none");
+                    }}
+                    onSuccess={async () => {
+                        setAssignmentToEdit(null);
+                        setModalMode('none');
+                        refetch();
+                    }}
+                    assignment={{ classId, assessmentId }}
+                    assignmentToEdit={assignmentToEdit}
+                />
+            )}
         </div>
     )
 }

@@ -5,13 +5,19 @@ import { getAttendance, getCourse } from "../../api";
 
 export interface CourseDataProps {
     course: {
+        is_active: boolean;
         id: string;
         name: string;
+        year: string;
         created_at: string;
-        year: string | number;
     };
     students: Student[];
     classes: ClassItem[];
+}
+
+interface CourseDailyAttendance {
+    student_id: string;
+    daily_status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
 }
 
 export const useCourseData = (id: string | undefined, date: string) => {
@@ -35,7 +41,7 @@ export const useCourseData = (id: string | undefined, date: string) => {
                 const fetchedCourse: CourseDataProps = await getCourse(id, controller);
                 setCourse(fetchedCourse);
 
-                const fetchedAttendance = await getAttendance(id, date, controller);
+                const fetchedAttendance: CourseDailyAttendance[] = await getAttendance(id, date, controller);
 
                 const attendanceMap: Record<string, string> = {};
 

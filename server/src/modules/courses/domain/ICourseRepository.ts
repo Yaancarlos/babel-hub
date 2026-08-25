@@ -7,8 +7,8 @@ import type {
 } from "./Course.types.js";
 
 export interface ICourseRepository {
-    getCourses(userSchoolId: string): Promise<Courses[] | []>;
-    getCourseDetails(courseId: string, userSchoolId: string): Promise<CourseDetails | null>;
+    getCourses(userSchoolId: string, isActive: boolean): Promise<Courses[] | []>;
+    getCourseDetails(courseId: string, userSchoolId: string, isActive: boolean): Promise<CourseDetails | null>;
     createCourse(courseName: string, courseYear: string, courseTeacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateCourse>;
     updateCourse(courseId: string, courseName: string, courseYear: string, courseTeacherId: string, userId: string, userRole: string, userSchoolId: string): Promise<UpdateCourse>;
     deleteCourse(courseId: string, userId: string, userRole: string, userSchoolId: string): Promise<void>;

@@ -1,37 +1,42 @@
-export interface Course {
-    id: string;
-    name: string;
-    teacher_id: string;
-    school_id: string;
-    
-}
-
 export interface Courses {
     id: string;
     course_name: string;
     created_at: string;
-    year: number;
-    director_id: number;
-    director_name: string;
+    year: string;
+    is_active: boolean;
+    director_id: string;
+    director_first_name: string;
+    director_middle_name: string | null;
+    director_first_last_name: string;
+    director_second_last_name: string | null;
     student_count: number;
 }
 
 export interface CourseDetails {
     course: {
+        is_active: boolean;
         id: string;
         name: string;
-        created_at: string;
         year: string;
+        created_at: string;
     };
     students: {
+        is_active: boolean;
         student_id: string;
-        full_name: string;
+        first_name: string;
+        middle_name: string | null;
+        first_last_name: string;
+        second_last_name: string | null;
         email: string;
     }[];
     classes: {
+        is_active: boolean;
         class_id: string;
         subject_name: string;
-        teacher_name: string;
+        first_name: string;
+        middle_name: string | null;
+        first_last_name: string;
+        second_last_name: string | null;
     }[];
 }
 

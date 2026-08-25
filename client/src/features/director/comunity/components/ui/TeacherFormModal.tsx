@@ -1,7 +1,7 @@
-import DynamicModalForm, {type FormField} from "../../../../../components/ui/modals/ModalForm.tsx";
+import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
 import React, { useState } from "react";
 import { useTeacherSubmit } from "../../hooks/teachers/useTeacherSubmit.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 interface TeacherFormModalProps {
     mode: modeTypes;
@@ -10,18 +10,23 @@ interface TeacherFormModalProps {
     onSuccess: () => void;
 }
 
-const formRegExp = [
-    { label: "name", regExp: /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']{2,50}$/ },
-    { label: "email", regExp: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
-    { label: "password", regExp: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/ },
-];
-
+const FORM_REGEX = {
+    name: /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']{2,50}$/,
+    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+};
 
 export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: TeacherFormModalProps) {
+    const isCreateMode = mode === 'create';
+
     const [formData, setFormData] = useState({
-        fullName: initialData?.full_name || "",
+        firstName: initialData?.teacher_first_name || "",
+        middleName: initialData?.teacher_middle_name || "",
+        firstLastName: initialData?.teacher_first_last_name || "",
+        secondLastName: initialData?.teacher_second_last_name || "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: ""
     });
 
     const { loading, error, setError, teacherSubmit } = useTeacherSubmit(onSuccess);
@@ -30,40 +35,65 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
         e.preventDefault();
         setError("");
 
-        const name = formRegExp.find(r => r.label === "name")?.regExp;
-        const email = formRegExp.find(r => r.label === "email")?.regExp;
-        const password = formRegExp.find(r => r.label === "password")?.regExp;
-
-        if (name && !name.test(formData.fullName)) {
-            setError("El nombre debe tener entre 2 y 50 caracteres y solo contener letras.");
+        if (!FORM_REGEX.name.test(formData.firstName)) {
+            setError("El primer nombre debe tener entre 2 y 50 caracteres (solo letras).");
+            return;
+        }
+        if (!FORM_REGEX.name.test(formData.firstLastName)) {
+            setError("El primer apellido debe tener entre 2 y 50 caracteres (solo letras).");
+            return;
+        }
+        if (formData.middleName.trim() && !FORM_REGEX.name.test(formData.middleName)) {
+            setError("El segundo nombre debe tener entre 2 y 50 caracteres (solo letras).");
+            return;
+        }
+        if (formData.secondLastName.trim() && !FORM_REGEX.name.test(formData.secondLastName)) {
+            setError("El segundo apellido debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
 
-        if (mode === 'create') {
-            if (email && !email.test(formData.email)) {
+        if (isCreateMode) {
+            if (!FORM_REGEX.email.test(formData.email)) {
                 setError("Por favor, ingresa un correo electrónico válido.");
                 return;
             }
-            if (password && !password.test(formData.password)) {
+            if (!FORM_REGEX.password.test(formData.password)) {
                 setError("La contraseña debe tener mínimo 8 caracteres, e incluir al menos una letra, un número y un carácter especial.");
+                return;
+            }
+
+            if (formData.password !== formData.confirmPassword) {
+                setError("Las contraseñas no coinciden.");
                 return;
             }
         }
 
+
         const payload = {
-            ...formData,
-            fullName: formData.fullName.trim().toLowerCase()
-        }
+            firstName: formData.firstName.trim().toLowerCase(),
+            middleName: formData.middleName.trim().toLowerCase(),
+            firstLastName: formData.firstLastName.trim().toLowerCase(),
+            secondLastName: formData.secondLastName.trim().toLowerCase(),
+            ...(isCreateMode && {
+                password: formData.password,
+                email: formData.email.trim().toLowerCase(),
+            })
+        };
 
         await teacherSubmit(mode, initialData?.id, payload);
     }
 
-    //@ts-ignore
     const teacherFields: FormField[] = [
-        { name: "fullName", label: "Nombre", type: "text", placeholder: "Cristian Garcia", required: true },
-        { name: "email", label: "Correo electronico", type: "email", placeholder: "example@gmail.com", required: true },
-        { name: "password", label: "Contraseña", type: "password", required: true }
-    ].filter(field => mode === 'create' || field.name === 'fullName');
+        { name: "firstName", label: "Primer Nombre", type: "text", placeholder: "Cristian", required: true },
+        { name: "middleName", label: "Segundo Nombre", type: "text", placeholder: "Antonio", required: false },
+        { name: "firstLastName", label: "Primer Apellido", type: "text", placeholder: "Garcia", required: true },
+        { name: "secondLastName", label: "Segundo Apellido", type: "text", placeholder: "Perez", required: false },
+        ...(isCreateMode ? [
+            { name: "email", label: "Correo electrónico", type: "email", placeholder: "example@gmail.com", required: true },
+            { name: "password", label: "Contraseña", type: "password", required: true },
+            { name: "confirmPassword", label: "Confirmar Contraseña", type: "password", required: true }
+        ] as FormField[] : [])
+    ];
 
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -74,7 +104,8 @@ export function TeacherFormModal({ mode, onClose, onSuccess, initialData }: Teac
     return (
         <DynamicModalForm
             isOpen={true}
-            title={mode === 'create' ? "Crear Nuevo Profesor" : "Editar Profesor"}
+            profileCreated={isCreateMode}
+            title={isCreateMode ? "Crear Nuevo Profesor" : "Editar Profesor"}
             fields={teacherFields}
             formData={formData}
             formError={error}

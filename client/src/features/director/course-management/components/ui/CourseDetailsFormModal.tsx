@@ -1,9 +1,10 @@
 import DynamicModalForm, { type FormField } from "../../../../../components/ui/modals/ModalForm.tsx";
-import type { ClassItem } from "../../types";
+import type {AvailableSubjects, ClassItem, Teacher} from "../../types";
 import React, { useState } from "react";
 import { useUpsertClass } from "../../hooks/course-details/useUpsertClass.ts";
 import { useModalData } from "../../hooks/course-details/useModalData.ts";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
+import {reverseName} from "../../../../../types";
 
 interface CourseDetailsFormProps {
     id: string;
@@ -15,6 +16,7 @@ interface CourseDetailsFormProps {
 }
 
 export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSuccess, onClose }: CourseDetailsFormProps) => {
+    const isCreateMode = mode === "create";
     const { teachers, subjects } = useModalData(id);
     const { loading, error, setError, upsertClass } = useUpsertClass(onSuccess);
 
@@ -24,34 +26,36 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
         teacherId: ""
     });
 
-    //@ts-ignore
     const assignClassFields: FormField[] = [
-        {
-            name: "courseId",
-            label: "Curso",
-            type: "text",
-            disabled: true,
-        },
-        {
-            name: "subjectId",
-            label: "Materia",
-            type: "select",
-            required: true,
-            options: subjects.map((s: any) => ({ value: s.id, label: s.name }))
-        },
+        ...(isCreateMode
+            ? [
+                { name: "courseId", label: "Curso", type: "text", disabled: true },
+                {
+                    name: "subjectId",
+                    label: "Materia",
+                    type: "select",
+                    required: true,
+                    options: subjects.map((s: AvailableSubjects) => ({ value: s.id, label: s.name }))
+                }
+            ] as FormField[] : []),
         {
             name: "teacherId",
             label: "Profesor",
             type: "select",
             required: true,
-            options: teachers.map((t: any) => ({ value: t.id, label: t.full_name }))
+            options: teachers.map((t: Teacher) => ({ value: t.id, label: reverseName({
+                    middleName: t.teacher_middle_name,
+                    secondLastName: t.teacher_second_last_name,
+                    firstName: t.teacher_first_name,
+                    firstLastName: t.teacher_first_last_name
+                }) }))
         }
-    ].filter(field => mode === "create" || (field.name !== 'courseId' && field.name !== 'subjectId'));
+    ];
 
     const handleUpsertClass = async (e: React.FormEvent) => {
         e.preventDefault();
         const payload = { newTeacher: formData.teacherId }
-        await upsertClass(mode, classToEdit?.class_id, mode === 'create' ? formData : payload);
+        await upsertClass(mode, classToEdit?.class_id, isCreateMode ? formData : payload);
     }
 
     const handleFormChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -63,7 +67,7 @@ export const CourseDetailsFormModal = ({ id, courseName, mode, classToEdit, onSu
     return (
         <DynamicModalForm
             isOpen={true}
-            title={mode === 'create' ? "Crear Nueva Clase" : "Editar Profesor de Clase"}
+            title={isCreateMode ? "Crear Nueva Clase" : "Editar Profesor de Clase"}
             fields={assignClassFields}
             formData={{...formData, courseId: courseName || formData.courseId }}
             formError={error}

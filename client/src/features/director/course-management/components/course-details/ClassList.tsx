@@ -1,5 +1,6 @@
 import type { ClassItem } from "../../types";
 import { CourseDetailsClassRows } from "../ui/CourseDetailsClassRows.tsx";
+import { memo } from "react";
 
 interface ClassListProps {
     classes: ClassItem[];
@@ -10,7 +11,14 @@ interface ClassListProps {
     classOption: string | null;
 }
 
-export const ClassList = ({ classes, onNavigate, onEdit, onDelete, classOption, onClassOptions }: ClassListProps) => {
+export const ClassList = memo(function ClassList({
+                                                     classes,
+                                                     onNavigate,
+                                                     onEdit,
+                                                     onDelete,
+                                                     classOption,
+                                                     onClassOptions
+                                                 }: ClassListProps) {
     return (
         <div className="absolute right-5 top-full w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-30 overflow-hidden">
             <div className="p-3 bg-gray-50 border-b border-gray-100">
@@ -36,5 +44,5 @@ export const ClassList = ({ classes, onNavigate, onEdit, onDelete, classOption, 
                 )}
             </ul>
         </div>
-    )
-}
+    );
+});

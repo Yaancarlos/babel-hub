@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPeriod, updatePeriod } from "../../api";
 import toast from "react-hot-toast";
-import type { modeTypes } from "../../../types/types.ts";
+import type { modeTypes } from "../../../../types/types.ts";
 
 export const useUpsertPeriod = (onSuccess: () => void) => {
     const [loading, setLoading] = useState(false);
@@ -16,6 +16,8 @@ export const useUpsertPeriod = (onSuccess: () => void) => {
                 await updatePeriod(periodId, payload);
             } else if (mode === 'create') {
                 await createPeriod(payload);
+            } else {
+                throw new Error("No se pudo determinar la acción a realizar");
             }
             toast.success(`Periodo ${mode === "create" ? "creado" : "editado"} correctamente.`);
 

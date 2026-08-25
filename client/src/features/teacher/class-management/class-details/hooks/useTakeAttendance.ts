@@ -1,7 +1,8 @@
-import {useState, useEffect, useCallback} from "react";
-import {bulkAttendance, getDailyAttendance} from "../api";
-import type {Student} from "../types";
+import { useState, useEffect, useCallback } from "react";
+import { bulkAttendance, getDailyAttendance } from "../api";
+import type { Student } from "../types";
 import toast from "react-hot-toast";
+import type { AttendanceStatus } from "../../../../types/types.ts";
 
 interface TakeAttendanceProps {
     classId: string;
@@ -41,11 +42,13 @@ export const useTakeAttendance = ({classId, date, students}: TakeAttendanceProps
         getAttendance();
     }, [classId, attendanceDate]);
 
-    const handleUpdateStatus = useCallback((studentId: string, status: 'late' | 'absent' | 'present') => {
+    const handleUpdateStatus = useCallback((studentId: string, status: AttendanceStatus) => {
         setDailyAttendance(prev => ({...prev, [studentId]: status }));
     }, []);
 
     const bulkAttendanceClass = async () => {
+        if (!classId || !date || students.length === 0) return;
+
         setSaving(true);
         try {
             const formattedRecords = Object.entries(dailyAttendance).map(([id, status]) => ({ studentId: id, status }));

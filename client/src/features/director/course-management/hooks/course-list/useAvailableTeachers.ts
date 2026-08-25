@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getTeachers } from "../../api";
 import axios from "axios";
+import type { Teacher } from "../../types";
 
 export const useAvailableTeachers = (id: string | null) => {
-    const [loading, setLoading] = useState(false);
-    const [teachers, setTeachers] = useState<any[]>([]);
+    const [loading, setLoading] = useState<Boolean>(false);
+    const [teachers, setTeachers] = useState<Teacher[]>([]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -16,7 +17,7 @@ export const useAvailableTeachers = (id: string | null) => {
                     ? `/teacher?available=true&includeTeacherId=${id}`
                     : '/teacher?available=true';
 
-                const response = await getTeachers(url, controller );
+                const response: Teacher[] = await getTeachers(url, controller );
                 setTeachers(response);
             } catch (error: any) {
                 if (axios.isCancel(error) || (error as Error).name === 'AbortError') return;

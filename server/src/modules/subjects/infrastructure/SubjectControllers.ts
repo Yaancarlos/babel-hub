@@ -33,13 +33,13 @@ export class SubjectControllers {
 
     createSubject = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { name, areaId } = request.body;
+            const { name, areaId, gradingTemplateId } = request.body;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            const record = await this.subjectServices.createSubject(name, areaId, userId, userRole, userSchoolId);
+            const record = await this.subjectServices.createSubject(name, areaId, gradingTemplateId, userId, userRole, userSchoolId);
             response.status(201).json({ subject: record });
         } catch (error : any) {
             next(error)
@@ -49,13 +49,13 @@ export class SubjectControllers {
     updateSubject = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const id = request.params.id as string;
-            const { name, areaId } = request.body;
+            const { name, areaId, gradingTemplateId } = request.body;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            await this.subjectServices.updateSubject(id, name, areaId, userId, userRole, userSchoolId);
+            await this.subjectServices.updateSubject(id, name, areaId, gradingTemplateId, userId, userRole, userSchoolId);
             response.status(204).send();
         } catch (error : any) {
             next(error)

@@ -1,9 +1,9 @@
 import api from "../../../../api/client.ts";
-import type { CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent } from "../types";
+import type {CreateStudent, CreateTeacher, UpdateTeacher, UpdateStudent, Courses, StudentProps, Parent} from "../types";
 
 //Students Endpoints
 
-export const getStudents = async () => {
+export const getStudents = async (): Promise<StudentProps[]> => {
     const response = await api.get("/student");
     return response.data.students;
 }
@@ -13,7 +13,7 @@ export const getStudentById = async (id: string) => {
     return response.data.record;
 }
 
-export const getCourses = async () => {
+export const getCourses = async (): Promise<Courses[]> => {
     const response = await api.get('/courses');
     return response.data.courses;
 }
@@ -32,11 +32,6 @@ export const deleteStudent = async (id: string) => {
 
 //Teachers Endpoint
 
-export const getTeachers = async () => {
-    const response = await api.get("/teacher");
-    return response.data.teachers;
-}
-
 export const getTeacherById = async (id: string) => {
     const response = await api.get(`/teacher/${id}`);
     return response.data;
@@ -52,4 +47,33 @@ export const updateTeacher = async (id: string, payload: UpdateTeacher) => {
 
 export const deleteTeacher = async (id: string) => {
     await api.delete(`/teacher/${id}`);
+}
+
+// Parents Endpoints
+
+export const getParents = async (): Promise<Parent[]> => {
+    const response = await api.get("/parents");
+    return response.data.parents;
+}
+
+export const getStudentsByName = async (query: string) =>{
+    const response = await api.get('student/search', {
+        params: {
+            q: query,
+            limit: 10
+        }
+    });
+    return response.data.students;
+}
+
+export const createParent = async (payload: any): Promise<void> => {
+    await api.post("/parents", payload);
+}
+
+export const linkStudentToParent = async (payload: any) => {
+    await api.post("/parents/link", payload);
+}
+
+export const deleteParent = async (id: string): Promise<void> => {
+    await api.delete(`/parents/${id}`);
 }

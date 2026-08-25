@@ -4,11 +4,11 @@ import ButtonChevronBack from "../../../../../components/ui/buttons/ButtonChevro
 import { PrimaryButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { ModalModeTypes } from "../../../../../types";
 import {  useState  } from "react";
-import { AreaDetailsRows } from "../ui/AreaDetailsRows.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
-import { useDeleteSubject } from "../../hooks/areas/useDeleteSubject.ts";
+import { useDeleteSubject } from "../../hooks/subjects/useDeleteSubject.ts";
 import type { SubjectsProps } from "../../types";
 import { AreaDetailsFormModal } from "../ui/AreaDetailsFormModal.tsx";
+import { ListRows } from "../../../../../components/ui/lists/SetupList.tsx";
 
 export function AreaDetails() {
     const { areaId } = useParams<{ areaId: string }>();
@@ -16,19 +16,19 @@ export function AreaDetails() {
 
     if (!areaId) return null;
 
-    const { loading, areaDetails, subjects, refetch } = useAreaDetails(areaId);
+    const { loading, areaDetails, refetch } = useAreaDetails(areaId);
     const { loadingDelete, deleteSubjectById } = useDeleteSubject(refetch);
 
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | undefined>(undefined);
+    const [subjectToEdit, setSubjectToEdit] = useState<SubjectsProps | null>(null);
     const [subjectToDelete, setSubjectToDelete] = useState<SubjectsProps | null>(null);
 
-    const handleEdit = (subject: any) => {
+    const handleEdit = (subject: SubjectsProps) => {
         setSubjectToEdit(subject);
         setModalMode('edit');
     }
 
-    const handleDelete = (subject: any) => {
+    const handleDelete = (subject: SubjectsProps) => {
         setSubjectToDelete(subject);
     }
 
@@ -38,8 +38,8 @@ export function AreaDetails() {
                 <div className="flex items-center gap-3">
                     <ButtonChevronBack onClick={() => navigate(-1)} />
                     <div>
-                        <h1 className="text-2xl font-bold text-custom-black">
-                            Área: {areaDetails?.name}
+                        <h1 className="text-2xl capitalize font-bold text-custom-black">
+                            {areaDetails?.area.name}
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">Gestión de Asignaturas</p>
                     </div>
@@ -47,14 +47,18 @@ export function AreaDetails() {
                 <div className="mt-4 md:mt-0">
                     <PrimaryButton
                         onClick={() => setModalMode('create')}
-                        title="Nueva Materia"
+                        title="Nueva Asignatura"
                     />
                 </div>
             </div>
 
-            <AreaDetailsRows
+            <ListRows
+                items={areaDetails ? areaDetails.subjects : []}
                 loading={loading}
-                subjects={subjects}
+                emptyMessage="No hay materias registradas en esta área todavía."
+                getKey={(s) => s.id}
+                getTitle={(s) => s.name}
+                getSubtitle={(s) => s.grading_template_name}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
@@ -77,14 +81,14 @@ export function AreaDetails() {
                 <AreaDetailsFormModal
                     mode={modalMode}
                     onSuccess={async () => {
-                        setSubjectToEdit(undefined);
+                        setSubjectToEdit(null);
                         setModalMode('none');
                         refetch();
                     }}
                     areaId={areaId}
                     subject={subjectToEdit}
                     onClose={() => {
-                        setSubjectToEdit(undefined);
+                        setSubjectToEdit(null);
                         setModalMode('none');
                     }}
                 />

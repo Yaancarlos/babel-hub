@@ -9,8 +9,9 @@ export class ClassControllers {
         try {
             const id = request.params.id as string;
             const schoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.classServices.getClassDetails(id, schoolId);
+            const records = await this.classServices.getClassDetails(id, schoolId, isActive);
             response.status(200).json(records);
         } catch (error : any) {
             next(error);
@@ -57,7 +58,7 @@ export class ClassControllers {
             const userSchoolId = request.user!.schoolId as string;
 
             await this.classServices.deleteClass(classId, userId, userRole, userSchoolId);
-            response.status(200).json({ message: "Successfully deleted class" });
+            response.status(200).send();
         } catch (error : any) {
             next(error);
         }
@@ -67,8 +68,9 @@ export class ClassControllers {
         try {
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.classServices.getTeacherClasses(userId, userSchoolId);
+            const records = await this.classServices.getTeacherClasses(userId, userSchoolId, isActive);
             response.status(200).json({ teacherClasses: records });
         } catch (error : any) {
             next(error);

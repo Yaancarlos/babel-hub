@@ -5,10 +5,34 @@ import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomEr
 export class PrincipalService {
     constructor(private readonly principalRepository: IPrincipalRepository) {}
 
-    async createPrincipal(principalEmail: string, principalPassword: string, principalName: string,  userId: string, userRole: string, userSchoolId: string): Promise<CreatePrincipal> {
+    async createPrincipal(
+        principalEmail: string,
+        principalPassword: string,
+        principalFirstName: string,
+        principalMiddleName: string | null | undefined,
+        principalFirstLastName: string,
+        principalSecondLastName: string | null | undefined,
+        userId: string,
+        userRole: string,
+        userSchoolId: string
+    ): Promise<CreatePrincipal> {
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
-        if (!principalEmail || !principalName || !principalPassword) throw new ValidationError("Todos los campos deben estar llenos");
+        if (!principalEmail ||
+            !principalFirstName ||
+            !principalFirstLastName ||
+            !principalPassword
+        ) throw new ValidationError("Todos los campos deben estar llenos");
 
-        return await this.principalRepository.createPrincipal(principalEmail, principalPassword, principalName, userId, userRole, userSchoolId);
+        return await this.principalRepository.createPrincipal(
+            principalEmail,
+            principalPassword,
+            principalFirstName,
+            principalMiddleName ?? null,
+            principalFirstLastName,
+            principalSecondLastName ?? null,
+            userId,
+            userRole,
+            userSchoolId
+        );
     }
 }

@@ -7,9 +7,9 @@ export class UserController {
 
     getUser = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const supabaseUserId = request.user!.supabaseUserId as string;
+            const authUserId = request.user!.authUserId as string;
 
-            const user = await this.userService.getUser(supabaseUserId);
+            const user = await this.userService.getUser(authUserId);
             response.status(200).json({ responseData: user });
         } catch (error : any) {
             next(error);

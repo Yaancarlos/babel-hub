@@ -19,19 +19,19 @@ export class SubjectServices {
         return this.subjectRepository.getAvailableSubjects(courseId, userSchoolId);
     }
 
-    async createSubject(subjectName: string, subjectAreaId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateSubject> {
+    async createSubject(subjectName: string, subjectAreaId: string, gradingTemplateId: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateSubject> {
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
-        if (!subjectName || !subjectAreaId) throw new ValidationError("Faltan campos obligatorios");
+        if (!subjectName || !subjectAreaId || !gradingTemplateId) throw new ValidationError("Faltan campos obligatorios");
 
-        return await this.subjectRepository.createSubject(subjectName, subjectAreaId, userId, userRole, userSchoolId);
+        return await this.subjectRepository.createSubject(subjectName, subjectAreaId, gradingTemplateId, userId, userRole, userSchoolId);
     }
 
-    async updateSubject(subjectId: string, subjectName: string, subjectAreaId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+    async updateSubject(subjectId: string, subjectName: string, subjectAreaId: string, gradingTemplateId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
         if (!subjectId) throw new ValidationError("El ID de la asignatura es obligatorio");
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
-        if (!subjectName || !subjectAreaId) throw new ValidationError("Faltan campos obligatorios");
+        if (!subjectName || !subjectAreaId || !gradingTemplateId) throw new ValidationError("Faltan campos obligatorios");
 
-        return await this.subjectRepository.updateSubject(subjectId, subjectName, subjectAreaId, userId, userRole, userSchoolId);
+        return await this.subjectRepository.updateSubject(subjectId, subjectName, subjectAreaId, gradingTemplateId, userId, userRole, userSchoolId);
     }
 
     async deleteSubject(subjectId: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {

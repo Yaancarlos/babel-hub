@@ -17,7 +17,7 @@ router.post(
     "/",
     strictLimiter,
     authMiddleware,
-    authorizedRoles(["principal", "admin"]),
+    authorizedRoles(["admin"]),
     controller.createPrincipal
 );
 

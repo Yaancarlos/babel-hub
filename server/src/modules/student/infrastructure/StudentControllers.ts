@@ -8,8 +8,9 @@ export class StudentControllers {
     getStudents = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const userSchoolId = request.user!.schoolId as string;
+            const isActive = true;
 
-            const records = await this.studentService.getStudents(userSchoolId);
+            const records = await this.studentService.getStudents(userSchoolId, isActive);
             response.status(200).json({ students: records });
         } catch (error : any) {
             next(error)
@@ -29,15 +30,31 @@ export class StudentControllers {
         }
     }
 
-    createStudent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+    getStudentsByName = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { email,  password, fullName, enrolmentCode, courseId } = request.body;
+            const query = request.query.q as string;
+            const limit = parseInt(request.query.limit as string, 10) || 10;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            const record = await this.studentService.createStudent(courseId, fullName, email, password, enrolmentCode, userId, userRole, userSchoolId);
+            const students = await this.studentService.getStudentsByName(query, { userSchoolId, userRole, userId }, limit);
+            response.status(200).json({ students });
+        } catch (error : any) {
+            next(error);
+        }
+    }
+
+    createStudent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const { email, password, firstName, middleName, firstLastName, secondLastName, enrollmentCode, courseId } = request.body;
+
+            const userSchoolId = request.user!.schoolId as string;
+            const userRole = request.user!.role as string;
+            const userId = request.user!.userId as string;
+
+            const record = await this.studentService.createStudent({ courseId, firstName, middleName, firstLastName, secondLastName, enrollmentCode, email, password }, { userId, userRole, userSchoolId });
             response.status(201).json({ student: record });
         } catch (error : any) {
             next(error)
@@ -47,13 +64,13 @@ export class StudentControllers {
     updateStudent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const id = request.params.id as string;
-            const { fullName, enrolmentCode, courseId } = request.body;
+            const { firstName, middleName, firstLastName, secondLastName, enrollmentCode, courseId } = request.body;
 
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
             const userId = request.user!.userId as string;
 
-            await this.studentService.updateStudent(id, courseId, fullName, enrolmentCode, userId, userRole, userSchoolId);
+            await this.studentService.updateStudent({ studentId: id, courseId, firstName, middleName, firstLastName, secondLastName, enrollmentCode }, { userId, userRole, userSchoolId });
             response.status(204).send();
         } catch (error : any) {
             next(error)

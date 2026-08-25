@@ -9,8 +9,7 @@ import { Assignments } from "../../../../features/director/class-management/comp
 import { RegisterAttendance } from "../../../../features/director/class-management/components/tabs/RegisterAttendance.tsx";
 import { Students } from "../../../../features/director/class-management/components/tabs/Students.tsx";
 import { ViewAttendance } from "../../../../features/director/class-management/components/tabs/ViewAttendance.tsx";
-
-type TabTypes = 'students' | 'register attendance' | 'see attendance' | 'assignments';
+import type { TabTypes } from "../../../../features/types/types.ts";
 
 export default function ClassesDetails() {
     const { id, courseId } = useParams<{ id: string, courseId: string }>();
@@ -34,7 +33,7 @@ export default function ClassesDetails() {
             {tab === "students" && (<Students students={data.students} />)}
             {tab === "register attendance" && (<RegisterAttendance classData={data} date={initialDate} />)}
             {tab === "see attendance" && (<ViewAttendance classData={data} courseId={courseId} />)}
-            {tab === "assignments" && (<Assignments assignments={data.assignments} />)}
+            {tab === "assignments" && (<Assignments classData={data} courseId={courseId} classId={id} />)}
         </ClassLayout>
     )
 }

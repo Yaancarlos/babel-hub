@@ -7,12 +7,13 @@ export class TeacherControllers {
 
     getTeachers = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const available = request.query.available as string;
-            const includeTeacherId = request.query.includeTeacherId as string;
+            const available = request.query.available as string | undefined;
+            const includeTeacherId = request.query.includeTeacherId as string | undefined;
+            const isActive = true;
 
             const userSchoolId = request.user!.schoolId as string;
 
-            const records = await this.teacherServices.getTeachers(userSchoolId, available, includeTeacherId);
+            const records = await this.teacherServices.getTeachers(userSchoolId, available, includeTeacherId, isActive);
             response.status(200).json({ teachers: records });
         } catch (error : any) {
             next(error);
@@ -34,13 +35,13 @@ export class TeacherControllers {
 
     createTeacher = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { email, password, fullName } = request.body;
+            const { email, password, firstName, middleName, firstLastName, secondLastName } = request.body;
 
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
 
-            const record = await this.teacherServices.createTeacher(fullName, password, email, userId, userRole, userSchoolId);
+            const record = await this.teacherServices.createTeacher(firstName, middleName, firstLastName, secondLastName, password, email, userId, userRole, userSchoolId);
             response.status(201).json({ teacher: record });
         } catch (error : any) {
             next(error);
@@ -51,13 +52,13 @@ export class TeacherControllers {
         try {
             const id = request.params.id as string;
 
-            const { fullName } = request.body;
+            const { firstName, middleName, firstLastName, secondLastName } = request.body;
 
             const userId = request.user!.userId as string;
             const userSchoolId = request.user!.schoolId as string;
             const userRole = request.user!.role as string;
 
-            await this.teacherServices.updateTeacher(id, fullName, userId, userRole, userSchoolId);
+            await this.teacherServices.updateTeacher(id, firstName, middleName, firstLastName, secondLastName, userId, userRole, userSchoolId);
             response.status(204).send();
         } catch (error : any) {
             next(error);

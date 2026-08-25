@@ -6,26 +6,30 @@ import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError, ValidationError } from "../../errors/domain/CustomErrors.js";
 
 export class PostgresTeacherRepository implements ITeacherRepository {
-    async getTeachers(userSchoolId: string, available: string | undefined, includeTeacherId: string | undefined): Promise<Teachers[]> {
+    async getTeachers(userSchoolId: string, available: string | undefined, includeTeacherId: string | undefined, isActive: boolean): Promise<Teachers[]> {
         const client = await pool.connect();
         try {
             let queryText = `
                 SELECT
                     t.id,
-                    u.full_name,
-                    u.email,
-                    t.created_at,
+                    p.first_name as teacher_first_name,
+                    p.middle_name as teacher_middle_name,
+                    p.first_last_name as teacher_first_last_name,
+                    p.second_last_name as teacher_second_last_name,
+                    p.is_active,
+                    p.email,
+                    p.created_at,
                     COUNT(DISTINCT cl.id)::int AS total_classes
-                FROM teachers t
-                JOIN users u ON t.user_id = u.id
-                LEFT JOIN classes cl ON cl.teacher_id = t.id
+                FROM teacher t
+                JOIN profile p ON t.profile_id = p.id
+                LEFT JOIN class cl ON cl.teacher_id = t.id
             `;
 
-            const values: any[] = [userSchoolId];
-            const whereClauses: string[] = ['u.school_id = $1'];
+            const values: any[] = [userSchoolId, isActive];
+            const whereClauses: string[] = ['p.school_id = $1', 'p.is_active = $2'];
 
             if (available === 'true') {
-                queryText += ` LEFT JOIN courses co ON t.id = co.teacher_id `;
+                queryText += ` LEFT JOIN course co ON t.id = co.teacher_id `;
 
                 if (includeTeacherId) {
                     values.push(includeTeacherId);
@@ -38,8 +42,16 @@ export class PostgresTeacherRepository implements ITeacherRepository {
             queryText += ` WHERE ${whereClauses.join(' AND ')} `;
 
             queryText += `
-                GROUP BY t.id, u.full_name, u.email, t.created_at
-                ORDER BY u.full_name ASC;
+                GROUP BY 
+                    t.id, 
+                    p.first_name,
+                    p.middle_name,
+                    p.first_last_name,
+                    p.second_last_name,
+                    p.is_active,
+                    p.email,
+                    p.created_at
+                ORDER BY p.first_last_name ASC;
             `;
 
             const result = await client.query(queryText, values);
@@ -55,12 +67,16 @@ export class PostgresTeacherRepository implements ITeacherRepository {
             const teacher = await client.query<TeacherRow>(`
                 SELECT
                     t.id as teacher_id,
-                    u.full_name,
-                    u.email,
-                    t.created_at
-                FROM teachers t
-                JOIN users u ON t.user_id = u.id
-                WHERE t.id = $1 AND u.school_id = $2
+                    p.first_name as teacher_first_name,
+                    p.middle_name as teacher_middle_name,
+                    p.first_last_name as teacher_first_last_name,
+                    p.second_last_name as teacher_second_last_name,
+                    p.email,
+                    p.is_active,
+                    p.created_at
+                FROM teacher t
+                JOIN profile p ON t.profile_id = p.id
+                WHERE t.id = $1 AND p.school_id = $2
             `, [teacherId, userSchoolId]);
 
             if (teacher.rowCount === 0) return null;
@@ -70,9 +86,9 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                     c.id as class_id,
                     s.name as subject_name,
                     co.name as course_name
-                FROM classes c
-                JOIN subjects s ON c.subject_id = s.id
-                JOIN courses co ON c.course_id = co.id
+                FROM class c
+                JOIN subject s ON c.subject_id = s.id
+                JOIN course co ON c.course_id = co.id
                 WHERE c.teacher_id = $1
                 ORDER BY co.name ASC
             `, [teacherId]);
@@ -86,9 +102,17 @@ export class PostgresTeacherRepository implements ITeacherRepository {
         }
     }
 
-    async createTeacher(teacherName: string, teacherPassword: string, teacherEmail: string, userId: string, userRole: string, userSchoolId: string): Promise<CreateTeacher> {
+    async createTeacher(teacherFirstName: string,
+                        teacherMiddleName: string | null,
+                        teacherFirstLastName: string,
+                        teacherSecondLastName: string | null,
+                        teacherPassword: string,
+                        teacherEmail: string,
+                        userId: string,
+                        userRole: string,
+                        userSchoolId: string): Promise<CreateTeacher> {
         const client = await pool.connect();
-        let supabaseUserId: string | null = null;
+        let authUserId: string | null = null;
         try {
             await client.query('BEGIN');
 
@@ -106,28 +130,28 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                 throw new ValidationError(`No se pudo crear el usuario (${error.message})`);
             }
 
-            supabaseUserId = data.user?.id as string;
+            authUserId = data.user?.id as string;
 
-            const userTeacher = await client.query(`
-                    INSERT INTO users (supabase_user_id, role, school_id, email, full_name) 
-                    VALUES ($1, 'teacher', $2, $3, $4)
-                    RETURNING id`
-                , [supabaseUserId, userSchoolId, teacherEmail, teacherName]);
+            const profile = await client.query(`
+                INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id)
+                VALUES ($1, $2, $3, $4, $5, 'teacher', $6, $7)
+                RETURNING id;
+            `, [authUserId, teacherFirstName, teacherMiddleName, teacherFirstLastName, teacherSecondLastName, teacherEmail, userSchoolId]);
 
-            const userTeacherId = userTeacher.rows[0].id;
+            const profileId = profile.rows[0].id;
 
-            const teacher = await client.query(`INSERT INTO teachers (user_id) VALUES ($1) RETURNING id`, [userTeacherId]);
+            const teacher = await client.query(`INSERT INTO teacher (profile_id) VALUES ($1) RETURNING id`, [profileId]);
 
             const teacherId = teacher.rows[0].id;
 
             await createAuditLog(client, {
-                targetUserId: teacherId,
+                targetUserId: profileId,
                 actorUserId: userId,
                 actorRole: userRole,
                 action: "CREATE_TEACHER",
                 schoolId: userSchoolId,
                 metadata: {
-                    name: teacherName,
+                    name: [teacherFirstName, teacherMiddleName ?? "", teacherFirstLastName, teacherSecondLastName ?? ""].join(" "),
                     email: teacherEmail
                 }
             })
@@ -136,11 +160,19 @@ export class PostgresTeacherRepository implements ITeacherRepository {
 
             return { id: teacherId };
         } catch (error : any) {
-            await client.query('ROLLBACK');
+            let rolledBack = true;
+            try {
+                await client.query('ROLLBACK');
+            } catch (rollbackError) {
+                rolledBack = false;
+                console.error('[CRITICAL] Rollback failed, DB state uncertain:', rollbackError);
+            }
 
-            if (supabaseUserId) {
-                console.warn(`[Error]: Eliminando usuario huérfano de Supabase: ${supabaseUserId}`);
-                await supabase.auth.admin.deleteUser(supabaseUserId);
+            if (authUserId && rolledBack) {
+                console.warn(`[Error]: Eliminando usuario huérfano de Supabase: ${authUserId}`);
+                await supabase.auth.admin.deleteUser(authUserId);
+            } else if (authUserId && !rolledBack) {
+                console.error(`[CRITICAL] Uncertain state for authUserId=${authUserId}, profile may or may not exist. Manual reconciliation needed.`);
             }
 
             throw error;
@@ -149,36 +181,43 @@ export class PostgresTeacherRepository implements ITeacherRepository {
         }
     }
 
-    async updateTeacher(teacherId: string, teacherName: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+    async updateTeacher(teacherId: string,
+                        teacherFirstName: string,
+                        teacherMiddleName: string | null,
+                        teacherFirstLastName: string,
+                        teacherSecondLastName: string | null,
+                        userId: string,
+                        userRole: string,
+                        userSchoolId: string): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
             const teacherCheck = await client.query(`
                 SELECT 
-                    t.user_id
-                FROM teachers t
-                JOIN users u ON t.user_id = u.id
-                WHERE t.id = $1 AND u.school_id = $2
+                    t.profile_id
+                FROM teacher t
+                JOIN profile p ON t.profile_id = p.id
+                WHERE t.id = $1 AND p.school_id = $2
             `, [teacherId, userSchoolId]);
 
             if (teacherCheck.rowCount === 0) throw new NotFoundError("No se encontro al maestro");
 
-            const teacherUserId = teacherCheck.rows[0].user_id;
+            const teacherUserId = teacherCheck.rows[0].profile_id;
 
             await client.query(`
-                UPDATE users 
-                SET full_name = $1 
-                WHERE id = $2
-            `, [teacherName, teacherUserId]);
+                UPDATE profile 
+                SET first_name = $1, middle_name = $2, first_last_name = $3, second_last_name = $4
+                WHERE id = $5
+            `, [teacherFirstName, teacherMiddleName, teacherFirstLastName, teacherSecondLastName, teacherUserId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,
                 actorRole: userRole,
                 action: 'UPDATE_TEACHER',
-                targetUserId: teacherId,
+                targetUserId: teacherUserId,
                 schoolId: userSchoolId,
-                metadata: { teacherId: teacherId, name: teacherName }
+                metadata: { teacherId: teacherId, name: [teacherFirstName, teacherMiddleName ?? "", teacherFirstLastName, teacherSecondLastName ?? ""].join(" ") }
             });
 
             await client.query('COMMIT');
@@ -198,22 +237,32 @@ export class PostgresTeacherRepository implements ITeacherRepository {
 
             const teacher = await client.query(`
                 SELECT 
-                    t.user_id, 
-                    u.supabase_user_id, 
-                    u.full_name
-                FROM teachers t
-                JOIN users u ON t.user_id = u.id
-                WHERE t.id = $1 AND u.school_id = $2
+                    t.profile_id, 
+                    p.auth_profile_id,
+                    p.first_name,
+                    p.middle_name,
+                    p.first_last_name,
+                    p.second_last_name
+                FROM teacher t
+                JOIN profile p ON t.profile_id = p.id
+                WHERE t.id = $1 AND p.school_id = $2
             `, [teacherId, userSchoolId]);
 
             if (teacher.rowCount === 0) throw new NotFoundError("No se encontro al maestro");
 
-            const { user_id, supabase_user_id, full_name } = teacher.rows[0];
+            const {
+                profile_id,
+                auth_profile_id,
+                first_name,
+                middle_name,
+                first_last_name,
+                second_last_name
+            } = teacher.rows[0];
 
-            await client.query(`DELETE FROM teachers WHERE id = $1`, [teacherId]);
-            await client.query(`DELETE FROM users WHERE id = $1`, [user_id]);
+            await client.query(`DELETE FROM teacher WHERE id = $1`, [teacherId]);
+            await client.query(`DELETE FROM profile WHERE id = $1`, [profile_id]);
 
-            const { error } = await supabase.auth.admin.deleteUser(supabase_user_id);
+            const { error } = await supabase.auth.admin.deleteUser(auth_profile_id);
 
             if (error) throw new ValidationError(`No se pudo eliminar el usuario (${error.message})`);
 
@@ -222,20 +271,31 @@ export class PostgresTeacherRepository implements ITeacherRepository {
                 actorRole: userRole,
                 action: 'DELETE_TEACHER',
                 schoolId: userSchoolId,
-                metadata: { teacherId: teacherId, name: full_name }
+                metadata: { teacherId: teacherId, name: [first_name, middle_name ?? "", first_last_name, second_last_name ?? ""].join(" ") }
             });
 
             await client.query('COMMIT');
             return;
         } catch (error : any) {
-            await client.query('ROLLBACK');
+            let rolledBack = true;
+            try {
+                await client.query('ROLLBACK');
+            } catch (rollbackError) {
+                rolledBack = false;
+                console.error(`[CRITICAL] Rollback failed during teacher deletion, DB state uncertain:`, rollbackError);
+            }
 
-            if (error.code === '23503') throw new ConflictError("No se puede eliminar al profesor porque actualmente está asignado a clases activas o actúa como director de curso.");
+            if (!rolledBack) {
+                console.error(`[CRITICAL] Uncertain state deleting teacher, profile_id may still exist while Supabase user was deleted. Manual reconciliation needed.`);
+            }
 
+            if (error.code === '23503') {
+                console.error('[DEBUG] FK violation detail:', error.detail, '| constraint:', error.constraint);
+                throw new ConflictError("No se puede eliminar el maestro porque tiene clases o información guardada.");
+            }
             throw error;
         } finally {
             client.release();
         }
     }
-
 }

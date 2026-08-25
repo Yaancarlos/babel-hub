@@ -10,17 +10,17 @@ import { NotFoundError, UnauthorizedError, ValidationError } from "../../errors/
 export class CourseService {
     constructor( private readonly courseRepository: ICourseRepository ) {}
 
-    async getCourses(userSchoolId: string): Promise<Courses[]> {
+    async getCourses(userSchoolId: string, isActive: boolean): Promise<Courses[]> {
         if (!userSchoolId) throw new UnauthorizedError("Falta el ID del colegio");
 
-        return this.courseRepository.getCourses(userSchoolId);
+        return this.courseRepository.getCourses(userSchoolId, isActive);
     }
 
-    async getCourseDetails(courseId: string, userSchoolId: string): Promise<CourseDetails> {
+    async getCourseDetails(courseId: string, userSchoolId: string, isActive: boolean): Promise<CourseDetails> {
         if (!userSchoolId) throw new UnauthorizedError("Falta el ID del colegio");
         if (!courseId) throw new ValidationError("El ID del curso es obligatorio");
 
-        const course = await this.courseRepository.getCourseDetails(courseId, userSchoolId);
+        const course = await this.courseRepository.getCourseDetails(courseId, userSchoolId, isActive);
 
         if (!course) throw new NotFoundError("No se encontró el curso");
 

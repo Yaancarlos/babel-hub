@@ -8,30 +8,30 @@ import { LoadingPage } from "../../../../../components/ui/Loadings.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { CourseListFormModal } from "../ui/CourseListFormModal.tsx";
 import type { ModalModeTypes } from "../../../../../types";
-import {NoOutletInfo} from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
+import { NoOutletInfo } from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
+import type { CoursesListData } from "../../types";
 
 export function CoursesListLayout() {
     const navigate = useNavigate();
     const { id: activeCourseId } = useParams<{ id: string }>();
 
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
-    const [courseToEdit, setCourseToEdit] = useState<any>(null);
-    const [teacherToEdit, setTeacherToEdit ] = useState<any>(null);
-    const [courseToDelete, setCourseToDelete] = useState<any>(null);
+    const [courseToEdit, setCourseToEdit] = useState<CoursesListData | null>(null);
+    const [teacherToEdit, setTeacherToEdit ] = useState<string | null>(null);
+    const [courseToDelete, setCourseToDelete] = useState<CoursesListData | null>(null);
 
     const { loading, courses, fetchCourses } = useCourseData();
     const { loadingDelete, deleteCourseById } = useDeleteCourse(fetchCourses);
 
-    const handleEdit = useCallback((course: any) => {
+    const handleEdit = useCallback((course: CoursesListData) => {
         setCourseToEdit(course);
         setTeacherToEdit(course.director_id);
         setModalMode('edit');
     }, []);
 
-    const handleDelete = useCallback((courseId: string) => {
-        const course = courses.find((s: any) => s.id === courseId);
-        setCourseToDelete(course || null);
-    }, [courses]);
+    const handleDelete = useCallback((course: CoursesListData) => {
+        setCourseToDelete(course);
+    }, []);
 
     const handleNavigate = useCallback((id: string) => {
         navigate(`${id}`);
