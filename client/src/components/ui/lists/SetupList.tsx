@@ -1,6 +1,6 @@
 import { LoadingContent } from "../Loadings.tsx";
-import {HiDotsVertical, HiPencil, HiTrash} from "react-icons/hi";
-import {useEffect, useRef, useState} from "react";
+import { HiDotsVertical, HiPencil, HiTrash } from "react-icons/hi";
+import { useEffect, useRef, useState } from "react";
 
 interface ListRowsProps<T> {
     items: T[];
@@ -23,21 +23,6 @@ export function ListRows<T>({
                                 onEdit,
                                 onDelete
                             }: ListRowsProps<T>) {
-    const [open, setOpen] = useState(false);
-    const [idx, setIdx] = useState<number | null>(null);
-    const ref = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        if (!open) return
-        const onClick = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
-                setOpen(false);
-                setIdx(null);
-            }
-        }
-        document.addEventListener('mousedown', onClick)
-        return () => document.removeEventListener('mousedown', onClick)
-    }, [open])
 
     if (loading) return <LoadingContent title='Cargando' />;
 
@@ -47,61 +32,101 @@ export function ListRows<T>({
                 <p className="text-gray-500 text-center py-8">{emptyMessage}</p>
             ) : (
                 <ul className="divide-gray-100 flex flex-col gap-2 divide-y">
-                    {items.map((item, index) => (
-                        <li key={getKey(item)} className="py-2 px-4 flex justify-between items-center hover:bg-gray-50 rounded-lg transition-colors">
-                            <div>
-                                <p className="font-medium capitalize text-base text-custom-black">{getTitle(item)}</p>
-                                <span className="font-base text-xs text-gray-400">{getSubtitle(item)}</span>
-                            </div>
-
-
-                            <div className="relative" ref={ref}>
-                                <button
-                                    onClick={() => {
-                                        setOpen((v) => !v)
-                                        setIdx(index);
-                                    }}
-                                    aria-label="Opciones de la asignación"
-                                    aria-haspopup="menu"
-                                    aria-expanded={open}
-                                    className="rounded text-custom-black opacity-100 transition-opacity cursor-pointer hover:bg-gray-100 data-[open=true]:opacity-100"
-                                    data-open={open}
-                                >
-                                    <HiDotsVertical />
-                                </button>
-
-                                {open && index === idx && (
-                                    <div
-                                        role="menu"
-                                        className="absolute right-0 top-full z-20 mt-1 max-w-[150px] overflow-hidden p-1 rounded-xl border border-gray-200 bg-white text-left shadow-lg"
-                                    >
-                                        <button
-                                            role="menuitem"
-                                            onClick={() => {
-                                                setOpen(false)
-                                                onEdit(item)
-                                            }}
-                                            className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-gray-700 transition-colors hover:bg-gray-100"
-                                        >
-                                            <HiPencil className="size-3.5" /> Renombrar
-                                        </button>
-                                        <button
-                                            role="menuitem"
-                                            onClick={() => {
-                                                setOpen(false)
-                                                onDelete(item)
-                                            }}
-                                            className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-red-600 transition-colors hover:bg-red-50"
-                                        >
-                                            <HiTrash className="size-3.5" /> Eliminar
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </li>
+                    {items.map((item) => (
+                        <ListRowItem
+                            key={getKey(item)}
+                            item={item}
+                            title={getTitle(item)}
+                            subtitle={getSubtitle(item)}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
                     ))}
                 </ul>
             )}
         </div>
-    )
+    );
+}
+
+interface ListRowItemProps<T> {
+    item: T;
+    title: string;
+    subtitle: string;
+    onEdit: (item: T) => void;
+    onDelete: (item: T) => void;
+}
+
+function ListRowItem<T>({ item, title, subtitle, onEdit, onDelete }: ListRowItemProps<T>) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const menuRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (
+                menuRef.current && !menuRef.current.contains(target) &&
+                buttonRef.current && !buttonRef.current.contains(target)
+            ) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen]);
+
+    return (
+        <li className="py-2 px-4 flex justify-between items-center hover:bg-gray-50 rounded-lg transition-colors">
+            <div>
+                <p className="font-medium capitalize text-base text-custom-black">{title}</p>
+                <span className="font-base text-xs text-gray-400">{subtitle}</span>
+            </div>
+
+            <div className="relative">
+                <button
+                    ref={buttonRef}
+                    onClick={() => setIsOpen((prev) => !prev)}
+                    aria-label="Opciones"
+                    aria-haspopup="menu"
+                    aria-expanded={isOpen}
+                    className={`rounded p-1 text-custom-black transition-colors cursor-pointer ${isOpen ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                >
+                    <HiDotsVertical />
+                </button>
+
+                {isOpen && (
+                    <div
+                        ref={menuRef}
+                        role="menu"
+                        className="absolute right-0 top-full z-20 mt-1 w-32 overflow-hidden p-1 rounded-xl border border-gray-200 bg-white text-left shadow-lg"
+                    >
+                        <button
+                            role="menuitem"
+                            onClick={() => {
+                                setIsOpen(false);
+                                onEdit(item);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-gray-700 transition-colors hover:bg-gray-100 cursor-pointer"
+                        >
+                            <HiPencil className="size-3.5" /> Renombrar
+                        </button>
+                        <button
+                            role="menuitem"
+                            onClick={() => {
+                                setIsOpen(false);
+                                onDelete(item);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm text-red-600 transition-colors hover:bg-red-50 cursor-pointer"
+                        >
+                            <HiTrash className="size-3.5" /> Eliminar
+                        </button>
+                    </div>
+                )}
+            </div>
+        </li>
+    );
 }
