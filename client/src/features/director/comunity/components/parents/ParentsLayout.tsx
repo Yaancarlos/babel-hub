@@ -19,6 +19,8 @@ export function ParentsLayout() {
     const { parents, loading, refetch } = useParentsData();
     const { deleteParentById, loadingDelete } = useParentDelete(refetch);
 
+    console.log(parents);
+
     const [searchTerm, setSearchTerm] = useState("");
     const [modalMode, setModalMode] = useState<ModalModeTypes>('none');
     const [parentToEdit, setParentToEdit] = useState<Parent | null>(null);
@@ -54,7 +56,7 @@ export function ParentsLayout() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div className="flex gap-2">
                     <ButtonChevronBack onClick={() => navigate(-1)} />
-                    <h2 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">Padres / Acudientes</h2>
+                    <h2 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">Padres</h2>
                 </div>
                 <div className="flex grow w-full gap-2 justify-end items-center">
                     <div className="w-full sm:max-w-xs xl:max-w-xl">
@@ -111,9 +113,9 @@ export function ParentsLayout() {
                     mode={modalMode}
                     initialData={parentToEdit}
                     onClose={() => setModalMode('none')}
-                    onSuccess={async () => {
+                    onSuccess={() => {
                         setModalMode('none');
-                        await refetch();
+                        refetch();
                     }}
                 />
             )}

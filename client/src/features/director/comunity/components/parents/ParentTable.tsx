@@ -22,7 +22,7 @@ export function ParentsTable({ parents, onEdit, onDelete, onAddStudent }: Parent
     const closeMenu = () => setActiveMenuId(null);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-auto">
             <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                 <tr className="bg-gray-50 border-b border-gray-100 text-gray-600">
@@ -33,9 +33,10 @@ export function ParentsTable({ parents, onEdit, onDelete, onAddStudent }: Parent
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                {parents.map((parent) => (
+                {parents.map((parent, index, array) => (
                     <ParentsRow
                         key={parent.parent_id}
+                        position={{ index, array: array.length - 1 }}
                         onAddStudent={onAddStudent}
                         isOpen={activeMenuId === parent.parent_id}
                         toggleMenu={() => toggleMenu(parent.parent_id)}
@@ -54,6 +55,7 @@ export function ParentsTable({ parents, onEdit, onDelete, onAddStudent }: Parent
 interface ParentsRowProps {
     parent: Parent;
     isOpen: boolean;
+    position: { index: number, array: number }
     onEdit: (parent: Parent) => void;
     onAddStudent: (parent: Parent) => void;
     onDelete: (parent: Parent) => void;
@@ -67,7 +69,7 @@ const RELATIONSHIP_TRANSLATIONS: Record<string, string> = {
     other: "Otro"
 };
 
-function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, onAddStudent }: ParentsRowProps) {
+function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, position, onAddStudent }: ParentsRowProps) {
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -118,7 +120,7 @@ function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, o
 
             <td className="p-4">
                 {parent.students_count > 0 ? (
-                    <div className="flex flex-wrap gap-1.5 max-w-[250px]">
+                    <div className="flex flex-wrap gap-2 max-w-md w-full">
                         {parent.students?.map((child) => {
                             const childName = `${child.student_first_name} ${child.student_first_last_name}`;
                             const role = RELATIONSHIP_TRANSLATIONS[child.relationship_type] || "Otro";
@@ -126,17 +128,17 @@ function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, o
                             return (
                                 <span
                                     key={child.student_id}
-                                    className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 font-medium px-2 py-1 rounded text-[11px] capitalize border border-indigo-100"
+                                    className="inline-flex items-center gap-1 bg-primary-shadow/50 text-primary font-medium px-2 py-1 rounded-xl text-[11px] capitalize border border-primary"
                                     title={`Relación: ${role}`}
                                 >
                                     {childName}
-                                    <span className="text-indigo-400 font-normal">({role})</span>
+                                    <span className="text-primary font-normal">({role})</span>
                                 </span>
                             );
                         })}
                     </div>
                 ) : (
-                    <span className="bg-yellow-50 text-yellow-700 font-medium px-2 py-1 rounded text-xs border border-yellow-100">
+                    <span className="bg-yellow-50 text-yellow-700 font-medium px-2 py-1 rounded-xl text-xs border border-yellow-100">
                         Sin asignar
                     </span>
                 )}
@@ -158,7 +160,7 @@ function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, o
                 {isOpen && (
                     <div
                         ref={menuRef}
-                        className="absolute right-8 top-10 border border-gray-100 rounded-xl z-50 bg-white max-w-[130px] w-full shadow-lg"
+                        className={`absolute border border-gray-100 rounded-xl z-50 bg-white max-w-[130px] w-full shadow-md ${position.index === position.array ? 'right-15 -top-13' : 'right-8 top-10'}`}
                     >
                         <ul className="flex flex-col text-xs md:text-sm">
                             <li className="w-full">

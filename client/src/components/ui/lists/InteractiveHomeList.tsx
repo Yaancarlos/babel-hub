@@ -6,6 +6,7 @@ export interface MenuOption {
     onClick?: () => void;
     disabled?: boolean;
     isDanger?: boolean;
+    icon?: React.ReactNode;
 }
 
 interface InteractiveHomeListProps {
@@ -75,7 +76,7 @@ export function InteractiveHomeList({ isActive, onClick, avatarText, title, disa
                     </button>
 
                     {isOpen && (
-                        <ul className={`absolute z-50 w-48 h-fit p-1 text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
+                        <ul className={`absolute z-50 max-w-[150px] w-full h-auto text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
                             menuPosition === 'top' ? 'bottom-12' : 'top-12'
                         }`}>
                             {menuOptions.map((opt, idx) => (
@@ -90,11 +91,14 @@ export function InteractiveHomeList({ isActive, onClick, avatarText, title, disa
                                                     opt.onClick?.();
                                                 }}
                                                 disabled={opt.disabled}
-                                                className={`p-2 w-full text-left cursor-pointer rounded-xl ${
-                                                    opt.isDanger ? "hover:bg-red-shadow text-red-error" : "hover:bg-gray-100"
+                                                className={`p-2 w-full text-left cursor-pointer ${
+                                                    opt.isDanger ? "hover:bg-red-shadow rounded-b-xl text-red-error" : idx === 0 ? 'rounded-t-xl hover:bg-gray-100' : "hover:bg-gray-100"
                                                 } ${opt.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                                             >
-                                                {opt.label}
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm">{opt.icon}</span>
+                                                    <p>{opt.label}</p>
+                                                </div>
                                             </button>
                                         </li>
                                     )}

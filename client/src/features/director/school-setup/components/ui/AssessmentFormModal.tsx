@@ -28,15 +28,7 @@ export function AssessmentFormModal({ mode, assessmentInfo, assessment, onClose,
 
     const gradingFields: FormField[] = [
         { name: "name", label: "Nombre del Criterio de Evaluacion", type: "text", placeholder: "Ej. Actividades", required: true },
-        { name: "weight", label: "Porcentaje", type: "number", placeholder: "Ej. 70", required: true },
-        {
-            name: "gradingTemplateId",
-            label: "Nombre del Template",
-            type: "text",
-            placeholder: "Ej. Example",
-            required: true,
-            disabled: true
-        }
+        { name: "weight", label: "Porcentaje", type: "number", placeholder: "Ej. 70", required: true }
     ]
 
     const handleUpsertAssessment = async (e: React.FormEvent) => {

@@ -25,7 +25,13 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
         endDate: selectedPeriod?.end_date.slice(0, 10) || ""
     });
 
-    if (!selectedPeriod) return <div>No hay periodos disponibles</div>;
+    if (!selectedPeriod) {
+        return (
+            <div className="md:col-span-2 lg:col-span-3">
+                <NoResults title="No se encontraron periodos"/>
+            </div>
+        )
+    };
 
     return (
         <div className="max-w-4xl mx-auto">

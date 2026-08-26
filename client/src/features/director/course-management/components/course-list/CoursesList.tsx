@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { InteractiveHomeList } from "../../../../../components/ui/lists/InteractiveHomeList.tsx";
 import { reverseName } from "../../../../../types";
 import { memo } from "react";
+import {HiOutlineClipboardList, HiOutlinePencil, HiTrash} from "react-icons/hi";
+import {LuClipboardPenLine} from "react-icons/lu";
 
 interface CoursesListProps {
     courses: CoursesListData[];
@@ -41,20 +43,24 @@ export const CoursesList = memo(function CoursesList({
                     menuOptions={[
                         {
                             label: "Ver asistencia",
+                            icon: <HiOutlineClipboardList />,
                             onClick: () => navigate(`/principal/notificaciones/asistencia?course=${course.course_name}`)
                         },
                         {
                             label: "Ver notas",
+                            icon: <LuClipboardPenLine />,
                             onClick: () => {},
                             disabled: true
                         },
                         {
                             label: "Editar",
+                            icon: <HiOutlinePencil />,
                             onClick: () => onEditCourse(course)
                         },
                         { label: "SEPARATOR" },
                         {
                             label: loadingDelete ? "Cargando..." : "Eliminar",
+                            icon: <HiTrash />,
                             onClick: () => onDeleteCourse(course),
                             disabled: loadingDelete,
                             isDanger: true
