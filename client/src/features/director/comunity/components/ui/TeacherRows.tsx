@@ -1,9 +1,28 @@
 import { memo } from "react";
 import { formateDate, reverseName } from "../../../../../types";
-import { DeleteButton, EditButton } from "../../../../../components/ui/buttons/Buttons.tsx";
 import type { TeacherRowProps } from "../../types";
+import {ActionMenu, type MenuOption} from "../../../../../components/ui/menu/ActionMenu.tsx";
+import {HiPencil, HiTrash} from "react-icons/hi";
 
 export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate }: TeacherRowProps) {
+    const menuOptions: MenuOption[] = [
+        {
+            label: "Editar",
+            icon: <HiPencil className="size-4" />,
+            onClick: () => onEdit(teacher),
+        },
+        {
+            isSeparator: true,
+            label: "separator"
+        },
+        {
+            label: "Eliminar",
+            icon: <HiTrash className="size-4" />,
+            onClick: () => onDelete(teacher),
+            isDanger: true,
+        }
+    ];
+
     const formattedName = reverseName({
         middleName: teacher.teacher_middle_name,
         secondLastName: teacher.teacher_second_last_name,
@@ -42,9 +61,8 @@ export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate
                 {formateDate(teacher.created_at)}
             </td>
 
-            <td className="md:p-4 pr-3 text-right space-x-1 xl:space-x-3">
-                <EditButton onClick={() => onEdit(teacher)} />
-                <DeleteButton onClick={() => onDelete(teacher)} />
+            <td className="p-4">
+                <ActionMenu options={menuOptions} />
             </td>
         </tr>
     );

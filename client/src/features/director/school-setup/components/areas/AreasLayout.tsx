@@ -6,8 +6,8 @@ import type { AreaProps } from "../../types";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import type { ModalModeTypes } from "../../../../../types";
 import { AreasFormModal } from "../ui/AreasFormModal.tsx";
-import { HiPencil, HiPlus, HiTrash } from "react-icons/hi";
-import { BsThreeDots } from "react-icons/bs";
+import { HiPlus } from "react-icons/hi";
+import {AreaRows} from "./AreaRows.tsx";
 
 export function AreasLayout() {
     const navigate = useNavigate();
@@ -51,9 +51,6 @@ export function AreasLayout() {
         setModalMode("create");
     };
 
-    const toggleMenu = (id: string) => {
-        setActiveMenuId((prev) => (prev === id ? null : id));
-    };
 
     return (
         <div className="w-full">
@@ -63,7 +60,7 @@ export function AreasLayout() {
                     <p className="text-xs text-gray-500">Cada área puede contener varias asignaturas.</p>
                 </div>
                 <button
-                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary hover:bg-primary-shadow border-2 border-primary/20"
+                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary hover:bg-primary-shadow border-2 border-gray-100"
                     onClick={handleCreate}
                 >
                     <HiPlus />
@@ -71,61 +68,17 @@ export function AreasLayout() {
                 </button>
             </div>
 
-            <ul className="flex flex-col gap-1">
-                {areas.map((area) => {
-                    const isMenuOpen = activeMenuId === area.id;
 
-                    return (
-                        <li
-                            key={area.id}
-                            className="w-full text-left p-3 sm:px-5 sm:py-3 relative border-2 border-primary-shadow/50 rounded-lg text-sm font-medium text-custom-black hover:bg-primary-shadow/40 transition-colors"
-                        >
-                            <div className="flex items-center justify-between">
-                                <button
-                                    onClick={() => handleNavigate(area.id)}
-                                    className="cursor-pointer capitalize text-sm sm:text-base font-medium"
-                                >
-                                    {area.name}
-                                </button>
-
-                                <button
-                                    className="p-2 rounded-md hover:bg-primary-shadow/70 cursor-pointer"
-                                    onClick={() => toggleMenu(area.id)}
-                                >
-                                    <BsThreeDots />
-                                </button>
-                            </div>
-
-                            {isMenuOpen && (
-                                <div
-                                    ref={ref}
-                                    className="absolute right-5 top-12 border-2 border-gray-100 rounded-xl z-20 bg-white max-w-[130px] w-full shadow-lg"
-                                >
-                                    <ul className="flex flex-col text-xs md:text-sm">
-                                        <li className="w-full">
-                                            <button
-                                                className="cursor-pointer flex items-center justify-start gap-2 rounded-t-xl p-2.5 w-full hover:bg-gray-100 transition-colors text-gray-700"
-                                                onClick={() => handleEdit(area)}
-                                            >
-                                                <HiPencil className="text-base" />
-                                                <span>Editar</span>
-                                            </button>
-                                        </li>
-                                        <li className="w-full">
-                                            <button
-                                                className="cursor-pointer flex items-center justify-start gap-2 rounded-b-xl p-2.5 w-full hover:bg-red-50 transition-colors text-red-500"
-                                                onClick={() => handleDelete(area)}
-                                            >
-                                                <HiTrash className="text-base" />
-                                                <span>Eliminar</span>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            )}
-                        </li>
-                    );
-                })}
+            <ul className="flex flex-col gap-2">
+                {areas.map((area: AreaProps) => (
+                    <AreaRows
+                        key={area.id}
+                        area={area}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        navigate={handleNavigate}
+                    />
+                ))}
             </ul>
 
             <ConfirmModal

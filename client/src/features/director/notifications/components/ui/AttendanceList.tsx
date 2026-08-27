@@ -8,57 +8,63 @@ import {GoClock} from "react-icons/go";
 
 interface AttendanceListProps {
     attendance: AttendanceSummary[];
-    uniqueCourses: any[];
+    uniqueCourses: string[];
     period: Period;
 }
 
 export function AttendanceList({ attendance, uniqueCourses, period }: AttendanceListProps) {
-    const ref = useRef<HTMLButtonElement>(null);
-    const [openIndex, setOpenIndex] = useState<number | null>(null);
-
+    const ref = useRef<HTMLDivElement>(null);
+    const [openStudentId, setOpenStudentId] = useState<string | null>(null);
 
     useEffect(() => {
         const calendarRef = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as Node)) {
-                setOpenIndex(null);
+                setOpenStudentId(null);
             }
-        }
+        };
+
         document.addEventListener("mousedown", calendarRef);
         return () => document.removeEventListener("mousedown", calendarRef);
     }, []);
 
-    const handleToggle = (student: AttendanceSummary, index: number) => {
+    const handleToggle = (student: AttendanceSummary) => {
         if (student.student_id) {
-            setOpenIndex(openIndex === index ? null : index);
+            setOpenStudentId(prev => prev === student.student_id ? null : student.student_id);
         }
     };
 
     return (
-        <div>
+        <div ref={ref} className="flex flex-col w-full gap-10">
             {
                 attendance.length > 0 ? (
-                    uniqueCourses.map((course) => (
-                        <div key={course} className="mb-8">
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="w-1 h-6 rounded-full bg-primary" />
-                                    <p className="font-bold text-sm text-primary">
-                                        Curso {course}
-                                    </p>
-                                </div>
+                    uniqueCourses.map((course) => {
+                        const courseStudents = attendance.filter(
+                            student => student.course_name === course
+                        );
 
-                                {attendance.map((student, index) => {
-                                    const absences = Number(student.total_absences);
-                                    const lates = Number(student.total_lates);
-                                    const isOpen = openIndex === index;
+                        return (
+                            <div key={course}>
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex gap-2 items-center w-full rounded-xl bg-primary-shadow p-2">
+                                        <div className="px-1.5 py-2 rounded-xl bg-primary-darker">
+                                            <p className="text-white text-sm font-bold">{course}</p>
+                                        </div>
+                                        <div className="flex flex-col justify-start">
+                                            <p className="text-custom-black md:text-base text-sm font-semibold">Curso {course}</p>
+                                            <p className="text-primary-darker text-xs">estudiantes</p>
+                                        </div>
+                                    </div>
 
-                                    return (
-                                        student.course_name === course && (
+                                    {courseStudents.map((student) => {
+                                        const absences = Number(student.total_absences);
+                                        const lates = Number(student.total_lates);
+                                        const isOpen = openStudentId === student.student_id;
+
+                                        return (
                                             <Fragment key={student.student_id}>
                                                 <button
-                                                    ref={ref}
-                                                    onClick={() => handleToggle(student, index)}
-                                                    className={`group py-3 px-4 cursor-pointer transition-all duration-200 w-full border flex items-center justify-between rounded-2xl
+                                                    onClick={() => handleToggle(student)}
+                                                    className={`group py-3 px-4 cursor-pointer transition-all duration-200 w-full border flex items-center justify-between rounded-xl
                                                     ${isOpen ?
                                                         (absences > 0 && absences % 2 === 0) ? 'border-red-error shadow-md' : 'border-primary' :
                                                         (absences > 0 && absences % 2 === 0) ? 'border-red-error hover:shadow-sm' : 'border-gray-100 bg-white hover:border-primary-shadow hover:bg-primary-shadow/20'
@@ -115,13 +121,15 @@ export function AttendanceList({ attendance, uniqueCourses, period }: Attendance
                                                     </div>
                                                 )}
                                             </Fragment>
-                                        )
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))
-                ) : (<NoResults title="No hay resultados de asistencia"/>)
+                        )
+                    })
+                ) : (
+                    <NoResults title="No hay resultados de la asistencia"/>
+                )
             }
         </div>
     )

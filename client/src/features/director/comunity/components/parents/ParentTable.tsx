@@ -1,9 +1,9 @@
 import type { Parent } from "../../types";
 import { formateDate, reverseName } from "../../../../../types";
-import { BsThreeDots } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { HiPencil, HiTrash } from "react-icons/hi";
 import {FiPlus} from "react-icons/fi";
+import {ActionMenu, type MenuOption} from "../../../../../components/ui/menu/ActionMenu.tsx";
 
 interface ParentsTableProps {
     parents: Parent[];
@@ -22,8 +22,8 @@ export function ParentsTable({ parents, onEdit, onDelete, onAddStudent }: Parent
     const closeMenu = () => setActiveMenuId(null);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-y-visible">
+            <table className="w-full text-left border-collapse min-w-3xl">
                 <thead>
                 <tr className="bg-gray-50 border-b border-gray-100 text-gray-600">
                     <th className="p-4 text-sm font-semibold">Acudiente ({parents.length})</th>
@@ -69,7 +69,7 @@ const RELATIONSHIP_TRANSLATIONS: Record<string, string> = {
     other: "Otro"
 };
 
-function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, position, onAddStudent }: ParentsRowProps) {
+function ParentsRow({ parent, onEdit, onDelete, closeMenu, isOpen, onAddStudent }: ParentsRowProps) {
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -90,6 +90,29 @@ function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, p
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen, closeMenu]);
+
+    const menuOptions: MenuOption[] = [
+        {
+            label: "Asignar",
+            icon: <FiPlus className="size-4" />,
+            onClick: () => onAddStudent(parent),
+        },
+        {
+            label: "Editar",
+            icon: <HiPencil className="size-4" />,
+            onClick: () => onEdit(parent),
+        },
+        {
+            isSeparator: true,
+            label: "separator"
+        },
+        {
+            label: "Eliminar",
+            icon: <HiTrash className="size-4" />,
+            onClick: () => onDelete(parent),
+            isDanger: true,
+        }
+    ];
 
     const formattedName = reverseName({
         firstName: parent.parent_first_name,
@@ -148,57 +171,8 @@ function ParentsRow({ parent, onEdit, onDelete, toggleMenu, closeMenu, isOpen, p
                 {formateDate(parent.created_at)}
             </td>
 
-            <td className="text-right p-4 relative">
-                <button
-                    ref={buttonRef}
-                    onClick={toggleMenu}
-                    className={`cursor-pointer p-2 rounded-md transition-colors ${isOpen ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-                >
-                    <BsThreeDots />
-                </button>
-
-                {isOpen && (
-                    <div
-                        ref={menuRef}
-                        className={`absolute border border-gray-100 rounded-xl z-50 bg-white max-w-[130px] w-full shadow-md ${position.index === position.array ? 'right-15 -top-13' : 'right-8 top-10'}`}
-                    >
-                        <ul className="flex flex-col text-xs md:text-sm">
-                            <li className="w-full">
-                                <button
-                                    className="cursor-pointer flex items-center justify-start gap-2 rounded-t-xl p-2.5 w-full hover:bg-gray-50 transition-colors text-gray-700"
-                                    onClick={() => {onAddStudent(parent)}}
-                                >
-                                    <FiPlus className="text-sm md:text-base"/>
-                                    <span>Asignar</span>
-                                </button>
-                            </li>
-                            <li className="w-full">
-                                <button
-                                    className="cursor-pointer flex items-center justify-start gap-2 p-2.5 w-full hover:bg-gray-50 transition-colors text-gray-700"
-                                    onClick={() => {
-                                        closeMenu();
-                                        onEdit(parent);
-                                    }}
-                                >
-                                    <HiPencil className="text-sm md:text-base" />
-                                    <span>Editar</span>
-                                </button>
-                            </li>
-                            <li className="w-full">
-                                <button
-                                    className="cursor-pointer flex items-center justify-start gap-2 rounded-b-xl p-2.5 w-full hover:bg-red-50 transition-colors text-red-500"
-                                    onClick={() => {
-                                        closeMenu();
-                                        onDelete(parent);
-                                    }}
-                                >
-                                    <HiTrash className="text-sm md:text-base" />
-                                    <span>Eliminar</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                )}
+            <td className="p-4">
+                <ActionMenu options={menuOptions} />
             </td>
         </tr>
     );

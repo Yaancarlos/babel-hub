@@ -1,15 +1,6 @@
-import { getStatusDotColor } from "../../../../../types";
+import { formatDate, getStatusDotColor } from "../../../../../types";
 import type { Period } from "../../types";
 import { useAttendanceStudentCalendar } from "../../hooks/useAttendanceStudentCalendar.ts";
-
-const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-        dayNum: date.getUTCDate(),
-        month: date.toLocaleString('es-ES', { month: 'short', timeZone: 'UTC' }).toUpperCase(),
-        weekday: date.toLocaleString('es-ES', { weekday: 'short', timeZone: 'UTC' }).toUpperCase()
-    };
-};
 
 export default function StudentCalendarCardComponent ({ studentId, period }: { studentId: string, period: Period }){
     const { attendance, loading, error } = useAttendanceStudentCalendar({

@@ -1,13 +1,6 @@
-import React, {useState, useRef, useEffect, Fragment} from "react";
-import { HiDotsVertical } from "react-icons/hi";
-
-export interface MenuOption {
-    label: string;
-    onClick?: () => void;
-    disabled?: boolean;
-    isDanger?: boolean;
-    icon?: React.ReactNode;
-}
+import React from "react";
+// 👇 Ensure this import path matches your project structure
+import { ActionMenu, type MenuOption } from "../menu/ActionMenu.tsx";
 
 interface InteractiveHomeListProps {
     isActive: boolean;
@@ -19,30 +12,15 @@ interface InteractiveHomeListProps {
     menuOptions?: MenuOption[];
 }
 
-export function InteractiveHomeList({ isActive, onClick, avatarText, title, disabled, subtitle, menuOptions }: InteractiveHomeListProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [menuPosition, setMenuPosition] = useState<'top' | 'bottom'>('bottom');
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const handleToggleMenu = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (!isOpen) {
-            const clickY = e.clientY;
-            const windowHeight = window.innerHeight;
-            setMenuPosition(windowHeight - clickY < 250 ? 'top' : 'bottom');
-        }
-        setIsOpen(!isOpen);
-    };
+export function InteractiveHomeList({
+                                        isActive,
+                                        onClick,
+                                        avatarText,
+                                        title,
+                                        disabled,
+                                        subtitle,
+                                        menuOptions
+                                    }: InteractiveHomeListProps) {
 
     return (
         <div
@@ -67,45 +45,8 @@ export function InteractiveHomeList({ isActive, onClick, avatarText, title, disa
             </button>
 
             {menuOptions && menuOptions.length > 0 && (
-                <div ref={ref}>
-                    <button
-                        onClick={handleToggleMenu}
-                        className="hover:bg-gray-100 cursor-pointer p-1.5 text-custom-black text-sm xl:opacity-0 xl:group-hover:opacity-100 transition-opacity md:text-base rounded-full"
-                    >
-                        <HiDotsVertical />
-                    </button>
-
-                    {isOpen && (
-                        <ul className={`absolute z-50 max-w-[150px] w-full h-auto text-sm md:text-base font-semibold right-4 bg-white text-custom-black shadow-lg border border-gray-100 rounded-xl ${
-                            menuPosition === 'top' ? 'bottom-12' : 'top-12'
-                        }`}>
-                            {menuOptions.map((opt, idx) => (
-                                <Fragment key={idx}>
-                                    {opt.label === "SEPARATOR" ? (
-                                        <hr className="border border-gray-100 rounded-xl my-2" />
-                                    ) : (
-                                        <li>
-                                            <button
-                                                onClick={() => {
-                                                    setIsOpen(false);
-                                                    opt.onClick?.();
-                                                }}
-                                                disabled={opt.disabled}
-                                                className={`p-2 w-full text-left cursor-pointer ${
-                                                    opt.isDanger ? "hover:bg-red-shadow rounded-b-xl text-red-error" : idx === 0 ? 'rounded-t-xl hover:bg-gray-100' : "hover:bg-gray-100"
-                                                } ${opt.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm">{opt.icon}</span>
-                                                    <p>{opt.label}</p>
-                                                </div>
-                                            </button>
-                                        </li>
-                                    )}
-                                </Fragment>
-                            ))}
-                        </ul>
-                    )}
+                <div className="shrink-0 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                    <ActionMenu options={menuOptions} />
                 </div>
             )}
         </div>

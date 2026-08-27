@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { InteractiveHomeList } from "../../../../../components/ui/lists/InteractiveHomeList.tsx";
 import { reverseName } from "../../../../../types";
 import { memo } from "react";
-import {HiOutlineClipboardList, HiOutlinePencil, HiTrash} from "react-icons/hi";
-import {LuClipboardPenLine} from "react-icons/lu";
+import { HiOutlineClipboardList, HiOutlinePencil, HiTrash } from "react-icons/hi";
+import { LuClipboardPenLine } from "react-icons/lu";
 
 interface CoursesListProps {
     courses: CoursesListData[];
@@ -16,13 +16,13 @@ interface CoursesListProps {
 }
 
 export const CoursesList = memo(function CoursesList({
-                                                               courses,
-                                                               activeCourseId,
-                                                               onEditCourse,
-                                                               onDeleteCourse,
-                                                               loadingDelete,
-                                                               onNavigate
-                                                           }: CoursesListProps) {
+                                                         courses,
+                                                         activeCourseId,
+                                                         onEditCourse,
+                                                         onDeleteCourse,
+                                                         loadingDelete,
+                                                         onNavigate
+                                                     }: CoursesListProps) {
     const navigate = useNavigate();
 
     return (
@@ -43,24 +43,24 @@ export const CoursesList = memo(function CoursesList({
                     menuOptions={[
                         {
                             label: "Ver asistencia",
-                            icon: <HiOutlineClipboardList />,
+                            icon: <HiOutlineClipboardList className="size-4" />,
                             onClick: () => navigate(`/principal/notificaciones/asistencia?course=${course.course_name}`)
                         },
                         {
                             label: "Ver notas",
-                            icon: <LuClipboardPenLine />,
+                            icon: <LuClipboardPenLine className="size-4" />,
                             onClick: () => {},
                             disabled: true
                         },
                         {
                             label: "Editar",
-                            icon: <HiOutlinePencil />,
+                            icon: <HiOutlinePencil className="size-4" />,
                             onClick: () => onEditCourse(course)
                         },
-                        { label: "SEPARATOR" },
+                        { isSeparator: true, label: "separator" },
                         {
                             label: loadingDelete ? "Cargando..." : "Eliminar",
-                            icon: <HiTrash />,
+                            icon: <HiTrash className="size-4" />,
                             onClick: () => onDeleteCourse(course),
                             disabled: loadingDelete,
                             isDanger: true

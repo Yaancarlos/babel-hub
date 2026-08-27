@@ -4,31 +4,40 @@ import {useMemo, useState} from "react";
 import { usePeriods } from "../../../../shared/hooks/usePeriods.ts";
 import { useAttendanceSummary } from "../hooks/useAttendanceSummary.ts";
 import {AttendanceList} from "./ui/AttendanceList.tsx";
-import {IoCalendarOutline} from "react-icons/io5";
-import {formatDatePeriod} from "../../../../types";
 import {LoadingContent} from "../../../../components/ui/Loadings.tsx";
+import {NoResults} from "../../../../components/ui/blocks/NoResults.tsx";
 
 export function AttendanceLayout() {
     const navigate = useNavigate();
+    const { periods } = usePeriods();
 
     const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
 
-    const { periods } = usePeriods();
-
-    const selectedPeriod = periods?.find(p => p.id === selectedPeriodId) || periods?.[0];
+    const selectedPeriod =
+        periods?.find(p => p.id === selectedPeriodId) || periods?.[0];
 
     const { loading, attendance } = useAttendanceSummary({
-        startDate: selectedPeriod?.start_date || "",
-        endDate: selectedPeriod?.end_date || ""
+        startDate: selectedPeriod?.start_date.slice(0,10) || "",
+        endDate: selectedPeriod?.end_date.slice(0,10) || ""
     });
 
     const uniqueCourses = useMemo(() => {
-        return Array.from(new Set(attendance.map(item => item.course_name))).sort();
+        return Array.from(
+            new Set(attendance.map(item => item.course_name))
+        ).sort();
     }, [attendance]);
+
+    if (periods.length === 0) {
+        return (
+            <div>
+                <NoResults title="No se encontraron periodos" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col h-full gap-4 md:gap-5">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row items-start gap-3 sm:items-center sm:justify-between">
                 <div className="flex gap-2 items-center">
                     <ButtonChevronBack onClick={() => navigate(-1)}/>
                     <div>
@@ -36,22 +45,9 @@ export function AttendanceLayout() {
                         <p className="text-gray-400 mt-1 text-sm">Monitorea las inasistencias y llegadas tarde</p>
                     </div>
                 </div>
-            </div>
-            <div className="h-full bg-white rounded-xl p-3 md:p-5 shadow-sm border border-gray-100 no-scrollbar overflow-x-auto">
-                <div className="w-full rounded-xl bg-primary-shadow flex justify-between items-center sm:p-3 p-2 md:p-4">
-                    <div className="flex gap-2 items-center">
-                        <div className="text-white bg-primary p-2 text-xl rounded-md">
-                            <IoCalendarOutline />
-                        </div>
-                        <div>
-                            <p className="text-primary uppercase text-[10px] sm:text-xs font-bold">centro de asistencia</p>
-                            <p className="text-custom-black capitalize font-semibold text-xs sm:text-sm">
-                                {formatDatePeriod(selectedPeriod.start_date, selectedPeriod.end_date)}
-                            </p>
-                        </div>
-                    </div>
+                <div className="self-end sm:self-auto">
                     <select
-                        className="bg-white text-sm capitalize appearance-none text-indigo-600 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                        className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                         value={selectedPeriod?.id || ""}
                         onChange={(e) => setSelectedPeriodId(e.target.value)}
                     >
@@ -60,8 +56,9 @@ export function AttendanceLayout() {
                         ))}
                     </select>
                 </div>
-
-                <div className="flex flex-col mt-5 gap-5 relative">
+            </div>
+            <div className="h-full bg-white rounded-xl p-3 md:p-5 shadow-sm border border-gray-100 no-scrollbar overflow-x-auto">
+                <div className="flex flex-col gap-5 relative">
                     {loading && (<LoadingContent title="Cargando asistencia" />)}
 
                     <AttendanceList

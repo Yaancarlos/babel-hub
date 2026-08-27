@@ -35,7 +35,7 @@ export const PrimaryButton = ({ title, onClick, full, type, disabled, form, clas
             type={type}
             disabled={disabled}
             onClick={onClick}
-            className={`bg-primary-shadow text-sm xl:text-base hover:bg-primary text-primary-darker hover:text-white md:px-3 lg:px-5 py-2 rounded-lg font-semibold transition-colors ${className || ''} shadow-sm cursor-pointer
+            className={`bg-primary text-sm xl:text-base text-white md:px-3 lg:px-5 py-2 rounded-xl hover:bg-primary-darker font-semibold transition-colors ${className || ''} shadow-sm cursor-pointer
                         ${full ? "w-full" : "w-full md:w-auto"}
             `}
         >

@@ -7,17 +7,13 @@ interface ClassListProps {
     onEdit: (cls: ClassItem) => void;
     onDelete: (cls: ClassItem) => void;
     onNavigate: (id: string) => void;
-    onClassOptions: (id: string) => void;
-    classOption: string | null;
 }
 
 export const ClassList = memo(function ClassList({
                                                      classes,
                                                      onNavigate,
                                                      onEdit,
-                                                     onDelete,
-                                                     classOption,
-                                                     onClassOptions
+                                                     onDelete
                                                  }: ClassListProps) {
     return (
         <div className="absolute right-5 top-full w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-30 overflow-hidden">
@@ -26,15 +22,11 @@ export const ClassList = memo(function ClassList({
             </div>
 
             <ul className="divide-y w-full divide-gray-100 max-h-[300px] overflow-y-auto">
-                {classes.map((cls, index, records) => (
+                {classes.map((cls) => (
                     <CourseDetailsClassRows
                         key={cls.class_id}
                         cls={cls}
-                        index={index}
-                        totalRecords={records.length}
-                        isOpen={classOption === cls.class_id}
                         onNavigate={onNavigate}
-                        onToggleMenu={onClassOptions}
                         onEdit={onEdit}
                         onDelete={onDelete}
                     />

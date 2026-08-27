@@ -42,7 +42,7 @@ export function CoursesListLayout() {
     return (
         <div className="flex flex-col lg:flex-row gap-5 h-[calc(100dvh-6rem)] md:h-[calc(100dvh-2.5rem)] ">
             <div className={`bg-white rounded-xl shadow-sm border border-gray-100 h-full flex flex-col ${activeCourseId ? 'hidden lg:flex' : 'flex'} lg:w-1/3 xl:w-1/4`}>
-                <div className="p-5 border-b border-gray-100 grid grid-cols-3 justify-between gap-5 items-start md:items-center rounded-t-xl bg-white z-10">
+                <div className="p-3 border-b border-gray-100 grid grid-cols-3 justify-between gap-5 items-start md:items-center rounded-t-xl bg-white z-10">
                     <h2 className="text-xl font-bold col-span-2 text-custom-black w-full">Cursos</h2>
                     <PrimaryButton
                         full={false}
@@ -63,10 +63,13 @@ export function CoursesListLayout() {
                     loadingDelete={loadingDelete}
                 />
             </div>
+
             <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex-1 no-scrollbar overflow-y-auto ${!activeCourseId ? 'hidden lg:flex items-center justify-center' : 'flex flex-col'}`}>
                 {activeCourseId ? (
                     <Outlet key={activeCourseId} />
-                ) : ( <NoOutletInfo title="Selecciona un curso" paragraph="Haz clic en un curso de la lista para ver sus detalles, estudiantes y clases asignadas."></NoOutletInfo> )}
+                ) : (
+                    <NoOutletInfo title="Selecciona un curso" paragraph="Haz clic en un curso de la lista para ver sus detalles, estudiantes y clases asignadas." />
+                )}
             </div>
 
             <ConfirmModal

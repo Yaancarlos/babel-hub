@@ -47,14 +47,14 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                                 <IoCalendarOutline />
                             </div>
                             <div>
-                                <p className="text-primary uppercase text-[10px] sm:text-xs font-bold">rango de periodo</p>
+                                <p className="text-primary-darker uppercase text-[10px] sm:text-xs font-bold">rango de periodo</p>
                                 <p className="text-custom-black capitalize font-semibold text-xs sm:text-sm">
                                     {formatDatePeriod(selectedPeriod.start_date, selectedPeriod.end_date)}
                                 </p>
                             </div>
                         </div>
                         <select
-                            className="bg-white text-sm capitalize appearance-none text-indigo-600 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                            className="bg-white text-sm capitalize appearance-none text-primary-darker rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                             value={selectedPeriod?.id || ""}
                             onChange={(e) => setSelectedPeriodId(e.target.value)}
                         >

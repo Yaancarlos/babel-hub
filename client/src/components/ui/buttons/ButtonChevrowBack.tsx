@@ -8,7 +8,7 @@ function ButtonChevronBack({ onClick }: Props) {
     return (
         <button
             onClick={onClick}
-            className="cursor-pointer bg-transparent hover:bg-primary-shadow text-custom-black transition-colors hover:text-primary rounded-full p-2"
+            className="cursor-pointer bg-transparent hover:bg-gray-100 text-custom-black transition-colors  rounded-full p-2"
         >
             <FaChevronLeft />
         </button>
