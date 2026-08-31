@@ -5,7 +5,7 @@ import {
     finalGradeForStudent,
     type GradeRecords,
     type Student,
-    tone,
+    toneBgandText,
     reverseName,
     suggestedComment
 } from "../../../types";
@@ -264,7 +264,7 @@ export function StudentGradeTable({
                                 )}
 
                                 <td className="border-l border-gray-200 bg-white text-center">
-                                        <span className={`text-sm font-bold tabular-nums rounded-md px-3 py-1.5 ${tone(final, scale)}`}>
+                                        <span className={`text-sm font-bold tabular-nums rounded-md px-3 py-1.5 ${toneBgandText(final, scale)}`}>
                                             {final === null ? '—' : final.toFixed(1)}
                                         </span>
                                 </td>

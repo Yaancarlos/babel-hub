@@ -30,6 +30,7 @@ import GradingTemplateDetails from "../features/director/school-setup/components
 import ParentLayout from "../pages/parent/ParentLayout.tsx";
 import ParentDashboard from "../pages/parent/dashboard/ParentDashboard.tsx";
 import Parents from "../pages/principal/community/parents/parents.tsx";
+import CumulativeGPA from "../pages/parent/cumulativeGPA/CumulativeGPA.tsx";
 
 const queryClient = new QueryClient();
 
@@ -131,7 +132,9 @@ function App() {
                             </ProtectedRoute>
                         }
                     >
-                        <Route path="dashboard" index element={<ParentDashboard />}/>
+                        <Route path="dashboard" index element={<ParentDashboard />} />
+
+                        <Route path="acumulado" element={<CumulativeGPA />} />
                     </Route>
 
 

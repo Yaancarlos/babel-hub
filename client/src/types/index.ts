@@ -184,7 +184,26 @@ interface GradeScale {
     passing: number;
 }
 
-export function tone(value: number | null | undefined, scale: GradeScale): string {
+export function toneBg(value: number | null | undefined, scale: GradeScale): string {
+    if (value === null || value === undefined || Number.isNaN(value) || typeof value !== "number") {
+        return 'bg-gray-100';
+    }
+
+    if (value < scale.passing) return 'bg-red-500';
+
+    const passingRange = scale.max - scale.passing;
+
+    if (passingRange <= 0) return 'bg-emerald-500';
+
+    const ratio = (value - scale.passing) / passingRange;
+
+    if (ratio >= 0.75) return 'bg-emerald-500';
+    if (ratio >= 0.33) return 'bg-lime-500';
+
+    return 'bg-amber-300';
+}
+
+export function toneBgandText(value: number | null | undefined, scale: GradeScale): string {
     if (value === null || value === undefined || Number.isNaN(value) || typeof value !== "number") {
         return 'bg-gray-50';
     }

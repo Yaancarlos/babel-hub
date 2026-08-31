@@ -1,7 +1,7 @@
 import type { IParentRepository } from "../domain/IParentRepository.js";
 import type { AuthUser, ParentCredentials } from "../../shared/domain/Shared.types.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
-import type { Parent, RelationTypes } from "../domain/Parent.types.js";
+import type {ClassFinalGrade, Parent, ParentStudent, RelationTypes} from "../domain/Parent.types.js";
 
 export class ParentService {
     constructor(private readonly parentRepository: IParentRepository) {}
@@ -10,6 +10,18 @@ export class ParentService {
         if (!userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
 
         return await this.parentRepository.getParents(userSchoolId);
+    }
+
+    async getParentStudents(authUser: AuthUser): Promise<ParentStudent[]> {
+        if (!authUser.userSchoolId || !authUser.userRole || !authUser.userId) throw new UnauthorizedError("Faltan credenciales del usuario (master)");
+
+        return await this.parentRepository.getParentStudents(authUser);
+    }
+
+    async getStudentGrades(studentId: string): Promise<ClassFinalGrade[]> {
+        if (!studentId) throw new ValidationError("El id del estudiante no existe");
+
+        return await this.parentRepository.getStudentGrades(studentId);
     }
 
     async createParent(parentCredentials: ParentCredentials, authUser: AuthUser): Promise<void> {

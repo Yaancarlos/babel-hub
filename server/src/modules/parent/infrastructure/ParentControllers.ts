@@ -16,6 +16,30 @@ export class ParentControllers {
         }
     }
 
+    getParentStudents = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const userId = request.user!.userId as string;
+            const userSchoolId = request.user!.schoolId as string;
+            const userRole = request.user!.role as string;
+
+            const students = await this.parentService.getParentStudents({ userId, userRole, userSchoolId });
+            response.status(200).json({ students });
+        } catch (error : any) {
+            next(error);
+        }
+    }
+
+    getStudentGrades = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
+        try {
+            const studentId = request.params.studentId as string;
+
+            const grades = await this.parentService.getStudentGrades(studentId);
+            response.status(200).json({ grades });
+        } catch (error : any) {
+            next(error);
+        }
+    }
+
     createParent = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
             const { email, password, firstName, middleName, firstLastName, secondLastName } = request.body;

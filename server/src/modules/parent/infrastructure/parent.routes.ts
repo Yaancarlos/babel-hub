@@ -20,6 +20,19 @@ router.get(
     controllers.getParents
 )
 
+router.get(
+    "/students",
+    authMiddleware,
+    authorizedRoles(['principal', 'admin', 'parent']),
+    controllers.getParentStudents
+)
+
+router.get(
+    "/student/:studentId/grades",
+    authMiddleware,
+    authorizedRoles(['principal', 'admin', 'parent']),
+    controllers.getStudentGrades
+)
 router.post(
     "/",
     strictLimiter,
