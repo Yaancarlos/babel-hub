@@ -27,15 +27,16 @@ export class AssignmentService {
         assignmentDueAt: string,
         classId: string,
         assessmentId: string,
+        periodId: string,
         userId: string,
         userRole: string,
         userSchoolId: string): Promise<void> {
-        if (!classId || !assessmentId) throw new ValidationError('los datos de la clase y el criterio esta vacios');
+        if (!classId || !assessmentId || !periodId) throw new ValidationError('los datos de la clase, el criterio o el periodo estan vacios');
         if (!assignmentName || !assignmentDueAt) throw new ValidationError('todos los campos obligatorios deben de estar llenos');
         if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('los datos del usario master son invalidos');
         assertValidDueDate(assignmentDueAt);
 
-        return this.assignmentRepository.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, userId, userRole, userSchoolId);
+        return this.assignmentRepository.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, periodId, userId, userRole, userSchoolId);
     }
 
     async updateAssignment(

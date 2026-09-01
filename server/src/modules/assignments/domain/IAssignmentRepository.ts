@@ -7,6 +7,7 @@ export interface IAssignmentRepository {
         assignmentDueAt: string,
         classId: string,
         assessmentId: string,
+        periodId: string,
         userId: string,
         userRole: string,
         userSchoolId: string): Promise<void>;

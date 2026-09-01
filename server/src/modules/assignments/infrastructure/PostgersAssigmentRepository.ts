@@ -69,6 +69,7 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
         assignmentDueAt: string,
         classId: string,
         assessmentId: string,
+        periodId: string,
         userId: string,
         userRole: string,
         userSchoolId: string): Promise<void> {
@@ -88,10 +89,10 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
             if (ownershipCheck.rowCount === 0) throw new NotFoundError("No se puede crear la asignación: clase o criterio inválido");
 
             const assignment = await client.query(`
-            INSERT INTO assignment (name, due_date, class_id, assessment_criteria_id)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO assignment (name, due_date, class_id, assessment_criteria_id, period_id)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id
-        `, [assignmentName, assignmentDueAt, classId, assessmentId]);
+        `, [assignmentName, assignmentDueAt, classId, assessmentId, periodId]);
 
             await createAuditLog(client, {
                 actorUserId: userId,

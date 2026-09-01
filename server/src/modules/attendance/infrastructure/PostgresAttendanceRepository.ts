@@ -1,4 +1,12 @@
-import type { ClassAttendance, CourseDailyAttendance, BulkRecords, AttendanceSummary, CalendarAttendance, CourseAttendance } from "../domain/Attendance.types.js";
+import type {
+    ClassAttendance,
+    CourseDailyAttendance,
+    BulkRecords,
+    AttendanceSummary,
+    CalendarAttendance,
+    CourseAttendance,
+    DailyAttendance
+} from "../domain/Attendance.types.js";
 import type { IAttendanceRepository } from "../domain/IAttendanceRepository.js";
 import { pool } from "../../../db/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
@@ -164,6 +172,33 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
             client.release()
         }
     }
+
+    async getStudentAttendance(studentId: string, startDate: string, endDate: string): Promise<DailyAttendance[]> {
+        const client = await pool.connect();
+        try {
+            const query = `
+                SELECT
+                    c.id AS class_id,
+                    sub.name AS class_name,
+                    COALESCE(a.status, 'no_data') AS status,
+                    a.created_at AS recorded_at
+                FROM student s
+                JOIN class c ON s.course_id = c.course_id
+                JOIN subject sub ON c.subject_id = sub.id
+                LEFT JOIN attendance a  ON a.class_id = c.id
+                AND a.student_id = s.id
+                AND a.date = CURRENT_DATE
+                WHERE s.id = $1
+                ORDER BY sub.name ASC;
+            `;
+
+            const result = await client.query(query, [studentId]);
+            return result.rows;
+        } finally {
+            client.release();
+        }
+    }
+
     async getCalendarAttendance(studentId: string, startDate: string, endDate: string): Promise<CalendarAttendance[]> {
         const client = await pool.connect();
         try {

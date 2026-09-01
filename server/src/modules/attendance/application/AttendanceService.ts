@@ -3,7 +3,7 @@ import type {
     AttendanceSummary,
     BulkRecords, CalendarAttendance,
     ClassAttendance, CourseAttendance,
-    CourseDailyAttendance
+    CourseDailyAttendance, DailyAttendance
 } from "../domain/Attendance.types.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
 
@@ -22,14 +22,6 @@ export class AttendanceService {
         if (!date || !courseId) throw new ValidationError('La informacion suministrada esta incompleta o es erronea');
 
         return this.attendanceRepository.getDailyCourseAttendance(courseId, schoolId, date, isActive);
-    }
-
-    async bulkUpsertAttendance(classId: string, records: BulkRecords[], date: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
-        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('Credenciales del usuario (master) invalidas');
-        if (!date || !classId) throw new ValidationError('La informacion suministrada esta incompleta o es erronea');
-        if (!Array.isArray(records) || records.length === 0) throw new ValidationError("Debes enviar al menos un registro de asistencia");
-
-        return await this.attendanceRepository.bulkUpsertAttendance(classId, records, date, userId, userRole, userSchoolId);
     }
 
     async getAttendanceSummary(schoolId: string, startDate: string, endDate: string, isActive: boolean): Promise<AttendanceSummary[]> {
@@ -51,5 +43,13 @@ export class AttendanceService {
         if (!startDate || !endDate) throw new ValidationError("La fecha es obligatoria");
 
         return this.attendanceRepository.getClassAttendance(courseId, classId, startDate, endDate);
+    }
+
+    async bulkUpsertAttendance(classId: string, records: BulkRecords[], date: string, userId: string, userRole: string, userSchoolId: string): Promise<void> {
+        if (!userId || !userRole || !userSchoolId) throw new UnauthorizedError('Credenciales del usuario (master) invalidas');
+        if (!date || !classId) throw new ValidationError('La informacion suministrada esta incompleta o es erronea');
+        if (!Array.isArray(records) || records.length === 0) throw new ValidationError("Debes enviar al menos un registro de asistencia");
+
+        return await this.attendanceRepository.bulkUpsertAttendance(classId, records, date, userId, userRole, userSchoolId);
     }
 }

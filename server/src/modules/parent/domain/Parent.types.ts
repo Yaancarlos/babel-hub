@@ -34,16 +34,7 @@ export interface ParentStudent {
     course_name: string;
 }
 
-export interface ClassFinalGrade {
-    class_id: string;
-    subject_name: string;
-    final_grade: number;
-    scale_max: number;
-    scale_min: number;
-    passing_value: number;
-}
-
-export interface DailyAttendance {
-    date: string;
-    daily_status: 'no_data' | 'absent' | 'late' | 'excused' | 'present';
+export interface Date {
+    start: string;
+    end: string;
 }

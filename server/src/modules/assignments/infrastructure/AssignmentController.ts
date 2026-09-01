@@ -21,13 +21,13 @@ export class AssignmentController {
 
     createAssignment = async (request: AuthenticatedRequest, response: Response, next: NextFunction) => {
         try {
-            const { assignmentName, assignmentDueAt, classId, assessmentId } = request.body;
+            const { assignmentName, assignmentDueAt, classId, assessmentId, periodId } = request.body;
 
             const userId = request.user!.userId as string;
             const userRole = request.user!.role! as string;
             const userSchoolId = request.user!.schoolId as string;
 
-            await this.assignmentService.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, userId, userRole, userSchoolId);
+            await this.assignmentService.createAssignment(assignmentName, assignmentDueAt, classId, assessmentId, periodId, userId, userRole, userSchoolId);
             response.status(201).send();
         } catch (error: any) {
             next(error);

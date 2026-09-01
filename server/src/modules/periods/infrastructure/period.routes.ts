@@ -16,7 +16,7 @@ const router: Router = Router();
 router.get(
     "/",
     authMiddleware,
-    authorizedRoles(["principal", "admin", "teacher"]),
+    authorizedRoles(["principal", "admin", "teacher", "parent", "student"]),
     controller.getPeriods
 );
 

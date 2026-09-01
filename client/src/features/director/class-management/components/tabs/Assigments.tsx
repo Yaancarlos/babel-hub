@@ -2,13 +2,14 @@ import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
 import { useAssignmentOverview } from "../../hooks/assignments/useAssignmentOverview.ts";
 import {type ModalModeTypes} from "../../../../../types";
 import type { AssessmentCriteria, Assignment, ClassDetailsData, GradeRecords } from "../../types";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { AssignmentFormModal } from "../ui/AssignmentFormModal.tsx";
 import { ConfirmModal } from "../../../../../components/ui/modals/ConfirmModal.tsx";
 import { useAssignmentDelete } from "../../hooks/assignments/useAssignmentDelete.ts";
 import { useClassScale } from "../../hooks/assignments/useClassScale.ts";
 import { useBulkAssignments } from "../../hooks/assignments/useBulkAssignment.ts";
 import { StudentGradeTable } from "../../../../../components/ui/table/StudentGradeTable.tsx";
+import {usePeriods} from "../../../../../shared/hooks/usePeriods.ts";
 
 interface AssignmentsProps {
     classData: ClassDetailsData;
@@ -17,18 +18,26 @@ interface AssignmentsProps {
 }
 
 export function Assignments({ classData, classId, courseId }: AssignmentsProps) {
-    const [modalMode, setModalMode] = useState<ModalModeTypes>("none");
-    const [assessmentId, setAssessmentId] = useState<string>("");
-    const [assignmentToEdit, setAssignmentToEdit] = useState<Assignment | null>(null);
-    const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
-
+    const { periods } = usePeriods();
     const { assignmentsOverview, loading, refetch } = useAssignmentOverview(courseId, classId);
     const { scale, loadingScale } = useClassScale(classId);
     const { loadingDelete, deleteAssignmentById } = useAssignmentDelete(refetch);
     const { bulkUpsertGrades } = useBulkAssignments(refetch);
 
-    if (loading || loadingScale || !scale) return null;
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+    const [modalMode, setModalMode] = useState<ModalModeTypes>("none");
+    const [assessmentId, setAssessmentId] = useState<string>("");
+    const [assignmentToEdit, setAssignmentToEdit] = useState<Assignment | null>(null);
+    const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
 
+    useEffect(() => {
+        if (periods && periods.length > 0 && !selectedPeriodId) {
+            setSelectedPeriodId(periods[0].id);
+        }
+    }, [periods, selectedPeriodId]);
+
+    if (loading || loadingScale || !scale) return null;
+    if (periods.length === 0) return <NoResults title="No se encontraron periodos" />;
     if (!assignmentsOverview || assignmentsOverview.length === 0) {
         return (
             <div className="md:col-span-2 lg:col-span-3">
@@ -37,21 +46,23 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
         );
     }
 
+    const selectedPeriod = periods.find(p => p.id === selectedPeriodId) || periods[0];
+
     const onAddAssignment = (assessment: AssessmentCriteria) => {
         setAssessmentId(assessment.id);
         setAssignmentToEdit(null);
-        setModalMode("create")
-    }
-
-    const onDeleteAssignment = (assignment: Assignment) => {
-        setAssignmentToDelete(assignment);
-    }
+        setModalMode("create");
+    };
 
     const onEditAssignment = (assessment: AssessmentCriteria, assignment: Assignment) => {
         setAssessmentId(assessment.id);
         setAssignmentToEdit(assignment);
         setModalMode("edit");
-    }
+    };
+
+    const onDeleteAssignment = (assignment: Assignment) => {
+        setAssignmentToDelete(assignment);
+    };
 
     const handleSaveAssignmentGrades = async (assignmentId: string, records: GradeRecords[]) => {
         await bulkUpsertGrades(classId, assignmentId, records.map(r => ({
@@ -62,7 +73,19 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-2">
+            <div className="md:p-4 p-2 w-full rounded-xl border-2 border-gray-100">
+                <select
+                    className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                    value={selectedPeriod?.id || ""}
+                    onChange={(e) => setSelectedPeriodId(e.target.value)}
+                >
+                    {periods?.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                </select>
+            </div>
+
             {classData.students.length > 0 && assignmentsOverview.length > 0 ? (
                 <StudentGradeTable
                     students={classData.students}
@@ -96,6 +119,7 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
             {modalMode !== "none" && (
                 <AssignmentFormModal
                     mode={modalMode}
+                    periodId={selectedPeriodId}
                     onClose={() => {
                         setAssignmentToEdit(null);
                         setModalMode("none");

@@ -1,3 +1,5 @@
+type Status = "no_data" | "absent" | "late" | "excused" | "present";
+
 export interface ClassAttendance {
     student_id: string;
     first_name: string;
@@ -10,7 +12,7 @@ export interface ClassAttendance {
 
 export interface CourseDailyAttendance {
     student_id: string;
-    daily_status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
+    daily_status: Status;
 }
 
 export interface AttendanceSummary {
@@ -27,7 +29,7 @@ export interface AttendanceSummary {
 
 export interface CalendarAttendance {
     date: string;
-    daily_status: 'absent' | 'late' | 'present' | 'excused' | 'no_data'
+    daily_status: Status
 }
 
 export interface CourseAttendance {
@@ -37,10 +39,17 @@ export interface CourseAttendance {
     student_first_last_name: string;
     student_second_last_name: string | null;
     date: string;
-    status: 'absent' | 'late' | 'present' | 'excused' | 'no_data';
+    status: Status;
 }
 
 export interface BulkRecords {
     studentId: string,
     status: string
+}
+
+export interface DailyAttendance {
+    class_id: string;
+    class_name: string;
+    status: Status;
+    recorded_at: string;
 }

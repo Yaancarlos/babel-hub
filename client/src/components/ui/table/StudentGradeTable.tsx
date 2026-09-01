@@ -81,7 +81,7 @@ export function StudentGradeTable({
         if (!changes) return;
 
         const records = Object.entries(changes).map(([studentId, data]) => ({
-            studentId, value: data.value, comment: data.comment,
+            studentId, value: data.value, comment: data.comment
         }));
 
         setSaving(assignmentId);
@@ -116,7 +116,6 @@ export function StudentGradeTable({
             await handleSave(assignmentId);
         }
     };
-
 
     return (
         <div className="rounded-md relative">

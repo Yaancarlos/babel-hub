@@ -11,23 +11,36 @@ interface CumulativeGPALayoutProps {
     student: ParentStudent[];
     activeTab: CumulativeGPATypes;
     onButtonChange: (tab: CumulativeGPATypes) => void;
+
+    periods: any[];
+    selectedPeriodId: string;
+    onPeriodChange: (id: string) => void;
 }
 
-export function CumulativeGPALayout({ children, student, activeTab, onButtonChange }: CumulativeGPALayoutProps) {
+export function CumulativeGPALayout({
+                                        children,
+                                        student,
+                                        activeTab,
+                                        onButtonChange,
+                                        periods,
+                                        selectedPeriodId,
+                                        onPeriodChange
+                                    }: CumulativeGPALayoutProps) {
     const navigate = useNavigate();
 
     return (
         <div className="flex flex-col h-full border border-gray-100 rounded-xl w-full bg-gray-50">
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 rounded-t-xl flex flex-col gap-4">
                 <div className="flex flex-col pt-5 px-5 md:flex-row justify-between items-start md:items-center gap-4">
-                    <div className="flex gap-4 items-center">
-                        <ButtonChevronBack onClick={() => navigate(-1)} />
-                        <div>
-                            <h1 className="text-xl md:text-1xl xl:text-2xl capitalize font-bold text-custom-black">
-                                Acumulado
-                            </h1>
-                            <p className="text-gray-500 mt-1 text-xs md:text-sm">
-                                Estudiante: <span className="font-medium capitalize text-gray-700">
+                    <div className="flex items-center w-full justify-between">
+                        <div className="flex gap-4 items-center">
+                            <ButtonChevronBack onClick={() => navigate(-1)} />
+                            <div>
+                                <h1 className="text-xl md:text-1xl xl:text-2xl capitalize font-bold text-custom-black">
+                                    Acumulado
+                                </h1>
+                                <p className="text-gray-500 mt-1 text-xs md:text-sm">
+                                    Estudiante: <span className="font-medium capitalize text-gray-700">
                                 {
                                     reverseName({
                                         middleName: student[0].student_middle_name,
@@ -37,7 +50,20 @@ export function CumulativeGPALayout({ children, student, activeTab, onButtonChan
                                     })
                                 }
                             </span>
-                            </p>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="self-end sm:self-auto">
+                            <select
+                                className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                                value={selectedPeriodId}
+                                onChange={(e) => onPeriodChange(e.target.value)}
+                            >
+                                {periods?.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </div>

@@ -40,7 +40,7 @@ export function AssessmentFormModal({ mode, assessmentInfo, assessment, onClose,
         }
 
         if (!FORM_REGEXP.name.test(formModal.name) || !formModal.name.trim()) {
-            setError("Llena los campos obligatorios");
+            setError("El nombre del criterio de evaluacion debe contener solo letras");
             return;
         }
 

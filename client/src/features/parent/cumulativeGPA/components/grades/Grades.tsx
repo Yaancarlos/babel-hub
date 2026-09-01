@@ -1,16 +1,17 @@
-import {useGrades} from "../../hooks/grades/useGrades.ts";
-import type {ParentStudent} from "../../types/types.ts";
-import {toneBg} from "../../../../../types";
-import {LoadingContent} from "../../../../../components/ui/Loadings.tsx";
+import { useGrades } from "../../hooks/grades/useGrades.ts";
+import type { ParentStudent } from "../../types/types.ts";
+import { toneBg } from "../../../../../types";
+import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
 
 interface GradesProps {
-    students: ParentStudent[]
+    students: ParentStudent[];
+    periodId: string;
 }
 
-export function Grades({ students }: GradesProps) {
-    const { loading, grades } = useGrades(students[0]?.student_id);
+export function Grades({ students, periodId }: GradesProps) {
+    const { loading, grades } = useGrades(students[0]?.student_id, periodId);
 
-    if (loading) <LoadingContent title="" />
+    if (loading || !periodId) return <LoadingContent title="" />;
 
     return (
         <div className="flex gap-5 justify-between">
@@ -20,6 +21,7 @@ export function Grades({ students }: GradesProps) {
                     {grades.map((grade) => (
                         <a
                             href="#"
+                            key={grade.class_id}
                             className="p-3 bg-white rounded-xl flex justify-between w-full"
                         >
                             <div className="flex items-center gap-2">
@@ -40,5 +42,5 @@ export function Grades({ students }: GradesProps) {
                 <div className="bg-primary-shadow/50 rounded-xl h-full"></div>
             </div>
         </div>
-    )
+    );
 }

@@ -21,6 +21,8 @@ export interface ClassFinalGrade {
 }
 
 export interface DailyAttendance {
-    date: string;
-    daily_status: 'no_data' | 'absent' | 'late' | 'excused' | 'present';
+    class_id: string;
+    class_name: string;
+    status: 'no_data' | 'absent' | 'late' | 'excused' | 'present';
+    recorded_at: string;
 }

@@ -6,9 +6,14 @@ import { strictLimiter } from "../../../middleware/ratelimit.middleware.js";
 import { PostgresParentRepository } from "./PostgresParentRepository.js";
 import { ParentService } from "../application/ParentService.js";
 import { ParentControllers } from "./ParentControllers.js";
+import { PostgresGradeRepository } from "../../grade/infrastructure/PostgresGradeRepository.js";
+import { PostgresAttendanceRepository } from "../../attendance/infrastructure/PostgresAttendanceRepository.js";
 
-const repository = new PostgresParentRepository();
-const service = new ParentService(repository);
+const parentRepository = new PostgresParentRepository();
+const gradeRepository = new PostgresGradeRepository();
+const attendanceRepository = new PostgresAttendanceRepository();
+
+const service = new ParentService(parentRepository, gradeRepository, attendanceRepository);
 const controllers = new ParentControllers(service);
 
 const router: Router = Router();
@@ -23,16 +28,24 @@ router.get(
 router.get(
     "/students",
     authMiddleware,
-    authorizedRoles(['principal', 'admin', 'parent']),
+    authorizedRoles(['parent']),
     controllers.getParentStudents
 )
 
 router.get(
-    "/student/:studentId/grades",
+    "/student/:studentId/period/:periodId/grades",
     authMiddleware,
-    authorizedRoles(['principal', 'admin', 'parent']),
+    authorizedRoles(['parent']),
     controllers.getStudentGrades
 )
+
+router.get(
+    "/student/:studentId/attendance",
+    authMiddleware,
+    authorizedRoles(['parent']),
+    controllers.getStudentAttendance
+)
+
 router.post(
     "/",
     strictLimiter,

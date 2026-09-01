@@ -6,19 +6,21 @@ import type { Assignment } from "../../types";
 
 interface AssignmentFormModalProps {
     mode: modeTypes;
+    periodId: string;
     onSuccess: () => void;
     onClose: () => void;
     assignmentToEdit: Assignment | null;
     assignment: { classId: string, assessmentId: string };
 }
 
-export function AssignmentFormModal({ mode, onSuccess, onClose, assignment, assignmentToEdit }: AssignmentFormModalProps) {
+export function AssignmentFormModal({ mode, periodId, onSuccess, onClose, assignment, assignmentToEdit }: AssignmentFormModalProps) {
     const isCreateMode = mode === "create";
     const [formData, setFormData] = useState({
         assignmentName: assignmentToEdit?.name || "",
         assignmentDueAt: assignmentToEdit?.due_date.slice(0,10) || "",
         classId: assignment.classId,
         assessmentId: assignment.assessmentId,
+        periodId
     });
 
     const { loading, error, setError, upsertAssignment } = useCreateAssignment(onSuccess);
@@ -38,7 +40,8 @@ export function AssignmentFormModal({ mode, onSuccess, onClose, assignment, assi
 
         const payload: Record<string, string> = {
             assignmentName: formData.assignmentName.trim().toLowerCase(),
-            assignmentDueAt: formData.assignmentDueAt
+            assignmentDueAt: formData.assignmentDueAt,
+            periodId: formData.periodId
         }
 
         if (!assignmentToEdit) {

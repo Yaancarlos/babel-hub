@@ -1,5 +1,5 @@
 import type { IGradeRepository } from "../domain/IGradeRepository.js";
-import type {GradeByAssignment, GradeRecord, ValidScales} from "../domain/Grade.types.js";
+import type {GradeByAssignment, GradeRecord, StudentGrade, ValidScales} from "../domain/Grade.types.js";
 import type { AuthUser } from "../../shared/domain/Shared.types.js";
 import { pool } from "../../../db/index.js";
 import { ConflictError, NotFoundError } from "../../errors/domain/CustomErrors.js";
@@ -20,6 +20,56 @@ export class PostgresGradeRepository implements IGradeRepository {
                 JOIN assignment a ON g.assignment_id = a.id
                 WHERE a.class_id = $1
             `, [classId]);
+
+            return result.rows;
+        } finally {
+            client.release();
+        }
+    }
+
+    async getStudentGrades(studentId: string, periodId: string): Promise<StudentGrade[]> {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(`
+                WITH CriteriaAverages AS (
+                    SELECT
+                        c.id AS class_id,
+                        sub.name AS subject_name,
+                        ac.id AS criteria_id,
+                        ac.weight,
+                        AVG(g.value) AS criteria_avg,
+                        sc.max_value,
+                        sc.min_value,
+                        sc.passing_value
+                    FROM student s
+                    JOIN class c ON s.course_id = c.course_id
+                    JOIN subject sub ON c.subject_id = sub.id
+                    JOIN grading_template gt ON sub.grading_template_id = gt.id
+                    JOIN scale sc ON gt.scale_id = sc.id
+                    JOIN assessment_criteria ac ON gt.id = ac.grading_template_id
+                    LEFT JOIN assignment a
+                        ON c.id = a.class_id
+                            AND a.assessment_criteria_id = ac.id
+                            AND a.period_id = $2
+
+                    LEFT JOIN grade g
+                        ON a.id = g.assignment_id
+                            AND g.student_id = s.id
+                    
+                    WHERE s.id = $1
+                    GROUP BY c.id, sub.name, ac.id, ac.weight, sc.max_value, sc.min_value, sc.passing_value
+                )
+                SELECT
+                    class_id,
+                    subject_name,
+                    COALESCE(ROUND(SUM(criteria_avg * (weight / 100.0))::float, 2), 0) AS final_grade,
+                    max_value AS scale_max,
+                    min_value AS scale_min,
+                    passing_value
+                FROM CriteriaAverages
+                GROUP BY class_id, subject_name, max_value, min_value, passing_value
+                ORDER BY subject_name ASC;
+            `, [studentId, periodId]);
 
             return result.rows;
         } finally {

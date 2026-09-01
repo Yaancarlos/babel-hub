@@ -1,5 +1,5 @@
 import type { IGradeRepository } from "../domain/IGradeRepository.js";
-import type { GradeByAssignment, GradeRecord } from "../domain/Grade.types.js";
+import type {GradeByAssignment, GradeRecord, StudentGrade} from "../domain/Grade.types.js";
 import type { AuthUser } from "../../shared/domain/Shared.types.js";
 import { UnauthorizedError, ValidationError } from "../../errors/domain/CustomErrors.js";
 import { validateGrade } from "../domain/Grade.rules.js";
