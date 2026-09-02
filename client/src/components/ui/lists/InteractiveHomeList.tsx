@@ -1,5 +1,4 @@
 import React from "react";
-// 👇 Ensure this import path matches your project structure
 import { ActionMenu, type MenuOption } from "../menu/ActionMenu.tsx";
 
 interface InteractiveHomeListProps {

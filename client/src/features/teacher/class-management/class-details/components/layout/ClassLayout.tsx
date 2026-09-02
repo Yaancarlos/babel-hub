@@ -18,7 +18,7 @@ export function ClassLayout ({ children, onTabChange, classDetails, activeTab }:
     return (
         <div className="flex flex-col h-full w-full ">
             <div className="sticky top-0 z-10 bg-white border-b border-gray-100 flex flex-col gap-4">
-                <div className="flex flex-col p-5 md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="flex flex-col pt-5 px-5 md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex gap-4 items-center">
                         <ButtonChevronBack onClick={() => navigate(-1)} />
                         <div>
@@ -61,7 +61,7 @@ export function ClassLayout ({ children, onTabChange, classDetails, activeTab }:
                 </div>
             </div>
 
-            <div className="p-3 lg:p-4 xl:p-5 flex-1 styled-scrollbar overflow-y-auto">
+            <div className="p-2 flex-1 styled-scrollbar overflow-y-auto">
                 {children}
             </div>
         </div>

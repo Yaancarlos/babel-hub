@@ -5,9 +5,6 @@ import {
     BiCalendar,
     BiBookBookmark,
     BiBell,
-    BiGroup,
-    BiUserVoice,
-    BiFile,
     BiMessageDetail
 } from "react-icons/bi";
 
@@ -19,10 +16,7 @@ export const TeacherLayout = () => {
         { id: "2", icon: <BiCalendar />, path: "/unknow", label: "Calendario" },
         { id: "3", icon: <BiBookBookmark />, path: "/teacher/clases", label: "Clases" },
         { id: "4", icon: <BiBell />, path: "/unknow", label: "Notificaciones" },
-        { id: "5", icon: <BiGroup />, path: "/unknow", label: "Comunidad" },
-        { id: "6", icon: <BiUserVoice />, path: "/unknow", label: "Acudientes" },
-        { id: "7", icon: <BiFile />, path: "/unknow", label: "Formatos" },
-        { id: "8", icon: <BiMessageDetail />, path: "/unknow", label: "Mensajes" }
+        { id: "5", icon: <BiMessageDetail />, path: "/unknow", label: "Mensajes" }
     ];
 
     return (

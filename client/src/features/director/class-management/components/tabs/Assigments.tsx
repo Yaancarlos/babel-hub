@@ -19,12 +19,13 @@ interface AssignmentsProps {
 
 export function Assignments({ classData, classId, courseId }: AssignmentsProps) {
     const { periods } = usePeriods();
-    const { assignmentsOverview, loading, refetch } = useAssignmentOverview(courseId, classId);
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+
+    const { assignmentsOverview, loading, refetch } = useAssignmentOverview(courseId, classId, selectedPeriodId);
     const { scale, loadingScale } = useClassScale(classId);
     const { loadingDelete, deleteAssignmentById } = useAssignmentDelete(refetch);
     const { bulkUpsertGrades } = useBulkAssignments(refetch);
 
-    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
     const [modalMode, setModalMode] = useState<ModalModeTypes>("none");
     const [assessmentId, setAssessmentId] = useState<string>("");
     const [assignmentToEdit, setAssignmentToEdit] = useState<Assignment | null>(null);
@@ -32,12 +33,17 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
 
     useEffect(() => {
         if (periods && periods.length > 0 && !selectedPeriodId) {
-            setSelectedPeriodId(periods[0].id);
+            const activePeriod = periods.find(p => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
         }
     }, [periods, selectedPeriodId]);
 
+    if (!periods || periods.length === 0) return <NoResults title="No se encontraron periodos" />;
+
+    if (!selectedPeriodId) return null;
+
     if (loading || loadingScale || !scale) return null;
-    if (periods.length === 0) return <NoResults title="No se encontraron periodos" />;
+
     if (!assignmentsOverview || assignmentsOverview.length === 0) {
         return (
             <div className="md:col-span-2 lg:col-span-3">
@@ -74,10 +80,11 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
 
     return (
         <div className="space-y-2">
-            <div className="md:p-4 p-2 w-full rounded-xl border-2 border-gray-100">
+            <div className="p-2 w-full flex items-center justify-end rounded-xl border-2 border-gray-100">
                 <select
                     className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                     value={selectedPeriod?.id || ""}
+                    disabled={classData.students.length === 0}
                     onChange={(e) => setSelectedPeriodId(e.target.value)}
                 >
                     {periods?.map(p => (

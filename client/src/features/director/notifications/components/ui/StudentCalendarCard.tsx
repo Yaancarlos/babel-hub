@@ -1,6 +1,6 @@
 import { formatDate, getStatusDotColor } from "../../../../../types";
-import type { Period } from "../../types";
 import { useAttendanceStudentCalendar } from "../../hooks/useAttendanceStudentCalendar.ts";
+import type { Period } from "../../../../../shared/types/types.ts";
 
 export default function StudentCalendarCardComponent ({ studentId, period }: { studentId: string, period: Period }){
     const { attendance, loading, error } = useAttendanceStudentCalendar({

@@ -29,10 +29,11 @@ export function RegisterAttendance({ classId, classData, date }: RegisterAttenda
 
     return (
         <div className="max-w-4xl mx-auto space-y-4">
-            <div className="md:p-4 p-2 w-full rounded-xl border-2 border-gray-100">
+            <div className="p-2 w-full rounded-xl border-2 border-gray-100">
                 <input
                     type="date"
                     value={attendanceDate}
+                    disabled={classData.students.length === 0}
                     onChange={(e) => setAttendanceDate(e.target.value)}
                     className="bg-gray-50 md:text-base text-sm border border-gray-200 text-gray-700 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
                 />
@@ -41,8 +42,8 @@ export function RegisterAttendance({ classId, classData, date }: RegisterAttenda
             {loading ? (
                 <LoadingContent title="Cargando..." />
             ) : (
-                <div className="bg-white relative">
-                    <div className="flex items-center border-2 rounded-t-xl border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
+                <div className="relative">
+                    <div className="flex items-center bg-white border-2 rounded-t-xl border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
                         <div className="sm:block hidden">
                             <p className="text-custom-black text-sm md:text-base font-semibold">Lista de estudiantes</p>
                             <p className="text-xs text-custom-black">{classData.students.length} estudiantes</p>
@@ -82,7 +83,7 @@ export function RegisterAttendance({ classId, classData, date }: RegisterAttenda
                             </div>
                         </div>
 
-                        <button type="button" className="bg-primary rounded-xl cursor-pointer flex items-center gap-1 px-3 md:px-5 py-2.5 text-white text-xs md:text-sm" onClick={bulkAttendanceClass}>
+                        <button type="button" className="bg-primary rounded-xl hover:bg-primary-darker cursor-pointer flex items-center gap-1 px-3 md:px-5 py-2.5 text-white text-xs md:text-sm" onClick={bulkAttendanceClass}>
                             <IoMdCheckmark />
                             <span className="font-semibold">{saving ? 'Guardando' : 'Registrar asistencia'}</span>
                         </button>

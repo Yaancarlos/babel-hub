@@ -90,7 +90,7 @@ export class PostgresParentRepository implements IParentRepository {
         }
     }
 
-    async createParent(parentCredentials:ParentCredentials, authUser:AuthUser): Promise<void> {
+    async createParent(parentCredentials: ParentCredentials, authUser: AuthUser): Promise<void> {
         const client = await pool.connect();
         let authUserId: string | null = null;
         try {
@@ -100,11 +100,11 @@ export class PostgresParentRepository implements IParentRepository {
                 email: parentCredentials.email,
                 password: parentCredentials.password,
                 email_confirm: true
-            })
+            });
 
             if (error) {
                 if (error.code === 'email_exists') {
-                    throw new ConflictError("Ya existe un usuario con la misma dirrecion de email");
+                    throw new ConflictError("Ya existe un usuario con la misma dirección de email");
                 }
 
                 throw new ValidationError(`No se pudo crear el usuario (${error.message})`);
@@ -113,16 +113,35 @@ export class PostgresParentRepository implements IParentRepository {
             authUserId = data.user?.id as string;
 
             const profile = await client.query(`
-                INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id)
-                VALUES ($1, $2, $3, $4, $5, 'parent', $6, $7)
-                RETURNING id;
-            `, [authUserId, parentCredentials.firstName, parentCredentials.middleName, parentCredentials.firstLastName, parentCredentials.secondLastName, parentCredentials.email, authUser.userSchoolId]);
+                INSERT INTO profile (
+                    auth_profile_id,
+                    first_name,
+                    middle_name,
+                    first_last_name,
+                    second_last_name,
+                    email,
+                    school_id,
+                    user_name,
+                    phone,
+                    role
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'parent')
+                    RETURNING id;
+            `, [
+                authUserId,
+                parentCredentials.firstName,
+                parentCredentials.middleName ?? null,
+                parentCredentials.firstLastName,
+                parentCredentials.secondLastName ?? null,
+                parentCredentials.email,
+                authUser.userSchoolId,
+                parentCredentials.userName ?? null,
+                parentCredentials.phone ?? null
+            ]);
 
             const profileId = profile.rows[0].id;
 
-            const parent = await client.query(`INSERT INTO parent (profile_id) VALUES ($1) RETURNING id`, [profileId]);
-
-            const parentId = parent.rows[0].id;
+            await client.query(`INSERT INTO parent (profile_id) VALUES ($1) RETURNING id`, [profileId]);
 
             await createAuditLog(client, {
                 targetUserId: profileId,
@@ -131,10 +150,15 @@ export class PostgresParentRepository implements IParentRepository {
                 action: "CREATE_PARENT",
                 schoolId: authUser.userSchoolId,
                 metadata: {
-                    name: [parentCredentials.firstName, parentCredentials.middleName ?? "", parentCredentials.firstLastName, parentCredentials.secondLastName ?? ""].join(" "),
+                    name: [
+                        parentCredentials.firstName,
+                        parentCredentials.middleName ?? "",
+                        parentCredentials.firstLastName,
+                        parentCredentials.secondLastName ?? ""
+                    ].join(" "),
                     email: parentCredentials.email
                 }
-            })
+            });
 
             await client.query('COMMIT');
         } catch (error : any) {
@@ -160,7 +184,7 @@ export class PostgresParentRepository implements IParentRepository {
             }
 
             if (error.code === '23505') {
-                throw new ConflictError('Ese email ya esta tomado, intenta usar otro');
+                throw new ConflictError('Ese email ya está tomado, intenta usar otro');
             }
 
             throw error;

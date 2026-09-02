@@ -1,10 +1,11 @@
 import {Fragment, useEffect, useRef, useState} from "react";
 import { reverseName } from "../../../../../types";
 import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
-import type { AttendanceSummary, Period } from "../../types";
+import type { AttendanceSummary } from "../../types";
 import StudentCalendarCardComponent from "./StudentCalendarCard.tsx";
 import {CgDanger} from "react-icons/cg";
 import {GoClock} from "react-icons/go";
+import type { Period } from "../../../../../shared/types/types.ts";
 
 interface AttendanceListProps {
     attendance: AttendanceSummary[];

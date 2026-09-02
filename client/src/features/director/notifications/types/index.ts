@@ -9,10 +9,3 @@ export interface AttendanceSummary {
     total_absences: number;
     total_lates: number;
 }
-
-export interface Period {
-    id: string;
-    name: string;
-    start_date: string;
-    end_date: string;
-}

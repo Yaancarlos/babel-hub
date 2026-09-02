@@ -153,7 +153,7 @@ const DashboardLayout = ({ user, grid }: LayoutProps) => {
                 </div>
             </div>
 
-            <div className="flex-1 p-4 md:p-5 bg-gray-50 h-[calc(100dvh-64px)] md:h-dvh overflow-y-auto">
+            <div className="flex-1 p-2 md:p-3 bg-gray-50 h-[calc(100dvh-24px)] md:h-dvh overflow-y-auto">
                 <ErrorBoundary>
                     <Outlet />
                 </ErrorBoundary>

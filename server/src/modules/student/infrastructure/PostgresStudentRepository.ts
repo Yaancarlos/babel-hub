@@ -131,10 +131,31 @@ export class PostgresStudentRepository implements IStudentRepository {
             authUserId = data.user?.id as string;
 
             const profile = await client.query(`
-                INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id)
-                VALUES ($1, $2, $3, $4, $5, 'student', $6, $7)
-                RETURNING id;
-            `, [authUserId, studentCredentials.firstName, studentCredentials.middleName, studentCredentials.firstLastName, studentCredentials.secondLastName, studentCredentials.email, authUser.userSchoolId]);
+                INSERT INTO profile (
+                    auth_profile_id,
+                    first_name,
+                    middle_name,
+                    first_last_name,
+                    second_last_name,
+                    email,
+                    school_id,
+                    user_name,
+                    phone,
+                    role
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'student')
+                    RETURNING id;
+            `, [
+                authUserId,
+                studentCredentials.firstName,
+                studentCredentials.middleName ?? null,
+                studentCredentials.firstLastName,
+                studentCredentials.secondLastName ?? null,
+                studentCredentials.email,
+                authUser.userSchoolId,
+                studentCredentials.userName ?? null,
+                studentCredentials.phone ?? null,
+            ]);
 
             const profileId = profile.rows[0].id;
 
@@ -200,9 +221,17 @@ export class PostgresStudentRepository implements IStudentRepository {
 
             await client.query(`
                 UPDATE profile
-                SET first_name = $1, middle_name = $2, first_last_name = $3, second_last_name = $4
-                WHERE id = $5
-            `, [studentCredentials.firstName, studentCredentials.middleName, studentCredentials.firstLastName, studentCredentials.secondLastName, studentProfileId]);
+                SET first_name = $1, middle_name = $2, first_last_name = $3, second_last_name = $4, user_name = $5, phone = $6
+                WHERE id = $7
+            `, [
+                studentCredentials.firstName,
+                studentCredentials.middleName ?? null,
+                studentCredentials.firstLastName,
+                studentCredentials.secondLastName ?? null,
+                studentCredentials.userName ?? null,
+                studentCredentials.phone ?? null,
+                studentProfileId
+            ]);
 
             await client.query(`
                 UPDATE student

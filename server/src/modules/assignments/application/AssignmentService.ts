@@ -11,11 +11,11 @@ export class AssignmentService {
         private readonly assignmentRepository: IAssignmentRepository,
         private readonly gradeRepository: IGradeRepository
     ) {}
-    async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsStructure> {
-        if (!classId || !courseId) throw new ValidationError('Los datos son inválidos');
+    async getAssignmentsOverview(courseId: string, classId: string, periodId: string, userSchoolId: string): Promise<AssignmentsStructure> {
+        if (!classId || !courseId || !periodId) throw new ValidationError('Los datos son inválidos');
 
         const [overview, grades] = await Promise.all([
-            this.assignmentRepository.getAssignmentsOverview(courseId, classId, userSchoolId),
+            this.assignmentRepository.getAssignmentsOverview(courseId, classId, periodId, userSchoolId),
             this.gradeRepository.getGradesByClass(classId)
         ]);
 

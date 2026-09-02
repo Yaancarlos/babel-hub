@@ -6,14 +6,14 @@ import { ConflictError, NotFoundError, ValidationError } from "../../errors/doma
 import type {ValidScales} from "../../grade/domain/Grade.types.js";
 
 export class PostgresAssignmentRepository implements IAssignmentRepository {
-    async getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview> {
+    async getAssignmentsOverview(courseId: string, classId: string, periodId: string, userSchoolId: string): Promise<AssignmentsOverview> {
         const client = await pool.connect();
         try {
             const ownershipCheck = await client.query(`
                 SELECT 1 FROM course WHERE id = $1 AND school_id = $2
             `, [courseId, userSchoolId]);
 
-            if (ownershipCheck.rowCount === 0) throw new NotFoundError("Curso no encontrado o sin acceso");
+            if (ownershipCheck.rowCount === 0) throw new NotFoundError("Curso no encontrado o no tienes acceso a este");
 
             const assessments = await client.query(`
                 SELECT
@@ -34,9 +34,9 @@ export class PostgresAssignmentRepository implements IAssignmentRepository {
                     a.created_at,
                     a.assessment_criteria_id
                 FROM assignment a
-                WHERE a.class_id = $1
+                WHERE a.class_id = $1 and a.period_id = $2
                 ORDER BY a.name ASC
-            `, [classId]);
+            `, [classId, periodId]);
 
             const assignmentsByCriteria = new Map<string, any[]>();
 

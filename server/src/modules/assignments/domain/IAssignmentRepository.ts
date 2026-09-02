@@ -1,7 +1,7 @@
 import type {AssignmentsOverview, UpdateAssignmentDTO} from "./Assignment.types.js";
 
 export interface IAssignmentRepository {
-    getAssignmentsOverview(courseId: string, classId: string, userSchoolId: string): Promise<AssignmentsOverview>;
+    getAssignmentsOverview(courseId: string, classId: string, periodId: string, userSchoolId: string): Promise<AssignmentsOverview>;
     createAssignment(
         assignmentName: string,
         assignmentDueAt: string,

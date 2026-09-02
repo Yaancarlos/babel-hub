@@ -4,6 +4,7 @@ import { pool } from "../../../db/index.js";
 import { supabase } from "../../../services/index.js";
 import { createAuditLog } from "../../../services/audit.service.js";
 import { ConflictError, NotFoundError, ValidationError } from "../../errors/domain/CustomErrors.js";
+import type {AuthUser, TeacherCreateCredentials, TeacherUpdateCredentials} from "../../shared/domain/Shared.types.js";
 
 export class PostgresTeacherRepository implements ITeacherRepository {
     async getTeachers(userSchoolId: string, available: string | undefined, includeTeacherId: string | undefined, isActive: boolean): Promise<Teachers[]> {
@@ -102,41 +103,44 @@ export class PostgresTeacherRepository implements ITeacherRepository {
         }
     }
 
-    async createTeacher(teacherFirstName: string,
-                        teacherMiddleName: string | null,
-                        teacherFirstLastName: string,
-                        teacherSecondLastName: string | null,
-                        teacherPassword: string,
-                        teacherEmail: string,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<CreateTeacher> {
+    async createTeacher(teacherCredentials: TeacherCreateCredentials, authUser: AuthUser): Promise<CreateTeacher> {
         const client = await pool.connect();
         let authUserId: string | null = null;
         try {
             await client.query('BEGIN');
 
             const { data, error } = await supabase.auth.admin.createUser({
-                email: teacherEmail,
-                password: teacherPassword,
+                email: teacherCredentials.email,
+                password: teacherCredentials.password,
                 email_confirm: true
             })
 
             if (error) {
                 if (error.code === 'email_exists') {
-                    throw new ConflictError("Ya existe un usuario con la misma dirrecion de email");
+                    throw new ConflictError("Ya existe un usuario con la misma dirección de email");
                 }
-
                 throw new ValidationError(`No se pudo crear el usuario (${error.message})`);
             }
 
             authUserId = data.user?.id as string;
 
             const profile = await client.query(`
-                INSERT INTO profile (auth_profile_id, first_name, middle_name, first_last_name, second_last_name, role, email, school_id)
-                VALUES ($1, $2, $3, $4, $5, 'teacher', $6, $7)
-                RETURNING id;
-            `, [authUserId, teacherFirstName, teacherMiddleName, teacherFirstLastName, teacherSecondLastName, teacherEmail, userSchoolId]);
+                INSERT INTO profile (
+                    auth_profile_id, first_name, middle_name, first_last_name, second_last_name, user_name, phone, role, email, school_id
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, 'teacher', $8, $9)
+                    RETURNING id;
+            `, [
+                authUserId,
+                teacherCredentials.firstName,
+                teacherCredentials.middleName ?? null,
+                teacherCredentials.firstLastName,
+                teacherCredentials.secondLastName ?? null,
+                teacherCredentials.userName ?? null,
+                teacherCredentials.phone ?? null,
+                teacherCredentials.email,
+                authUser.userSchoolId
+            ]);
 
             const profileId = profile.rows[0].id;
 
@@ -146,13 +150,18 @@ export class PostgresTeacherRepository implements ITeacherRepository {
 
             await createAuditLog(client, {
                 targetUserId: profileId,
-                actorUserId: userId,
-                actorRole: userRole,
+                actorUserId: authUser.userId,
+                actorRole: authUser.userRole,
                 action: "CREATE_TEACHER",
-                schoolId: userSchoolId,
+                schoolId: authUser.userSchoolId,
                 metadata: {
-                    name: [teacherFirstName, teacherMiddleName ?? "", teacherFirstLastName, teacherSecondLastName ?? ""].join(" "),
-                    email: teacherEmail
+                    name: [
+                        teacherCredentials.firstName,
+                        teacherCredentials.middleName ?? "",
+                        teacherCredentials.firstLastName,
+                        teacherCredentials.secondLastName ?? ""
+                    ].join(" "),
+                    email: teacherCredentials.email
                 }
             })
 
@@ -181,43 +190,57 @@ export class PostgresTeacherRepository implements ITeacherRepository {
         }
     }
 
-    async updateTeacher(teacherId: string,
-                        teacherFirstName: string,
-                        teacherMiddleName: string | null,
-                        teacherFirstLastName: string,
-                        teacherSecondLastName: string | null,
-                        userId: string,
-                        userRole: string,
-                        userSchoolId: string): Promise<void> {
+    async updateTeacher(teacherCredentials: TeacherUpdateCredentials, authUser: AuthUser): Promise<void> {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
             const teacherCheck = await client.query(`
-                SELECT 
+                SELECT
                     t.profile_id
                 FROM teacher t
-                JOIN profile p ON t.profile_id = p.id
+                         JOIN profile p ON t.profile_id = p.id
                 WHERE t.id = $1 AND p.school_id = $2
-            `, [teacherId, userSchoolId]);
+            `, [teacherCredentials.teacherId, authUser.userSchoolId]);
 
-            if (teacherCheck.rowCount === 0) throw new NotFoundError("No se encontro al maestro");
+            if (teacherCheck.rowCount === 0) throw new NotFoundError("No se encontró al maestro");
 
             const teacherUserId = teacherCheck.rows[0].profile_id;
 
             await client.query(`
-                UPDATE profile 
-                SET first_name = $1, middle_name = $2, first_last_name = $3, second_last_name = $4
-                WHERE id = $5
-            `, [teacherFirstName, teacherMiddleName, teacherFirstLastName, teacherSecondLastName, teacherUserId]);
+                UPDATE profile
+                SET first_name = $1,
+                    middle_name = $2,
+                    first_last_name = $3,
+                    second_last_name = $4,
+                    user_name = $5,
+                    phone = $6
+                WHERE id = $7
+            `, [
+                teacherCredentials.firstName,
+                teacherCredentials.middleName ?? null,
+                teacherCredentials.firstLastName,
+                teacherCredentials.secondLastName ?? null,
+                teacherCredentials.userName ?? null,
+                teacherCredentials.phone ?? null,
+                teacherUserId
+            ]);
 
             await createAuditLog(client, {
-                actorUserId: userId,
-                actorRole: userRole,
+                actorUserId: authUser.userId,
+                actorRole: authUser.userRole,
                 action: 'UPDATE_TEACHER',
                 targetUserId: teacherUserId,
-                schoolId: userSchoolId,
-                metadata: { teacherId: teacherId, name: [teacherFirstName, teacherMiddleName ?? "", teacherFirstLastName, teacherSecondLastName ?? ""].join(" ") }
+                schoolId: authUser.userSchoolId,
+                metadata: {
+                    teacherId: teacherCredentials.teacherId,
+                    name: [
+                        teacherCredentials.firstName,
+                        teacherCredentials.middleName ?? "",
+                        teacherCredentials.firstLastName,
+                        teacherCredentials.secondLastName ?? ""
+                    ].join(" ")
+                }
             });
 
             await client.query('COMMIT');

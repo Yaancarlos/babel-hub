@@ -3,7 +3,7 @@ import type { AssessmentCriteria } from "../../types";
 import { getAssignmentOverview  } from "../../api";
 import toast from "react-hot-toast";
 
-export const useAssignmentOverview = (courseId: string, classId: string) => {
+export const useAssignmentOverview = (courseId: string, classId: string, periodId: string) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [assignmentsOverview, setAssignmentsOverview] = useState<AssessmentCriteria[] | null>(null);
     const [trigger, setTrigger] = useState<number>(0);
@@ -14,11 +14,11 @@ export const useAssignmentOverview = (courseId: string, classId: string) => {
 
     useEffect(() => {
         const getAssignments = async () => {
-            if (!courseId || !classId) return;
+            if (!courseId || !classId || !periodId) return;
 
             setLoading(true);
             try {
-                const record = await getAssignmentOverview(courseId, classId);
+                const record = await getAssignmentOverview(courseId, classId, periodId);
                 const { assessment_criteria, grades } = record;
 
                 const gradesByAssignment = new Map<string, any[]>();
@@ -58,7 +58,7 @@ export const useAssignmentOverview = (courseId: string, classId: string) => {
             }
         }
         getAssignments();
-    }, [courseId, classId, trigger])
+    }, [courseId, classId, trigger, periodId])
 
     return { assignmentsOverview, loading, refetch };
 }

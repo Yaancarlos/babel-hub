@@ -28,7 +28,7 @@ router.get(
 );
 
 router.get(
-    "/teacher/class/:classId",
+    "/:classId/teacher",
     authMiddleware,
     authorizedRoles(["teacher"]),
     controller.getTeacherClassDetails

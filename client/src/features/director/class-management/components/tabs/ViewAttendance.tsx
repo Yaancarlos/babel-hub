@@ -3,7 +3,7 @@ import {formatDate, formatDatePeriod, reverseName} from "../../../../../types";
 import { NoResults } from "../../../../../components/ui/blocks/NoResults.tsx";
 import { useAttendanceGrid } from "../../hooks/useAttendanceGrid.ts";
 import type { ClassDetailsData } from "../../types";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { usePeriods } from "../../../../../shared/hooks/usePeriods.ts";
 import { IoCalendarOutline } from "react-icons/io5";
 
@@ -13,8 +13,16 @@ interface ViewAttendanceProps {
 }
 
 export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
-    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
     const { periods } = usePeriods();
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+
+    useEffect(() => {
+        if (periods && periods.length > 0 && !selectedPeriodId) {
+            const activePeriod = periods.find(p => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
+        }
+    }, [periods, selectedPeriodId]);
+
     const selectedPeriod = periods?.find(period => period.id === selectedPeriodId) ?? periods?.[0];
 
     const { loading, calendar, attendance } = useAttendanceGrid({
@@ -31,7 +39,7 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                 <NoResults title="No se encontraron periodos"/>
             </div>
         )
-    };
+    }
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -40,7 +48,7 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                     <LoadingContent title="Cargando asistencia..." />
                 </div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-2">
                     <div className="w-full rounded-xl bg-primary-shadow flex justify-between items-center sm:p-3 p-2 md:p-4">
                         <div className="flex gap-2 items-center">
                             <div className="text-white bg-primary p-2 text-xl rounded-md">
@@ -57,6 +65,7 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                             className="bg-white text-sm capitalize appearance-none text-primary-darker rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                             value={selectedPeriod?.id || ""}
                             onChange={(e) => setSelectedPeriodId(e.target.value)}
+                            disabled={classData.students.length === 0}
                         >
                             {periods?.map(p => (
                                 <option key={p.id} value={p.id}>{p.name}</option>

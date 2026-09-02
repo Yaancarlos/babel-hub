@@ -16,6 +16,8 @@ const FORM_REGEX = {
     name: /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-']{2,50}$/,
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
     password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+    username: /^[a-zA-Z0-9_.-]{3,20}$/,
+    phone: /^[\d\s\-\+]{7,15}$/
 };
 
 export function StudentFormModal({ mode, initialData, onClose, onSuccess }: StudentFormModalProps) {
@@ -28,6 +30,8 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         secondLastName: initialData?.student_second_last_name || "",
         enrollmentCode: initialData?.enrollment_code || "",
         courseId: initialData?.course_id || "",
+        userName: initialData?.user_name || "",
+        phone: initialData?.phone || "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -74,6 +78,14 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
             setError("El segundo apellido debe tener entre 2 y 50 caracteres (solo letras).");
             return;
         }
+        if (formData.userName.trim() && !FORM_REGEX.username.test(formData.userName)) {
+            setError("El usuario debe tener entre 3 y 20 caracteres (letras, números, puntos, guiones).");
+            return;
+        }
+        if (formData.phone.trim() && !FORM_REGEX.phone.test(formData.phone)) {
+            setError("El celular debe tener entre 7 y 15 caracteres numéricos válidos.");
+            return;
+        }
 
         if (mode === 'create') {
             if (!FORM_REGEX.email.test(formData.email)) {
@@ -96,8 +108,12 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
             middleName: formData.middleName.trim().toLowerCase(),
             firstLastName: formData.firstLastName.trim().toLowerCase(),
             secondLastName: formData.secondLastName.trim().toLowerCase(),
-            courseId: formData.courseId.trim().toLowerCase(),
-            enrollmentCode: formData.enrollmentCode.trim().toLowerCase(),
+            courseId: formData.courseId.trim(),
+            enrollmentCode: formData.enrollmentCode.trim(),
+            userName: formData.userName.trim()
+                ? `@${formData.userName.trim().toLowerCase().replace(/^@/, '')}`
+                : "",
+            phone: formData.phone.trim(),
             ...(isCreateMode && {
                 password: formData.password,
                 email: formData.email.trim().toLowerCase(),
@@ -113,6 +129,8 @@ export function StudentFormModal({ mode, initialData, onClose, onSuccess }: Stud
         { name: "middleName", label: "Segundo Nombre", type: "text", placeholder: "Antonio", required: false },
         { name: "firstLastName", label: "Primer Apellido", type: "text", placeholder: "Garcia", required: true },
         { name: "secondLastName", label: "Segundo Apellido", type: "text", placeholder: "Perez", required: false },
+        { name: "userName", label: "Usuario", type: "text", placeholder: "perez_z", required: false },
+        { name: "phone", label: "Celular", type: "text", placeholder: "300-111-2222", required: false },
         {
             name: "courseId",
             label: "Curso",

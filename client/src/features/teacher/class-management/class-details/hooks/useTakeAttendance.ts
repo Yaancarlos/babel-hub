@@ -18,7 +18,7 @@ export const useTakeAttendance = ({classId, date, students}: TakeAttendanceProps
 
     useEffect(() => {
         const getAttendance = async () => {
-            if (!classId || !date) return;
+            if (!classId || !date || students.length === 0) return;
 
             setLoading(true);
             try {

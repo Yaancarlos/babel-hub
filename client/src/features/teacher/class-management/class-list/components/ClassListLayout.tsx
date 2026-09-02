@@ -3,6 +3,8 @@ import { LoadingPage } from "../../../../../components/ui/Loadings.tsx";
 import { InteractiveHomeList } from "../../../../../components/ui/lists/InteractiveHomeList.tsx";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { NoOutletInfo } from "../../../../../components/ui/blocks/NoOutletInfo.tsx";
+import {HiOutlineClipboardList} from "react-icons/hi";
+import {LuClipboardPenLine} from "react-icons/lu";
 
 export function ClassListLayout() {
     const { id: activeCourseId } = useParams();
@@ -13,10 +15,10 @@ export function ClassListLayout() {
     if (loading) return <LoadingPage title="Cargando..."/>
 
     return (
-        <div className="flex flex-col lg:flex-row gap-5 h-[calc(100dvh-6rem)] md:h-[calc(100dvh-2.5rem)] ">
+        <div className="flex flex-col lg:flex-row gap-3 h-[calc(100dvh-5rem)] md:h-[calc(100dvh-1.8rem)]">
             <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex h-full flex-col ${activeCourseId ? 'hidden lg:flex' : 'flex'} lg:w-1/3 xl:w-1/4`}>
                 <div className="flex flex-col h-full p-3 space-y-2">
-                    {course && (
+                    {course ? (
                         <InteractiveHomeList
                             isActive={activeCourseId === course.id}
                             disabled={true}
@@ -25,6 +27,10 @@ export function ClassListLayout() {
                             title={<span className="capitalize">Curso {course.name}</span>}
                             subtitle={`${course.total_students} Estudiantes`}
                         />
+                    ) : (
+                        <div className="w-full border border-dashed rounded-xl border-primary bg-primary-shadow/50 text-center px-2 py-4">
+                            <p className="text-primary text-sm font-semibold">No tienes dirección de curso</p>
+                        </div>
                     )}
 
                     {error && <p className="text-red-500 m-4 text-sm">{error}</p>}
@@ -50,11 +56,13 @@ export function ClassListLayout() {
                                     menuOptions={[
                                         {
                                             label: "Ver asistencia",
-                                            onClick: () => navigate(`/teacher/clases/${item.class_id}?button=see attendance`)
+                                            onClick: () => navigate(`/teacher/clases/${item.class_id}?button=see attendance`),
+                                            icon: <HiOutlineClipboardList className="size-4" />
                                         },
                                         {
                                             label: "Ver notas",
-                                            disabled: true
+                                            disabled: true,
+                                            icon: <LuClipboardPenLine className="size-4" />
                                         }
                                     ]}
                                 />

@@ -17,7 +17,7 @@ const controller = new AssignmentController(service);
 const router: Router = Router();
 
 router.get(
-    "/:courseId/class/:classId/overview",
+    "/periods/:periodId/overview",
     authMiddleware,
     authorizedRoles(['principal', 'teacher']),
     controller.getAssignmentOverview

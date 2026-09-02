@@ -17,7 +17,7 @@ export const StudentAttendanceRow = memo(function StudentAttendanceRow({
     onUpdateStatus: (id: string, status: AttendanceStatus) => void
 }) {
     return (
-        <li className="sm:p-3 p-2 md:p-4 flex flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+        <li className="sm:p-3 p-2 md:p-4 bg-white flex flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
             <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-10 h-10 rounded-full uppercase bg-primary-shadow text-primary hidden sm:flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
                     {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}

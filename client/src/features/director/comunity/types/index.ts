@@ -7,6 +7,8 @@ export interface StudentProps {
     student_first_last_name: string;
     student_second_last_name: string | null;
     email: string;
+    user_name: string;
+    phone: string;
     is_active: boolean;
     enrollment_code: string | null;
     created_at: string;
@@ -137,6 +139,8 @@ export interface Parent {
     parent_middle_name: string | null;
     parent_first_last_name: string;
     parent_second_last_name: string | null;
+    phone: string;
+    user_name: string;
     email: string;
     is_active: boolean;
     created_at: string;

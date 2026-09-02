@@ -13,7 +13,8 @@ export class PostgresPeriodRepository implements IPeriodsRepository {
                     id,
                     name,
                     start_date,
-                    end_date
+                    end_date,
+                    (CURRENT_DATE BETWEEN start_date AND end_date) AS is_current
                 FROM academic_period
                 WHERE school_id = $1
                 ORDER BY start_date ASC;

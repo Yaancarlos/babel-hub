@@ -15,7 +15,7 @@ export interface Period {
     name: string;
     start_date: string;
     end_date: string;
-    grading_template_id: string;
+    is_current: boolean;
 }
 
 export interface Area {

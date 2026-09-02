@@ -3,7 +3,7 @@ import type { ClassAttendance, ClassDetailsData, CourseAttendance } from "../typ
 import type { AssignmentsOverview, Scales } from "../../../../../types";
 
 export const getTeacherClass = async (id: string, controller: any): Promise<ClassDetailsData> => {
-    const response = await api.get(`/classes/teacher/class/${id}`, { signal: controller.signal });
+    const response = await api.get(`/classes/${id}/teacher`, { signal: controller.signal });
     return response.data.teacherClass;
 }
 
@@ -24,8 +24,13 @@ export const bulkAttendance = async (id: string, date:string, records:any[]) => 
 
 // Assignment Endpoint
 
-export const getAssignmentOverview = async (courseId: string, classId: string): Promise<AssignmentsOverview> => {
-    const response = await api.get(`/assignments/${courseId}/class/${classId}/overview`);
+export const getAssignmentOverview = async (courseId: string, classId: string, periodId: string): Promise<AssignmentsOverview> => {
+    const response = await api.get(`/assignments/periods/${periodId}/overview`, {
+        params: {
+            courseId,
+            classId,
+        }
+    });
     return response.data.assignments;
 }
 

@@ -2,7 +2,7 @@ import { LoadingContent } from "../../../../../../components/ui/Loadings.tsx";
 import {formatDate, formatDatePeriod, reverseName} from "../../../../../../types";
 import {usePeriodAttendance} from "../../hooks/usePeriodAttendance.ts";
 import {usePeriods} from "../../../../../../shared/hooks/usePeriods.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {IoCalendarOutline} from "react-icons/io5";
 import {NoResults} from "../../../../../../components/ui/blocks/NoResults.tsx";
 
@@ -12,18 +12,35 @@ interface ViewAttendanceProps {
 }
 
 export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
-    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
     const { periods } = usePeriods();
-    const selectedPeriod = periods?.find(period => period.id === selectedPeriodId) ?? periods?.[0];
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+
+    useEffect(() => {
+        if (periods && periods.length > 0 && !selectedPeriodId) {
+            const activePeriod = periods.find(p => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
+        }
+    }, [periods, selectedPeriodId]);
+
+    const selectedPeriod = periods?.find(p => p.id === selectedPeriodId);
+
+    const startDate = selectedPeriod?.start_date ? selectedPeriod.start_date.slice(0, 10) : "";
+    const endDate = selectedPeriod?.end_date ? selectedPeriod.end_date.slice(0, 10) : "";
 
     const { loading, calendarDates, periodAttendance } = usePeriodAttendance({
         courseId,
         classId,
-        startDate: selectedPeriod?.start_date.slice(0, 10) || "",
-        endDate: selectedPeriod?.end_date.slice(0, 10) || ""
-    })
+        startDate,
+        endDate
+    });
 
-    if (!selectedPeriod) return <div>No hay periodos disponibles</div>;
+    if (!periods || periods.length === 0) {
+        return <NoResults title="No se encontraron periodos" />;
+    }
+
+    if (!selectedPeriodId || loading || !selectedPeriod) {
+        return null;
+    }
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -32,7 +49,7 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                     <LoadingContent title="Cargando asistencia..." />
                 </div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-2">
                     <div className="w-full rounded-xl bg-primary-shadow flex justify-between items-center sm:p-3 p-2 md:p-4">
                         <div className="flex gap-2 items-center">
                             <div className="text-white bg-primary p-2 text-xl rounded-md">
@@ -48,6 +65,7 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                         <select
                             className="bg-white text-sm capitalize appearance-none text-indigo-600 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                             value={selectedPeriod?.id || ""}
+                            disabled={periodAttendance.length === 0}
                             onChange={(e) => setSelectedPeriodId(e.target.value)}
                         >
                             {periods?.map(p => (

@@ -21,8 +21,13 @@ export const getDailyAttendance = async (classId: string, date: string) => {
 
 // Assignment Endpoints
 
-export const getAssignmentOverview = async (courseId: string, classId: string): Promise<AssignmentsOverview> => {
-    const response = await api.get(`/assignments/${courseId}/class/${classId}/overview`);
+export const getAssignmentOverview = async (courseId: string, classId: string, periodId: string): Promise<AssignmentsOverview> => {
+    const response = await api.get(`/assignments/periods/${periodId}/overview`, {
+        params: {
+            courseId,
+            classId,
+        }
+    });
     return response.data.assignments;
 }
 

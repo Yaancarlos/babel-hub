@@ -2,6 +2,8 @@ import { finalGradeForStudent, reverseName } from "../../../../../../types";
 import type { Student } from "../../types";
 import { NoResults } from "../../../../../../components/ui/blocks/NoResults.tsx";
 import {useAssignmentOverview} from "../../hooks/assignments/useAssignmentOverview.ts";
+import {useEffect, useState} from "react";
+import {usePeriods} from "../../../../../../shared/hooks/usePeriods.ts";
 
 interface StudentsProps {
     students: Student[]
@@ -10,7 +12,18 @@ interface StudentsProps {
 }
 
 export function Students({ students, courseId, classId }: StudentsProps) {
-    const { assignmentsOverview } = useAssignmentOverview(courseId, classId);
+    const { periods } = usePeriods();
+    const [selectedPeriodId, setSelectedPeriodId] = useState<string>('');
+
+    useEffect(() => {
+        if (periods && periods.length > 0 && !selectedPeriodId) {
+            const activePeriod = periods.find(p => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
+        }
+    }, [periods, selectedPeriodId]);
+
+    const { assignmentsOverview } = useAssignmentOverview(courseId, classId, selectedPeriodId, students);
+
     if (!assignmentsOverview) return null;
 
     return (
@@ -20,8 +33,8 @@ export function Students({ students, courseId, classId }: StudentsProps) {
                     <table className="w-full min-w-md text-center border-collapse">
                         <thead>
                             <tr className="bg-primary-shadow text-primary border-b border-primary-shadow">
-                                <th className="py-3 md:py-4 px-4 md:px-5 lg:px-6 text-sm text-left font-medium ">Estudiante</th>
-                                <th className="py-3 md:py-4 px-4 md:px-5 lg:px-6 text-sm font-medium ">Promedio</th>
+                                <th className="p-3 text-sm text-left font-medium ">Estudiante</th>
+                                <th className="p-3 text-sm font-medium ">Promedio</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -30,7 +43,7 @@ export function Students({ students, courseId, classId }: StudentsProps) {
 
                             return (
                                 <tr key={student.student_id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="py-3 px-6">
+                                    <td className="px-2 py-3">
                                         <div className="flex items-center text-left gap-3">
                                             <div className="w-9 h-9 rounded-full bg-primary-shadow uppercase text-primary-darker flex items-center justify-center text-xs md:text-sm font-bold shrink-0">
                                                 {`${student.first_name.charAt(0)}${student.first_last_name.charAt(0)}`}
