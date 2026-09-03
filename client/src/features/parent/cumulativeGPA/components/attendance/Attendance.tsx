@@ -3,22 +3,23 @@ import { useAttendance } from "../../hooks/attendance/useAttendance.ts";
 import { LoadingContent } from "../../../../../components/ui/Loadings.tsx";
 import { BsCalendar4Week } from "react-icons/bs";
 import { GoClock, GoCheckCircle, GoXCircle, GoDash } from "react-icons/go";
+import {useState} from "react";
 
 interface AttendanceProps {
     students: ParentStudent[];
     period: any;
+    date: string;
 }
 
-export function Attendance({ students, period }: AttendanceProps) {
-    const { loading, attendance } = useAttendance(students[0]?.student_id, period);
+export function Attendance({ students, period, date }: AttendanceProps) {
+    const [attendanceDate, setAttendanceDate] = useState<string>(date);
+    const { loading, attendance } = useAttendance(students[0]?.student_id, period, attendanceDate);
 
-    const date = new Date();
-    const opt: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
+    const formattedDate = new Intl.DateTimeFormat('es-ES', {
         day: 'numeric',
         month: 'long',
         year: 'numeric'
-    };
+    }).format(new Date(attendanceDate + 'T00:00:00'));
 
     if (loading || !period) return <LoadingContent title="" />;
 
@@ -50,13 +51,23 @@ export function Attendance({ students, period }: AttendanceProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
             <div className="bg-white col-span-2 rounded-xl p-5 border border-gray-200 w-full">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="bg-primary/10 rounded-xl p-2">
-                        <BsCalendar4Week className="size-5 text-primary" />
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <div className="bg-primary/10 rounded-xl p-2">
+                            <BsCalendar4Week className="size-5 text-primary" />
+                        </div>
+                        <h2 className="capitalize font-bold text-base md:text-lg text-custom-black">
+                            {formattedDate}
+                        </h2>
                     </div>
-                    <h2 className="capitalize font-bold text-lg text-custom-black">
-                        {date.toLocaleDateString('es-ES', opt)}
-                    </h2>
+                    <div>
+                        <input
+                            type="date"
+                            value={attendanceDate}
+                            onChange={(e) => setAttendanceDate(e.target.value)}
+                            className="bg-gray-50 md:text-base text-sm border border-gray-200 text-gray-700 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium"
+                        />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 lg:grid-rows-1 lg:grid-cols-5 gap-4">

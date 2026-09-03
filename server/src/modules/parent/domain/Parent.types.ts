@@ -37,4 +37,5 @@ export interface ParentStudent {
 export interface Date {
     start: string;
     end: string;
+    date: string;
 }

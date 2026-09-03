@@ -173,7 +173,7 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
         }
     }
 
-    async getStudentAttendance(studentId: string, startDate: string, endDate: string): Promise<DailyAttendance[]> {
+    async getStudentAttendance(studentId: string, startDate: string, endDate: string, date: string): Promise<DailyAttendance[]> {
         const client = await pool.connect();
         try {
             const query = `
@@ -187,12 +187,12 @@ export class PostgresAttendanceRepository implements IAttendanceRepository {
                 JOIN subject sub ON c.subject_id = sub.id
                 LEFT JOIN attendance a  ON a.class_id = c.id
                 AND a.student_id = s.id
-                AND a.date = CURRENT_DATE
-                WHERE s.id = $1
+                AND a.date = $1
+                WHERE s.id = $2
                 ORDER BY sub.name ASC;
             `;
 
-            const result = await client.query(query, [studentId]);
+            const result = await client.query(query, [date, studentId]);
             return result.rows;
         } finally {
             client.release();

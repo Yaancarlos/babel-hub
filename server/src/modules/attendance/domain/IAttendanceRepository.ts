@@ -13,5 +13,5 @@ export interface IAttendanceRepository {
     getAttendanceSummary(schoolId: string, startDate: string, endDate: string, isActive: boolean): Promise<AttendanceSummary[]>
     getCalendarAttendance(studentId: string, startDate: string, endDate: string): Promise<CalendarAttendance[]>;
     getClassAttendance(courseId: string, classId: string, startDate: string, endDate: string): Promise<CourseAttendance[]>;
-    getStudentAttendance(studentId: string, startDate: string, endDate: string): Promise<DailyAttendance[]>
+    getStudentAttendance(studentId: string, startDate: string, endDate: string, date: string): Promise<DailyAttendance[]>
 }

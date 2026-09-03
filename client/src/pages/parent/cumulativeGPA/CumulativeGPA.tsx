@@ -8,16 +8,20 @@ import { usePeriods } from "../../../shared/hooks/usePeriods.ts";
 
 import { Grades } from "../../../features/parent/cumulativeGPA/components/grades/Grades.tsx";
 import { Attendance } from "../../../features/parent/cumulativeGPA/components/attendance/Attendance.tsx";
+import { Observations } from "../../../features/parent/cumulativeGPA/components/observations/Observations.tsx";
+import { formatterDate } from "../../../types";
 
 export default function CumulativeGPA() {
-    const [tab, setTab] = useState<CumulativeGPATypes>('grades');
+    const [tab, setTab] = useState<CumulativeGPATypes>('attendance');
     const { periods } = usePeriods();
     const { loading, students } = useParentData();
     const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+    const initialDate = formatterDate.format(new Date());
 
     useEffect(() => {
         if (periods && periods.length > 0 && !selectedPeriodId) {
-            setSelectedPeriodId(periods[0].id);
+            const activePeriod = periods.find((p) => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
         }
     }, [periods, selectedPeriodId]);
 
@@ -25,7 +29,9 @@ export default function CumulativeGPA() {
     if (students.length === 0) return <NoResults title='Estudiantes no asignados a este acudiante' />;
     if (periods.length === 0) return <NoResults title="No se encontraron periodos" />;
 
-    const selectedPeriod = periods.find(p => p.id === selectedPeriodId) || periods[0];
+    const selectedPeriod = periods.find(p => p.id === selectedPeriodId);
+
+    if (!selectedPeriod || !selectedPeriodId) return null;
 
     return (
         <CumulativeGPALayout
@@ -37,7 +43,8 @@ export default function CumulativeGPA() {
             onPeriodChange={setSelectedPeriodId}
         >
             {tab === 'grades' && (<Grades students={students} periodId={selectedPeriod?.id} />)}
-            {tab === 'attendance' && (<Attendance students={students} period={selectedPeriod} />)}
+            {tab === 'attendance' && (<Attendance date={initialDate} students={students} period={selectedPeriod} />)}
+            {tab === 'observations' && (<Observations />)}
         </CumulativeGPALayout>
     );
 }

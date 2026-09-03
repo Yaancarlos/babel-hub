@@ -62,7 +62,7 @@ export class PostgresGradeRepository implements IGradeRepository {
                 SELECT
                     class_id,
                     subject_name,
-                    COALESCE(ROUND(SUM(criteria_avg * (weight / 100.0))::float, 2), 0) AS final_grade,
+                    COALESCE(ROUND(SUM(criteria_avg * (weight / 100.0))::numeric, 1)::float, 0) AS final_grade,
                     max_value AS scale_max,
                     min_value AS scale_min,
                     passing_value

@@ -4,17 +4,17 @@ import type { Period } from "../../../../../shared/types/types.ts";
 import { getStudentAttendance } from "../../api";
 
 
-export const useAttendance = (studentId: string, period: Period) => {
+export const useAttendance = (studentId: string, period: Period, date:string) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [attendance, setAttendance] = useState<DailyAttendance[]>([]);
 
     useEffect(() => {
         const fetchAttendance = async () => {
-            if (!studentId || !period) return;
+            if (!studentId || !period || !date) return;
 
             setLoading(true);
             try {
-                const result = await getStudentAttendance(studentId, period);
+                const result = await getStudentAttendance(studentId, period, date);
                 setAttendance(result);
             } catch (error : any) {
                 console.error(error);
@@ -23,7 +23,7 @@ export const useAttendance = (studentId: string, period: Period) => {
             }
         }
         fetchAttendance();
-    }, [studentId, period]);
+    }, [studentId, period, date]);
 
     return { loading, attendance };
 }

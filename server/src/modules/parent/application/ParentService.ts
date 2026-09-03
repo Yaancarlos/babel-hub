@@ -44,11 +44,11 @@ export class ParentService {
     async getStudentAttendance(studentId: string, date: Date, authUser: AuthUser): Promise<DailyAttendance[]> {
         if (!authUser.userId || !authUser.userSchoolId) throw new UnauthorizedError("Faltan credenciales del usuario");
         if (!studentId) throw new ValidationError("El id del estudiante no esta siendo enviado");
-        if (!date.start || !date.end) throw new ValidationError("El campo de las fechas no esta siendo enviado");
+        if (!date.start || !date.end || !date.date) throw new ValidationError("El campo de las fechas no esta siendo enviado");
 
         await this.assertParentOwnsStudent(studentId, authUser);
 
-        return await this.attendanceRepository.getStudentAttendance(studentId, date.start, date.end);
+        return await this.attendanceRepository.getStudentAttendance(studentId, date.start, date.end, date.date);
     }
 
     async createParent(parentCredentials: ParentCredentials, authUser: AuthUser): Promise<void> {
