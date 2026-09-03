@@ -37,7 +37,7 @@ export function PeriodsLayout() {
                     <p className="text-custom-black text-sm font-semibold">Tus periodos academicos</p>
                 </div>
                 <button
-                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary hover:bg-primary-shadow border-2 border-primary/20"
+                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary hover:bg-primary-shadow hover:border-primary-shadow border border-gray-100"
                     onClick={handleCreatePeriod}
                 >
                     <HiPlus />

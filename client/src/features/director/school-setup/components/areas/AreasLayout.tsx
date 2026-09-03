@@ -60,7 +60,7 @@ export function AreasLayout() {
                     <p className="text-xs text-gray-500">Cada área puede contener varias asignaturas.</p>
                 </div>
                 <button
-                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary hover:bg-primary-shadow border-2 border-gray-100"
+                    className="cursor-pointer flex items-center gap-1 py-2 px-3 rounded-md transition-colors text-sm font-bold text-primary border hover:bg-primary-shadow hover:border-primary-shadow border-gray-100"
                     onClick={handleCreate}
                 >
                     <HiPlus />

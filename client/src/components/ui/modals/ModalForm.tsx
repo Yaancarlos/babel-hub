@@ -175,17 +175,11 @@ export default function DynamicModalForm({
                         type="submit"
                         form="dynamic-form"
                         disabled={isSubmitDisabled}
-                        className={`bg-primary text-sm md:text-base text-white border border-primary px-5 py-2 rounded-lg transition-colors cursor-pointer w-full
+                        className={`bg-primary text-sm md:text-base text-white border border-primary hover:border-primary-darker hover:bg-primary-darker px-5 py-2 rounded-lg transition-colors cursor-pointer w-full
                                     ${isSubmitDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {formLoading ? "Guardando..." : "Guardar"}
                     </button>
-                    {/*<PrimaryButton
-                        type="submit"
-                        form="dynamic-form"
-                        title={formLoading ? "Guardando..." : "Guardar"}
-                        disabled={isSubmitDisabled}
-                    />*/}
                 </div>
             </div>
         </div>

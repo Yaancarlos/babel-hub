@@ -1,6 +1,6 @@
 import ButtonChevronBack from "../../../../components/ui/buttons/ButtonChevrowBack.tsx";
 import { useNavigate } from "react-router-dom";
-import {useMemo, useState} from "react";
+import {useMemo, useState, useEffect} from "react";
 import { usePeriods } from "../../../../shared/hooks/usePeriods.ts";
 import { useAttendanceSummary } from "../hooks/useAttendanceSummary.ts";
 import {AttendanceList} from "./ui/AttendanceList.tsx";
@@ -8,17 +8,25 @@ import {LoadingContent} from "../../../../components/ui/Loadings.tsx";
 import {NoResults} from "../../../../components/ui/blocks/NoResults.tsx";
 
 export function AttendanceLayout() {
-    const navigate = useNavigate();
     const { periods } = usePeriods();
-
+    const navigate = useNavigate();
     const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
 
-    const selectedPeriod =
-        periods?.find(p => p.id === selectedPeriodId) || periods?.[0];
+    useEffect(() => {
+        if (periods && periods.length > 0 && !selectedPeriodId) {
+            const activePeriod = periods.find(p => p.is_current);
+            setSelectedPeriodId(activePeriod ? activePeriod.id : periods[0].id);
+        }
+    }, [periods, selectedPeriodId]);
+
+    const selectedPeriod = periods?.find(period => period.id === selectedPeriodId);
+
+    const startDate = selectedPeriod?.start_date ? selectedPeriod.start_date.slice(0, 10) : "";
+    const endDate = selectedPeriod?.end_date ? selectedPeriod.end_date.slice(0, 10) : "";
 
     const { loading, attendance } = useAttendanceSummary({
-        startDate: selectedPeriod?.start_date.slice(0,10) || "",
-        endDate: selectedPeriod?.end_date.slice(0,10) || ""
+        startDate,
+        endDate
     });
 
     const uniqueCourses = useMemo(() => {
@@ -27,16 +35,11 @@ export function AttendanceLayout() {
         ).sort();
     }, [attendance]);
 
-    if (periods.length === 0) {
-        return (
-            <div>
-                <NoResults title="No se encontraron periodos" />
-            </div>
-        );
-    }
+    if (!periods || periods.length === 0) return <NoResults title="No se encontraron periodos" />;
+    if (!selectedPeriodId || loading || !selectedPeriod) return null;
 
     return (
-        <div className="flex flex-col h-full gap-4 md:gap-5">
+        <div className="flex flex-col h-full gap-3">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row items-start gap-3 sm:items-center sm:justify-between">
                 <div className="flex gap-2 items-center">
                     <ButtonChevronBack onClick={() => navigate(-1)}/>
