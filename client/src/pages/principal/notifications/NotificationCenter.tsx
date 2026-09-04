@@ -15,7 +15,9 @@ function NotificationCenter() {
     ]
 
     return (
-      <ListData data={listItems}/>
+        <div className="p-2">
+            <ListData data={listItems}/>
+        </div>
     )
 }
 

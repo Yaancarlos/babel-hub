@@ -43,7 +43,7 @@ const DashboardLayout = ({ user, grid }: LayoutProps) => {
     return (
         <div className="flex flex-col md:flex-row h-dvh overflow-hidden bg-gray-50">
 
-            <div className="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+            <div className="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-30">
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => navigate(`/${user?.role}/dashboard`)}
@@ -153,7 +153,7 @@ const DashboardLayout = ({ user, grid }: LayoutProps) => {
                 </div>
             </div>
 
-            <div className="flex-1 p-2 md:p-3 bg-gray-50 h-[calc(100dvh-24px)] md:h-dvh overflow-y-auto">
+            <div className="flex-1 md:p-3 bg-gray-50 h-dvh overflow-y-auto">
                 <ErrorBoundary>
                     <Outlet />
                 </ErrorBoundary>

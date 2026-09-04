@@ -11,7 +11,6 @@ interface CumulativeGPALayoutProps {
     student: ParentStudent[];
     activeTab: CumulativeGPATypes;
     onButtonChange: (tab: CumulativeGPATypes) => void;
-
     periods: any[];
     selectedPeriodId: string;
     onPeriodChange: (id: string) => void;
@@ -29,8 +28,8 @@ export function CumulativeGPALayout({
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col rounded-xl  h-[calc(100dvh-5rem)] md:h-[calc(100dvh-1.8rem)] w-full bg-gray-50">
-            <div className="sticky top-0 z-10 p-3 bg-white border-b border-gray-100 rounded-t-xl flex flex-col gap-4">
+        <div className="flex flex-col shadow-xs md:rounded-xl h-[calc(100dvh-5rem)] md:h-[calc(100dvh-1.8rem)] w-full bg-gray-50">
+            <div className="sticky top-0 z-10 p-3 bg-white md:rounded-t-xl flex flex-col gap-4">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex items-center w-full justify-between">
                         <div className="flex gap-4 items-center">
@@ -54,10 +53,11 @@ export function CumulativeGPALayout({
                             </div>
                         </div>
 
-                        <div className="self-end sm:self-auto">
+                        <div className={`self-end sm:self-auto ${activeTab === 'attendance' ? 'hidden' : ''}`}>
                             <select
                                 className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                                 value={selectedPeriodId}
+                                disabled={activeTab === 'attendance'}
                                 onChange={(e) => onPeriodChange(e.target.value)}
                             >
                                 {periods?.map(p => (
@@ -108,7 +108,7 @@ export function CumulativeGPALayout({
                 </div>
 
             </div>
-            <div className="p-2 overflow-auto no-scrollbar">
+            <div className="overflow-auto no-scrollbar">
                 {children}
             </div>
         </div>

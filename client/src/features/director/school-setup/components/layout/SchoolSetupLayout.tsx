@@ -34,6 +34,8 @@ export function SchoolSetupLayout() {
     ]
 
     return (
-        <ListData data={schoolSetupItems} />
+        <div className="p-2">
+            <ListData data={schoolSetupItems} />
+        </div>
     )
 }

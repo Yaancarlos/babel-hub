@@ -79,8 +79,8 @@ export function Assignments({ classData, courseId, classId }: AssignmentsProps) 
     };
 
     return (
-        <div className="space-y-2">
-            <div className="flex items-center justify-end p-2 w-full rounded-xl border-2 border-gray-100">
+        <div>
+            <div className="flex items-center justify-end p-2 w-full">
                 <select
                     name="teacher_periods_assignments"
                     className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"

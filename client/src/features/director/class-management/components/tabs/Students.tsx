@@ -8,7 +8,7 @@ interface StudentsProps {
 
 export function Students({ students }: StudentsProps) {
     return (
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white overflow-hidden">
             {
                 students.length > 0 ? (
                     <ul className="divide-y divide-gray-50">

@@ -24,7 +24,7 @@ export function Grades({ students, periodId }: GradesProps) {
 
     return (
         <div className="flex gap-5 flex-col md:flex-row justify-between">
-            <div className="w-full">
+            <div className="w-full p-5 ">
                 <div className="flex justify-between mb-3 items-center">
                     <div>
                         <span className="text-primary-darker text-xs font-semibold">Rendimiento académico</span>
@@ -61,7 +61,7 @@ export function Grades({ students, periodId }: GradesProps) {
                     ))}
                 </div>
             </div>
-            <div className="w-full">
+            <div className="w-full p-5">
                 <div className="bg-primary-shadow/50 rounded-xl p-5 h-full">
                     <div className="flex justify-between items-center">
                         <div>

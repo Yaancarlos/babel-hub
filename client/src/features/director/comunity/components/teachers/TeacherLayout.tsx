@@ -44,8 +44,8 @@ export function TeacherLayout() {
     if (loading) return <LoadingContent title="Cargando profesores..." />;
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col md:gap-5">
+            <div className="bg-white md:rounded-xl md:border md:border-gray-200 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <div className="flex gap-2 items-center">
                         <ButtonChevronBack onClick={() => navigate(-1)} />

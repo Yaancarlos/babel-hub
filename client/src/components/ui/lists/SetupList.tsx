@@ -27,7 +27,7 @@ export function ListRows<T>({
     if (loading) return <LoadingContent title='Cargando' />;
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white md:rounded-xl shadow-sm border border-gray-100 p-4">
             {items.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">{emptyMessage}</p>
             ) : (

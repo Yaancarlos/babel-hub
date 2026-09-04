@@ -39,22 +39,25 @@ export default function GradingTemplateDetails() {
     }
 
     return (
-        <div className="space-y-5">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div className="flex items-center gap-3">
-                    <ButtonChevronBack onClick={() => navigate(-1)} />
-                    <div>
-                        <h1 className="text-2xl capitalize font-bold text-custom-black">
-                            {gradingTemplateDetails?.grading_name}
-                        </h1>
-                        <p className="text-gray-500 text-sm mt-1">Gestión de Criterios de Evaluación</p>
+        <div className="md:space-y-5">
+            <div className="bg-white md:rounded-xl md:border md:border-gray-100 p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="flex items-center justify-between w-full gap-3">
+                    <div className="flex items-center gap-2">
+                        <ButtonChevronBack onClick={() => navigate(-1)} />
+                        <div>
+                            <h1 className="md:text-2xl text-xl capitalize font-bold text-custom-black">
+                                {gradingTemplateDetails?.grading_name}
+                            </h1>
+                            <p className="text-gray-500 text-sm mt-1">Gestión de Criterios de Evaluación</p>
+                        </div>
                     </div>
-                </div>
-                <div className="mt-4 md:mt-0">
-                    <PrimaryButton
-                        onClick={handleCreate}
-                        title="Nuevo Criterio"
-                    />
+                    <div>
+                        <PrimaryButton
+                            onClick={handleCreate}
+                            title="Nuevo Criterio"
+                            className="px-2"
+                        />
+                    </div>
                 </div>
             </div>
 

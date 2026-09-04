@@ -5,7 +5,6 @@ import { useAttendanceGrid } from "../../hooks/useAttendanceGrid.ts";
 import type { ClassDetailsData } from "../../types";
 import {useEffect, useState} from "react";
 import { usePeriods } from "../../../../../shared/hooks/usePeriods.ts";
-import { IoCalendarOutline } from "react-icons/io5";
 
 interface ViewAttendanceProps {
     classData: ClassDetailsData;
@@ -23,23 +22,21 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
         }
     }, [periods, selectedPeriodId]);
 
-    const selectedPeriod = periods?.find(period => period.id === selectedPeriodId) ?? periods?.[0];
+    const selectedPeriod = periods?.find(p => p.id === selectedPeriodId);
+
+    const startDate = selectedPeriod?.start_date ? selectedPeriod.start_date.slice(0, 10) : "";
+    const endDate = selectedPeriod?.end_date ? selectedPeriod.end_date.slice(0, 10) : "";
 
     const { loading, calendar, attendance } = useAttendanceGrid({
         courseId,
         classId: classData.details.id,
         students: classData.students.length,
-        startDate: selectedPeriod?.start_date.slice(0, 10) || "",
-        endDate: selectedPeriod?.end_date.slice(0, 10) || ""
+        startDate,
+        endDate
     });
 
-    if (!selectedPeriod) {
-        return (
-            <div className="md:col-span-2 lg:col-span-3">
-                <NoResults title="No se encontraron periodos"/>
-            </div>
-        )
-    }
+    if (!periods || periods.length === 0) return <NoResults title="No se encontraron periodos" />;
+    if (!selectedPeriodId || loading || !selectedPeriod) return null;
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -48,13 +45,10 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                     <LoadingContent title="Cargando asistencia..." />
                 </div>
             ) : (
-                <div className="space-y-2">
-                    <div className="w-full rounded-xl bg-primary-shadow flex justify-between items-center sm:p-3 p-2 md:p-4">
+                <div>
+                    <div className="w-full flex justify-between items-center p-2">
                         <div className="flex gap-2 items-center">
-                            <div className="text-white bg-primary p-2 text-xl rounded-md">
-                                <IoCalendarOutline />
-                            </div>
-                            <div>
+                            <div className="pl-2">
                                 <p className="text-primary-darker uppercase text-[10px] sm:text-xs font-bold">rango de periodo</p>
                                 <p className="text-custom-black capitalize font-semibold text-xs sm:text-sm">
                                     {formatDatePeriod(selectedPeriod.start_date, selectedPeriod.end_date)}
@@ -62,18 +56,18 @@ export function ViewAttendance({ classData, courseId }: ViewAttendanceProps) {
                             </div>
                         </div>
                         <select
-                            className="bg-white text-sm capitalize appearance-none text-primary-darker rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                            className="text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                             value={selectedPeriod?.id || ""}
                             onChange={(e) => setSelectedPeriodId(e.target.value)}
                             disabled={classData.students.length === 0}
                         >
                             {periods?.map(p => (
-                                <option key={p.id} value={p.id}>{p.name}</option>
+                                <option className="bg-white text-primary-darker" key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
                     </div>
 
-                    <div className="bg-white rounded-xl border-2 border-gray-100">
+                    <div className="bg-white border-t-2 border-gray-100">
                         <div className="flex items-center border-b-2 border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
                             <p className="text-custom-black text-sm hidden sm:block md:text-base font-semibold">Registro Diario</p>
                             <div className="flex items-center gap-2 md:gap-4">

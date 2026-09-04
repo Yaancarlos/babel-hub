@@ -29,8 +29,8 @@ export function RegisterAttendance ({ classData, date }: RegisterAttendanceProps
 
 
     return (
-        <div className="max-w-4xl mx-auto space-y-4">
-            <div className="p-2 w-full rounded-xl border-2 border-gray-100">
+        <div className="max-w-4xl mx-auto space-y-2">
+            <div className="pt-2 px-2 w-full flex items-center justify-end">
                 <input
                     type="date"
                     disabled={classData.students.length === 0}
@@ -44,7 +44,7 @@ export function RegisterAttendance ({ classData, date }: RegisterAttendanceProps
                 <LoadingContent title="Cargando..." />
             ) : (
                 <div className="relative">
-                    <div className="flex bg-white items-center border-2 rounded-t-xl border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
+                    <div className="flex bg-white items-center border-y-2 border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
                         <div className="sm:block hidden">
                             <p className="text-custom-black text-sm md:text-base font-semibold">Lista de estudiantes</p>
                             <p className="text-xs text-custom-black">{classData.students.length} estudiantes</p>
@@ -60,7 +60,7 @@ export function RegisterAttendance ({ classData, date }: RegisterAttendanceProps
                     {classData.students.length === 0 ? (
                         <NoResults title="No hay estudiantes en este curso" />
                     ) : (
-                        <ul className="divide-y divide-gray-50 border-x-2 border-b-2 rounded-b-xl border-gray-100 overflow-y-auto">
+                        <ul className="divide-y divide-gray-50 border-b-2 border-gray-100 overflow-y-auto">
                             {classData.students.map((student) => {
                                 const status = records[student.student_id] || 'present';
                                 return (

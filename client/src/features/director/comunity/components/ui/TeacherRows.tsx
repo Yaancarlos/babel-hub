@@ -57,7 +57,7 @@ export const TeacherRow = memo(function ({ teacher, onEdit, onDelete, onNavigate
                 </span>
             </td>
 
-            <td className="p-4 text-gray-500 text-xs xl:text-sm font-medium">
+            <td className="p-4 text-gray-500 text-sm font-medium">
                 {formateDate(teacher.created_at)}
             </td>
 

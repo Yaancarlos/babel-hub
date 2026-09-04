@@ -3,7 +3,6 @@ import {formatDate, formatDatePeriod, reverseName} from "../../../../../../types
 import {usePeriodAttendance} from "../../hooks/usePeriodAttendance.ts";
 import {usePeriods} from "../../../../../../shared/hooks/usePeriods.ts";
 import {useEffect, useState} from "react";
-import {IoCalendarOutline} from "react-icons/io5";
 import {NoResults} from "../../../../../../components/ui/blocks/NoResults.tsx";
 
 interface ViewAttendanceProps {
@@ -49,13 +48,10 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                     <LoadingContent title="Cargando asistencia..." />
                 </div>
             ) : (
-                <div className="space-y-2">
-                    <div className="w-full rounded-xl bg-primary-shadow flex justify-between items-center sm:p-3 p-2 md:p-4">
+                <div>
+                    <div className="w-full flex justify-between items-center p-2">
                         <div className="flex gap-2 items-center">
-                            <div className="text-white bg-primary p-2 text-xl rounded-md">
-                                <IoCalendarOutline />
-                            </div>
-                            <div>
+                            <div className="md:pl-2">
                                 <p className="text-primary uppercase text-[10px] sm:text-xs font-bold">rango de periodo</p>
                                 <p className="text-custom-black capitalize font-semibold text-xs sm:text-sm">
                                     {formatDatePeriod(selectedPeriod.start_date, selectedPeriod.end_date)}
@@ -63,7 +59,7 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                             </div>
                         </div>
                         <select
-                            className="bg-white text-sm capitalize appearance-none text-indigo-600 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                            className="bg-white text-sm capitalize appearance-none border-2 border-gray-100 text-custom-black rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                             value={selectedPeriod?.id || ""}
                             disabled={periodAttendance.length === 0}
                             onChange={(e) => setSelectedPeriodId(e.target.value)}
@@ -74,7 +70,7 @@ export function ViewAttendance({ courseId, classId }: ViewAttendanceProps) {
                         </select>
                     </div>
 
-                    <div className="bg-white rounded-xl border-2 border-gray-100">
+                    <div className="bg-white border-y-2 border-gray-100">
                         <div className="flex items-center border-b-2 border-gray-100 p-3 md:p-4 justify-end sm:justify-between">
                             <p className="text-custom-black text-sm hidden sm:block md:text-base font-semibold">Registro Diario</p>
                             <div className="flex items-center gap-2 md:gap-4">

@@ -39,8 +39,8 @@ export function AttendanceLayout() {
     if (!selectedPeriodId || loading || !selectedPeriod) return null;
 
     return (
-        <div className="flex flex-col h-full gap-3">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row items-start gap-3 sm:items-center sm:justify-between">
+        <div className="flex flex-col h-full md:gap-3">
+            <div className="bg-white md:rounded-xl md:border md:border-gray-100 p-4 flex flex-col sm:flex-row items-start gap-3 sm:items-center sm:justify-between">
                 <div className="flex gap-2 items-center">
                     <ButtonChevronBack onClick={() => navigate(-1)}/>
                     <div>
@@ -60,7 +60,7 @@ export function AttendanceLayout() {
                     </select>
                 </div>
             </div>
-            <div className="h-full bg-white rounded-xl p-3 md:p-5 shadow-sm border border-gray-100 no-scrollbar overflow-x-auto">
+            <div className="md:h-full bg-white md:rounded-xl p-3 md:p-5 border border-gray-100 no-scrollbar overflow-x-auto">
                 <div className="flex flex-col gap-5 relative">
                     {loading && (<LoadingContent title="Cargando asistencia" />)}
 

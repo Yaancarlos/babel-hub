@@ -22,7 +22,7 @@ export function ParentsTable({ parents, onEdit, onDelete, onAddStudent }: Parent
     const closeMenu = () => setActiveMenuId(null);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-y-visible">
+        <div className="bg-white md:rounded-xl shadow-sm border border-gray-100 overflow-x-auto overflow-y-visible">
             <table className="w-full text-left border-collapse min-w-3xl">
                 <thead>
                 <tr className="bg-gray-50 border-b border-gray-100 text-gray-600">
@@ -167,7 +167,7 @@ function ParentsRow({ parent, onEdit, onDelete, closeMenu, isOpen, onAddStudent 
                 )}
             </td>
 
-            <td className="p-4 text-gray-500 text-xs xl:text-sm whitespace-nowrap">
+            <td className="p-4 text-gray-500 text-sm whitespace-nowrap">
                 {formateDate(parent.created_at)}
             </td>
 

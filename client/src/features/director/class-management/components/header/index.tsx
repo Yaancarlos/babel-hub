@@ -70,7 +70,7 @@ export function ClassLayout({ children, data, activeTab, onTabChange }: ClassLay
                     </button>
                 </div>
             </div>
-            <div className="p-2 flex-1 styled-scrollbar overflow-y-auto">
+            <div className="flex-1 styled-scrollbar overflow-y-auto">
                 {children}
             </div>
         </div>

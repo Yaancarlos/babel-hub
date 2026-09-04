@@ -27,12 +27,12 @@ export function Students({ students, courseId, classId }: StudentsProps) {
     if (!assignmentsOverview) return null;
 
     return (
-        <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
+        <div className="bg-white overflow-hidden ">
             <div className="overflow-x-auto">
                 { students.length === 0 ? ( <NoResults title="No hay estudiantes en este curso." /> ) : (
                     <table className="w-full min-w-md text-center border-collapse">
                         <thead>
-                            <tr className="bg-primary-shadow text-primary border-b border-primary-shadow">
+                            <tr className="bg-primary-shadow text-primary-darker ">
                                 <th className="p-3 text-sm text-left font-medium ">Estudiante</th>
                                 <th className="p-3 text-sm font-medium ">Promedio</th>
                             </tr>

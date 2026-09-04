@@ -40,9 +40,9 @@ export function CoursesListLayout() {
     if (loading) return <LoadingPage title="Cargando cursos..." />
 
     return (
-        <div className="flex flex-col lg:flex-row gap-3 h-[calc(100dvh-5rem)] md:h-[calc(100dvh-1.8rem)]">
-            <div className={`bg-white rounded-xl shadow-sm border border-gray-100 h-full flex flex-col ${activeCourseId ? 'hidden lg:flex' : 'flex'} lg:w-1/3 xl:w-1/4`}>
-                <div className="p-3 border-b border-gray-100 grid grid-cols-3 justify-between gap-5 items-start md:items-center rounded-t-xl bg-white z-10">
+        <div className="flex flex-col lg:flex-row gap-3 h-[calc(100dvh-4rem)] md:h-[calc(100dvh-1.8rem)]">
+            <div className={`bg-white md:rounded-xl shadow-sm border border-gray-100 h-full flex flex-col ${activeCourseId ? 'hidden lg:flex' : 'flex'} lg:w-1/3 xl:w-1/4`}>
+                <div className="p-3 border-b border-gray-100 grid grid-cols-3 justify-between gap-5 items-start md:items-center md:rounded-t-xl bg-white z-10">
                     <h2 className="text-xl font-bold col-span-2 text-custom-black w-full">Cursos</h2>
                     <PrimaryButton
                         full={false}
@@ -64,7 +64,7 @@ export function CoursesListLayout() {
                 />
             </div>
 
-            <div className={`bg-white rounded-xl shadow-sm border border-gray-100 flex-1 no-scrollbar overflow-y-auto ${!activeCourseId ? 'hidden lg:flex items-center justify-center' : 'flex flex-col'}`}>
+            <div className={`bg-white md:rounded-xl shadow-sm border border-gray-100 flex-1 no-scrollbar overflow-y-auto ${!activeCourseId ? 'hidden lg:flex items-center justify-center' : 'flex flex-col'}`}>
                 {activeCourseId ? (
                     <Outlet key={activeCourseId} />
                 ) : (

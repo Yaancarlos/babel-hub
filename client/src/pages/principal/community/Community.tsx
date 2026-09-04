@@ -28,7 +28,7 @@ function Community () {
     ]
 
     return (
-        <div>
+        <div className="p-2">
             <ListData
                 data={listItems}
             />

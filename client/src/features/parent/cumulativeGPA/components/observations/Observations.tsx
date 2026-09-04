@@ -2,7 +2,7 @@ import {BiCommentDetail} from "react-icons/bi";
 
 export function Observations() {
     return (
-        <div className="flex flex-col items-center justify-center p-5 xl:p-12 w-full border border-dashed border-gray-300 rounded-xl">
+        <div className="flex flex-col items-center justify-center p-5 xl:p-12 w-full border-x border-b border-dashed border-gray-300 rounded-b-xl">
             <div className="mb-4">
                 <BiCommentDetail className="md:size-10 size-6 text-primary"/>
             </div>

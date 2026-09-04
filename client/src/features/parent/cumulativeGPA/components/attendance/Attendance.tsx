@@ -50,7 +50,7 @@ export function Attendance({ students, period, date }: AttendanceProps) {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-            <div className="bg-white col-span-2 rounded-xl p-5 border border-gray-200 w-full">
+            <div className="bg-white col-span-2 p-5 w-full">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <div className="bg-primary/10 rounded-xl p-2">
@@ -149,7 +149,7 @@ export function Attendance({ students, period, date }: AttendanceProps) {
                     </div>
                 </div>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200"></div>
+            <div className="bg-white w-full"></div>
         </div>
     );
 }

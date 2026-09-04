@@ -52,8 +52,8 @@ export function ParentsLayout() {
     if (loading) return <LoadingContent title="Cargando padres/acudientes..." />;
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div className="flex flex-col md:gap-5">
+            <div className="bg-white xl:rounded-xl md:border md:border-gray-100 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div className="flex gap-2">
                     <ButtonChevronBack onClick={() => navigate(-1)} />
                     <h2 className="text-xl md:text-1xl xl:text-2xl font-bold text-custom-black">Padres</h2>

@@ -79,10 +79,10 @@ export function Assignments({ classData, classId, courseId }: AssignmentsProps) 
     };
 
     return (
-        <div className="space-y-2">
-            <div className="p-2 w-full flex items-center justify-end rounded-xl border-2 border-gray-100">
+        <div>
+            <div className="p-2 w-full flex items-center justify-end">
                 <select
-                    className="bg-white text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
+                    className="text-sm capitalize appearance-none text-custom-black border border-gray-200 rounded-xl md:px-4 p-2 md:py-2.5 focus:outline-none focus:ring-1 focus:ring-primary font-semibold cursor-pointer"
                     value={selectedPeriod?.id || ""}
                     disabled={classData.students.length === 0}
                     onChange={(e) => setSelectedPeriodId(e.target.value)}
